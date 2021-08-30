@@ -9,10 +9,17 @@ function Header(props) {
                     <img className="logo" src="/img/logo.png" alt="Green Peace"/>
                 </Link>
             </div>
-            <div className="header-btn">
-                <Link to="/auth">
-                    <div className="auth-btn">Войти</div>
-                </Link>
+            <div className="btns-wrapper">
+                <div className="header-btn">
+                    <Link to="/auth">
+                        <div className="btn auth-btn">Войти</div>
+                    </Link>
+                </div>
+                <div className="header-btn">
+                    <Link to="/register">
+                        <div className="btn register-btn">Зарегистрироваться</div>
+                    </Link>
+                </div>
             </div>
         </header>
     )
