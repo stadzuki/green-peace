@@ -1,0 +1,39 @@
+* {
+    padding: 0;
+    margin: 0;
+    box-sizing: border-box;
+}
+
+button {
+    font-family: 'Open Sans', sans-serif;
+}
+
+a {
+    text-decoration: none;
+}
+
+body {
+    background-color: #C4C4C4;
+    font-family: 'Open Sans', sans-serif;
+    font-style: normal;
+    font-weight: normal;
+    font-size: 14px;
+}
+
+header {
+    background-color: #fff;
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+    padding: 20px 0 15px;
+
+    .auth-btn {
+        padding: 12px 25px;
+        max-width: 110px;
+        background: #2D52FA;
+        border-radius: 5px;
+        color: #FFFFFF;
+        font-weight: 600;
+        text-transform: uppercase;
+    }
+}
