@@ -1,8 +1,6 @@
 import React from "react";
 
 function Home(props) {
-    let currentValue = props.curentValue || "DEFAULT";
-
     return (
         <div className="map">
             <div className="inner-card card-container">
