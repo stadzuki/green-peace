@@ -1,7 +1,7 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 
-function Header(props) {
+function Header({onClickSignUp, onClickSignIn}) {
     return (
         <header>
             <div className="header-logo">
@@ -10,15 +10,11 @@ function Header(props) {
                 </Link>
             </div>
             <div className="btns-wrapper">
-                <div className="header-btn">
-                    <Link to="/auth">
-                        <div className="btn auth-btn">Войти</div>
-                    </Link>
+                <div className="header-btn" onClick={onClickSignIn}>
+                    <div className="btn auth-btn">Войти</div>
                 </div>
-                <div className="header-btn">
-                    <Link to="/register">
-                        <div className="btn register-btn">Зарегистрироваться</div>
-                    </Link>
+                <div className="header-btn" onClick={onClickSignUp}>
+                    <div className="btn register-btn">Зарегистрироваться</div>
                 </div>
             </div>
         </header>

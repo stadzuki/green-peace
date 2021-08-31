@@ -12,8 +12,22 @@ a {
     text-decoration: none;
 }
 
-.hide {
-    display: none;
+body {
+    height: 100vh;
+    background-color: #C4C4C4;
+    font-family: 'Open Sans', sans-serif;
+    font-style: normal;
+    font-weight: normal;
+    font-size: 14px;
+    overflow: hidden;
+}
+
+.map-container {
+    height: 100vh;
+}
+
+.visible {
+    display: block;
 }
 
 .notif {
@@ -30,14 +44,7 @@ a {
     left: 0;
 }
 
-body {
-    background-color: #C4C4C4;
-    font-family: 'Open Sans', sans-serif;
-    font-style: normal;
-    font-weight: normal;
-    font-size: 14px;
-    overflow: hidden;
-}
+// Header
 
 header {
     background-color: #fff;
@@ -51,6 +58,7 @@ header {
     }
 
     .btn {
+        cursor: pointer;
         padding: 12px 25px;
         background: #2F75FB;
         border-radius: 5px;
@@ -65,71 +73,22 @@ header {
     }
 }
 
-.map {
-    width: 100%;
-    height: 100vh;
-    background: url('https://upload.wikimedia.org/wikipedia/ru/e/ef/%D0%A1%D0%BA%D1%80%D0%B8%D0%BD%D1%88%D0%BE%D1%82_%D1%81%D0%B5%D1%80%D0%B2%D0%B8%D1%81%D0%B0_%D0%AF%D0%BD%D0%B4%D0%B5%D0%BA%D1%81.%D0%9A%D0%B0%D1%80%D1%82%D1%8B.png') no-repeat;
-    background-size: cover;
-    background-position-y: -60px;
-}
-
-.card-container {
-    max-width: 330px;
-    margin: 0 auto;
-}
+// Card categories
 
 .selected-category {
     background: #367EEA;
 }
 
-.inner-card {
-    position: absolute;
-    margin-top: 2%;
-    margin-left: 2%;
-    background: rgba(255, 255, 255, 0.8);
-    border-radius: 10px;
-    max-width: 370px;
-    max-height: 400px;
-    height: 400px;
-    padding-top: 20px;
-    padding-left: 20px;
+.category-item {
+    background: #9A9A9A;
+    padding: 12px;
+    margin-top: 15px;
+    margin-right: 15px;
+    border-radius: 90px;
+    transition: background 0.1s;
 
-    .select-list {
-        select {
-            max-width: 330px;
-            width: 330px;
-            padding: 15px 12px;
-            background: rgba(238, 238, 238, 0.6);
-            border: 0.5px solid #BCBCBC;
-            border-radius: 90px;
-            color: #686868;
-        }
-    }
-
-    .card-categories {
-        .categories-title {
-            color: #313131;
-            margin-top: 25px;
-        }
-
-        .categories-list {
-            margin-top: 20px;
-            display: flex;
-            flex-wrap: wrap;
-
-
-            .category-item {
-                background: #9A9A9A;
-                padding: 12px;
-                margin: 10px;
-                border-radius: 90px;
-                transition: background 0.1s;
-
-                &:hover {
-                    background: #2ECC6E;
-                    transition: background 0.1s;
-                }
-            }
-        }
+    &:hover {
+        background: #2ECC6E;
+        transition: background 0.1s;
     }
 }

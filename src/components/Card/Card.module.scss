@@ -1,0 +1,64 @@
+.cardContainer {
+    max-width: 330px;
+    margin: 0 auto;
+}
+
+.innerCard {
+    z-index: 5;
+    position: absolute;
+    margin: 2%;
+    background: rgba(255, 255, 255, 0.8);
+    border-radius: 10px;
+    max-width: 370px;
+    padding: 20px;
+
+    .selectList {
+        position: relative;
+        select {
+            max-width: 330px;
+            width: 330px;
+            padding: 15px 12px;
+            background: rgba(238, 238, 238, 0.6);
+            border: 0.5px solid #BCBCBC;
+            border-radius: 90px;
+            color: #686868;
+            -webkit-appearance: none;
+            -moz-appearance: none;
+            appearance: none;
+
+            option {
+                background-color:#fff;
+                outline: none;
+                border: none;
+                border-radius: 5px;
+                color: #000000;
+                font-size: 14px;
+                margin: 50px 0;
+                font-style: normal;
+                font-weight: normal;
+
+                &:hover {
+                    background-color: red;
+                }
+            }
+        }
+
+        .dropIcon {
+            position: absolute;
+            top: 35%;
+            right: 5%;
+        }
+    }
+
+    .cardCategories {
+        .categoriesTitle {
+            color: #313131;
+            margin-top: 25px;
+        }
+
+        .categoriesList {
+            display: flex;
+            flex-wrap: wrap;
+        }
+    }
+}
