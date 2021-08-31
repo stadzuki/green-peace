@@ -142,6 +142,14 @@ function Login({method, onClose}) {
                                     <img src="/img/facebook-icon.png" width="25" alt="icon" />
                                     Facebook
                                 </button>
+                                <button className={styles.loginWith}>
+                                    <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/a/a5/Instagram_icon.png/600px-Instagram_icon.png" width="25" alt="icon" />
+                                    Instagram
+                                </button>
+                                <button className={styles.loginWith}>
+                                    <img src="https://upload.wikimedia.org/wikipedia/commons/5/5c/Telegram_Messenger.png" width="25" alt="icon" />
+                                    Telegram
+                                </button>
                             </div>
                             <p className={styles.noAccount}>
                                 Нет аккаунта?
