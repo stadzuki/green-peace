@@ -1,10 +1,12 @@
 import React from 'react';
 
 import Category from '../Category';
+import Place from '../Place';
 
 import styles from './Card.module.scss';
 
 function Card() {
+    const [isSelectedCategory, setIsSelectedCategory] = React.useState(false)
 
     const categories = [
         {type: 'paper', img: '/img/category/paper.png'},
@@ -24,6 +26,7 @@ function Card() {
 
     const clickCategoryHandler = (t) => {
         console.log(t);
+        setIsSelectedCategory((prev) => !prev)
     }
 
     return (
@@ -46,10 +49,29 @@ function Card() {
                 <p className={styles.categoriesTitle}>Что хотите сдать?</p>
                 <ul className={styles.categoriesList}>
                     {categories.map((category, idx) => {
-                        return <Category key={idx} type={category.type} img={category.img} onCategoryClick={() => clickCategoryHandler(category.type)}/>
+                        return <Category 
+                                    key={idx} 
+                                    type={category.type} 
+                                    img={category.img} 
+                                    onCategoryClick={() => clickCategoryHandler(category.type)}
+                                />
                     })}
                 </ul>
             </div>
+            { isSelectedCategory 
+                ? <div className={styles.aboutPlace}>
+                    <div className={styles.locate}>
+                        <div className={`${styles.locateBtn} ${styles.activeLocate}`}>Ближайшие</div>
+                        <div className={styles.locateBtn}>Весь город</div>
+                    </div>
+                    <ul className={styles.places}>
+                        <Place/>
+                        <Place/>
+                        <Place/>
+                    </ul>
+                </div>
+                : ''
+            }
         </div>
     )
 }

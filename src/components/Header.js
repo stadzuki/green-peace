@@ -1,7 +1,10 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
+import AppContext from '../context';
 
-function Header({onClickSignUp, onClickSignIn}) {
+function Header() {
+    const {setLoginMethod, isAuthorize, user} = React.useContext(AppContext)
+
     return (
         <header>
             <div className="header-logo">
@@ -9,14 +12,21 @@ function Header({onClickSignUp, onClickSignIn}) {
                     <img className="logo" src="/img/logo.png" alt="Green Peace"/>
                 </Link>
             </div>
-            <div className="btns-wrapper">
-                <div className="header-btn" onClick={onClickSignIn}>
+            {isAuthorize 
+            ? <div className="btns-wrapper">
+                <div className="header-btn">
+                    <div className="btn">{user.login}</div>
+                </div>
+            </div>
+            : <div className="btns-wrapper">
+                <div className="header-btn" onClick={() => setLoginMethod('signIn')}>
                     <div className="btn auth-btn">Войти</div>
                 </div>
-                <div className="header-btn" onClick={onClickSignUp}>
+                <div className="header-btn" onClick={() => setLoginMethod('signUp')}>
                     <div className="btn register-btn">Зарегистрироваться</div>
                 </div>
             </div>
+            }
         </header>
     )
 }
