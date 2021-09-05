@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import AppContext from '../../context';
 
 import Category from '../Category';
@@ -6,11 +6,20 @@ import Place from '../Place';
 
 import styles from './Card.module.scss';
 
+let selectedCategory = [];
+
 function Card() {
+    const [city, setCity] = useState('')
+    const [category, setCategory] = useState([])
+    const [adres, setAdres] = useState({})
+    const [namePlace, setNamePlace] = useState({})
+    const [timeWork, setTimeWork] = useState({})
+    const [descriptionPlace, setDescriptionPlace] = useState({})
+    const [photoFile, setPhotoFile] = useState({})
+
     const [isSelectedCategory, setIsSelectedCategory] = React.useState(false)
     const {target, setTarget} = React.useContext(AppContext)
 
-    const selectedCategory = [];
     let selectedItem;
 
     const categories = [
@@ -29,15 +38,31 @@ function Card() {
         {type: 'tires', img: '/img/category/tires.png'},
     ]
 
-    const clickCategoryHandler = (evt, type) => {
+    const clickCategoryHandler = (evt, typeCategory) => {
         if(target) {
-            console.log(1);
+            if(selectedCategory.includes(typeCategory)) {
+                console.log('include');
+                selectedCategory = selectedCategory.filter(item => item !== typeCategory);
+
+                if(evt.target.tagName === 'IMG') {
+                    evt.target.parentNode.classList.remove('selected');
+                } else {
+                    evt.target.classList.remove('selected');
+                }
+
+                setCategory(selectedCategory)
+                return 1;
+            }
+
             if(evt.target.tagName === 'IMG') {
                 evt.target.parentNode.classList.add('selected');
             } else {
                 evt.target.classList.add('selected');
             }
-            selectedCategory.push(type)
+
+            selectedCategory.push(typeCategory)
+            setCategory(selectedCategory)
+            console.log(category);
         } else {
             let eTarget;
             if(evt.target.tagName === 'IMG') {
@@ -57,42 +82,29 @@ function Card() {
                 console.log(eTarget);
                 if(selectedItem === eTarget) {
                     eTarget.classList.remove('selected');
+                    setIsSelectedCategory(false)
                 } else {
                     selectedItem.classList.remove('selected')
                     eTarget.classList.add('selected')
                     selectedItem = eTarget;
                 }
             }
-            // if(selectedItem === evt.target) {
-            //     setIsSelectedCategory((prev) => !prev)
-            //     evt.target.classList.toggle('selected')
-            //     return 1;
-            // } else if(!isSelectedCategory){
-            //     if(evt.target.tagName === 'IMG') {
-            //         evt.target.parentNode.classList.add('selected');
-            //     } else {
-            //         evt.target.classList.add('selected');
-            //     }
-            //     selectedItem = evt.target;
-            // } else {
-            //     if(evt.target.tagName === 'IMG') {
-            //         evt.target.parentNode.classList.remove('selected');
-            //     } else {
-            //         evt.target.classList.remove('selected');
-            //     }
-            //     selectedItem = undefined;
-            // }
 
             // Описать логику получения данных о категории в опеределенном выбранном городе!
         }
 
     }
+
+    const selectHandler = (e) => {
+        setCity(e.target.value)
+    }
+
     //Описать логику вставки добавления метки на карту target/setTargets
     return (
         <div className={`${styles.innerCard} ${styles.cardContainer} ${target ? styles.scroll : ''}`}>
             {/* создать свой компоненты выподающего списка */}
             <div className={styles.selectList}>
-                <select name="city-list" >
+                <select name="city-list" onChange={selectHandler}>
                     <option value="DEFAULT" selected disabled>Где вы находитесь?</option>
                     <option value="Moscow">Москва</option>
                     <option value="Kazan">Казань</option>
@@ -137,12 +149,31 @@ function Card() {
                 ? <form>
                     <p>
                         <span>Адрес</span>
-                        <input type="text" placeholder="Введите адрес пункта приема"/>
+                        <input type="text" placeholder="Укажите адрес пункта приема"/>
+                        <button className={styles.pointOnMap}>Указать на карте</button>
+                    </p>
+                    <p>
+                        <span>Название</span>
+                        <input type="text" placeholder="Укажите название пункта приема"/>
+                    </p>
+                    <p>
+                        <span>Период работы</span>
+                        <input type="text" placeholder="Укажите название пункта приема"/>
                     </p>
                     <p>
                         <span>Описание</span>
-                        <textarea type="text" placeholder="Введите описание пункта приема"></textarea>
+                        <textarea type="text" placeholder="Укажите описание пункта приема"></textarea>
                     </p>
+                    <div className="input__wrapper">
+                        <p className="upload-file-title">Укажите фото пункта приема</p>
+                        <input name="file" type="file" name="file" id="input__file" className="input input__file" multiple />
+                        <label htmlFor="input__file" className="input__file-button">
+                            <span className="input__file-icon-wrapper"><img className="input__file-icon" src="/img/add.svg" alt="Выбрать файл" width="25" /></span>
+                            <span className="input__file-button-text">Выберите файл</span>
+                        </label>
+                    </div>
+
+                    <button>Создать метку</button>
                 </form>
                 : '' }
         </div>
