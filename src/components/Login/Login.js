@@ -164,8 +164,16 @@ function Login({method, onClose}) {
         onClose();
     }
 
+    const overlayClose = (e) => {
+        console.log(e)
+        console.log(e.target)
+        if(e.target.matches('.Login_overlay__1KxoY')) {
+            closeHandler();
+        }
+    }
+
     return (
-        <div className={`${styles.overlay} ${method ? styles.visible : ''}`}>
+        <div className={`${styles.overlay} ${method ? styles.visible : ''}`} onClick={overlayClose}>
             {isLoader ? <Loader/>  : ''}
             <div className={styles.modal}>
                 {displayNotif ? <Notif title={notifTitle}/> : null}

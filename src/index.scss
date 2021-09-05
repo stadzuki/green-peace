@@ -16,6 +16,7 @@ a {
 
 body {
     height: 100vh;
+    overflow: hidden;
     background-color: #C4C4C4;
     font-family: 'Open Sans', sans-serif;
     font-style: normal;
@@ -25,6 +26,10 @@ body {
 
 .map-container {
     height: 100vh;
+}
+
+.hide {
+  display: none;
 }
 
 .visible {
@@ -43,6 +48,47 @@ body {
     font-size: 14px;
     right: 0;
     left: 0;
+}
+
+// Marker
+
+.markerContainer {
+  position: absolute;
+  right: 3%;
+  bottom: 4%;
+
+  &:hover {
+    cursor: pointer;
+    .markerHover {
+      display: block;
+    }
+  }
+}
+
+.markerHover {
+  display: none;
+  position: absolute;
+  bottom: 130%;
+  left: -110%;
+  width: 160px;
+  background-color: #2ECC6E;
+  color: #fff;
+  border-radius: 5px;
+  padding: 5px 7px;
+  font-weight: 500;
+  font-size: 13px;
+  line-height: 15px;
+}
+
+.markerCreator {
+  background-color: #2ECC6E;
+  padding: 20px;
+  border-radius: 50%;
+  width: 75px;
+  height: 75px;
+  // position: absolute;
+  // bottom: 4%;
+  // right: 2%;
 }
 
 // Header
@@ -256,3 +302,6 @@ header {
     }
   }
   
+  .selected {
+    background-color: #2ECC6E;
+  }

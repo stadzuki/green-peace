@@ -6,7 +6,8 @@ import Header from './components/Header';
 import Login from './components/Login/Login';
 import Card from './components/Card/Card';
 import Loader from './components/Loader';
-
+import MarkerCreator from './components/MarkerCreator';
+import MarkerCreatorModal from './components/MarkerCreatorModal/MarkerCreatorModal';
 
 import jwtDecode from 'jwt-decode';
 import axios from 'axios';
@@ -16,7 +17,7 @@ mapboxgl.accessToken = 'pk.eyJ1IjoibG9saWsyMCIsImEiOiJja3N6NDhlZ2oycGxnMndvZHVkb
 function App() {
   const url = 'http://5f63-188-119-45-172.ngrok.io';
 
-  const [isLoader, setIsLoader] = React.useState(true)
+  const [isLoader, setIsLoader] = React.useState(false)
 
   //Map
   const mapContainer = useRef(null);
@@ -32,17 +33,20 @@ function App() {
   //User
   const [user, setUser] = useState({})
   const [isAuthorize, setIsAuthorize] = useState(false)
+
+  //Marker
+  const [target, setTarget] = useState(false)
   /* login, icon, email, socialAuth*/
 
   useEffect(() => {
 
     if(token === '') {
+      setIsLoader(true)
       const tokenJWT = JSON.parse(localStorage.getItem('token'));
       
       if(tokenJWT !== null && isAuthorize === false && tokenJWT !== undefined) {
         const payloads = jwtDecode(tokenJWT);
 
-        setIsLoader(true)
         console.log('zashel');
 
         axios.get(`${url}/Users/${payloads.id}`, { headers: {"Authorization" : `${tokenJWT}`}})
@@ -82,11 +86,14 @@ function App() {
         user,
         setUser,
         isAuthorize,
-        setIsAuthorize
+        setIsAuthorize,
+        target,
+        setTarget
       }}
     >
       <div className="App">
         {isLoader ? <Loader/>  : ''}
+
         <Login method={loginMethod} onClose={() => setLoginMethod('')}/>
         
         <Header/>
@@ -94,6 +101,8 @@ function App() {
         <Card/>
 
         <div ref={mapContainer} className="map-container" />
+
+        <MarkerCreator changeTarget={() => setTarget(true)}/>
 
       </div>
     </AppContext.Provider>
