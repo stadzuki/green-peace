@@ -16,42 +16,43 @@ import Pin from "./components/Pin";
 
 const TOKEN = 'pk.eyJ1IjoibG9saWsyMCIsImEiOiJja3N6NDhlZ2oycGxnMndvZHVkbGV0MTZ1In0.JkdOOOgJTsu1Sl2qO-5VAA';
 
-const markers = [
-  {latitude: 53.669353, longitude: 23.813131},
-  {latitude: 53.5904, longitude: 24.2478},
-];
+const url = 'http://7bbd-188-119-45-172.ngrok.io'
 
 function App() {
-  const url = "http://5f63-188-119-45-172.ngrok.io";
+
+  // const [mm, setMM] = useState(false)
+
+  const city = [
+    {name: 'minsk', latitude: 53.893009, longitude: 27.567444},
+    {name: 'grodno', latitude: 53.669353, longitude: 23.813131},
+    {name: 'pinsk', latitude: 52.129272, longitude: 26.074677},
+  ]
+
+  const [markers, setMarkers] = useState([
+    {name: 'minsk', latitude: 53.893009, longitude: 27.567444},
+    {name: 'grodno', latitude: 53.669353, longitude: 23.813131},
+  ]);
+
+  const mapMarkers = React.useMemo(() => markers.map(
+    c => (
+      <Marker key={c.name} longitude={c.longitude} latitude={c.latitude} >
+        <Pin size={20} />
+      </Marker>
+    )
+  ), [markers]);
 
   const [mapCoord, setMapCoord] = useState({
-    latitude: 40,
-    longitude: -100,
-    zoom: 3.5,
+    latitude: 53.893009,
+    longitude: 	27.567444,
+    zoom: 12,
     bearing: 0,
     pitch: 0,
   });
-
-  const [marker, setMarker] = useState({
-    latitude: 40,
-    longitude: -100,
-  });
-
-  // const onMarkerDragEnd = React.useCallback(event => {
-  //   setMarker({
-  //     longitude: event.lngLat[0],
-  //     latitude: event.lngLat[1]
-  //   });
-  // }, []);
 
   const [isLoader, setIsLoader] = useState(false);
 
   //Map
   const [isGettedLocate, setIsGettedLocate] = useState(false);
-
-  const [lng, setLng] = useState(-70.9);
-  const [lat, setLat] = useState(42.35);
-  const [zoom, setZoom] = useState(9);
 
   //Auth
   const [token, setToken] = useState("");
@@ -73,14 +74,15 @@ function App() {
     // }
   };
 
-  const getLocation = () => {
+  function getLocation() {
     if (!navigator.geolocation) {
       console.log("Geolocation is not supported by your browser");
     } else {
       navigator.geolocation.getCurrentPosition(
         (position) => {
-          setLat(position.coords.latitude);
-          setLng(position.coords.longitude);
+          setMapCoord((prev) => {
+            return {...prev, latitude: position.coords.latitude, longitude: position.coords.longitude}
+          })
         },
         () => {
           console.log("Unable to retrieve your location");
@@ -90,7 +92,20 @@ function App() {
     setIsGettedLocate(true);
   };
 
+  function getMarkers() {
+    axios.get(`${url}/api/Company/GetCompanies`)
+      .then((response) => {
+        setMarkers(response.data)
+        console.log(markers);
+      })
+      .catch((error) => {
+        console.log(error);
+      })
+  }
+
   useEffect(() => {
+    // getMarkers()
+
     if (token === "") {
       // setIsLoader(true)
       const tokenJWT = JSON.parse(localStorage.getItem("token"));
@@ -134,6 +149,17 @@ function App() {
     }
   });
 
+  // useEffect(() => {
+  //   axios.get(`${url}/api/Company/GetCompanies`)
+  //     .then((response) => {
+  //       markers = response.data;
+  //       console.log(markers);
+  //     })
+  //     .catch((error) => {
+  //       console.log(error);
+  //     })
+  // })
+
   return (
     <AppContext.Provider
       value={{
@@ -155,6 +181,13 @@ function App() {
 
         <Card />
 
+        <button onClick={(e) => {
+          e.preventDefault();
+          setMarkers((prev) => {
+            return [...prev, {name: 'pinsk', latitude: 52.129272, longitude: 26.074677}]
+          })
+        }}>123213213213213213123213</button>
+
         <MapGL
           {...mapCoord}
           width="100vw"
@@ -163,26 +196,8 @@ function App() {
           onViewportChange={setMapCoord}
           mapboxApiAccessToken={TOKEN}
         >
-          {/* <Marker
-            longitude={marker.longitude}
-            latitude={marker.latitude}
-            offsetTop={-20}
-            offsetLeft={-10}
-          >
-            <Pin size={20} />
-          </Marker> */}
-          {markers.map(item => {
-            <Marker
-              longitude={item.longitude}
-              latitude={item.latitude}
-              offsetTop={-20}
-              offsetLeft={-10}
-            >
-              <Pin size={20} />
-            </Marker>
-          })}
+          {mapMarkers}
         </MapGL>
-
         <MarkerCreator changeTarget={createMarkerHanlder} />
       </div>
     </AppContext.Provider>

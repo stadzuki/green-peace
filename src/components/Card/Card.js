@@ -1,3 +1,4 @@
+import axios from 'axios';
 import React, { useState } from 'react';
 import AppContext from '../../context';
 
@@ -8,6 +9,8 @@ import styles from './Card.module.scss';
 
 let selectedCategory = [];
 let selectedItem;
+
+const url = 'http://7bbd-188-119-45-172.ngrok.io'
 
 function Card() {
     const [city, setCity] = useState('')
@@ -159,6 +162,14 @@ function Card() {
                         <input type="text" placeholder="Укажите название пункта приема"/>
                     </p>
                     <p>
+                        <span>Номер телефона</span>
+                        <input type="text" placeholder="Укажите номер телефона пункта приема"/>
+                    </p>
+                    <p>
+                        <span>Сайт</span>
+                        <input type="text" placeholder="Укажите сайт пункта приема"/>
+                    </p>
+                    <p>
                         <span>Описание</span>
                         <textarea type="text" placeholder="Укажите описание пункта приема"></textarea>
                     </p>
@@ -171,7 +182,30 @@ function Card() {
                         </label>
                     </div>
 
-                    <button>Создать метку</button>
+                    <button onClick={(e) => {
+                        e.preventDefault();
+                        const data = {
+                            id: 0,
+                            title: 'ООО Сдача бумаги',
+                            description: 'Мы принимаем бумагу и жестянки',
+                            latitude: 53.893009,
+                            longitude: 27.567444,
+                            address: 'ул. Репина постройка 2',
+                            workTime: '08:00-23:00',
+                            phoneNumber: '+7123123123',
+                            webSiteUrl: 'sdacha.ru',
+                            imageUrl: 'service.ru/img.png',
+                            categoriesId: [1, 4]
+                        }
+
+                        axios.post(`${url}/api/Company/AddCompany`, data)
+                            .then((resp) => {
+                                console.log(resp);
+                            })
+                            .catch((error) => {
+                                console.log(error);
+                            })
+                    }}>Создать метку</button>
                 </form>
                 : '' }
         </div>
