@@ -7,6 +7,7 @@ import Place from '../Place';
 import styles from './Card.module.scss';
 
 let selectedCategory = [];
+let selectedItem;
 
 function Card() {
     const [city, setCity] = useState('')
@@ -20,7 +21,6 @@ function Card() {
     const [isSelectedCategory, setIsSelectedCategory] = React.useState(false)
     const {target, setTarget} = React.useContext(AppContext)
 
-    let selectedItem;
 
     const categories = [
         {type: 'paper', img: '/img/category/paper.png'},
@@ -78,9 +78,7 @@ function Card() {
             }
 
             if(isSelectedCategory) {
-                console.log(selectedItem);
-                console.log(eTarget);
-                if(selectedItem === eTarget) {
+                if(selectedItem == eTarget) {
                     eTarget.classList.remove('selected');
                     setIsSelectedCategory(false)
                 } else {
