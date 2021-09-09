@@ -1,5 +1,4 @@
 import React from 'react';
-import MarkerCreatorModal from './MarkerCreatorModal/MarkerCreatorModal';
 
 function MarkerCreator({changeTarget}) {
     return (

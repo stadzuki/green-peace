@@ -3,16 +3,93 @@
     margin: 0 auto;
 }
 
+// .container {
+//     max-width: 250px;
+//     margin: 0 auto;
+//     overflow: hidden;
+// }
+
+// .modal {
+//     z-index: 5;
+//     position: absolute;
+//     top: 13%;
+//     left: 23%;
+//     border-radius: 5px;
+//     background-color: #fff;
+//     padding: 20px;
+
+//     .modalDescription {
+//         font-weight: 600;
+//         font-size: 14px;
+//     }
+// }
+
 .innerCard {
+    display: flex;
     z-index: 1;
     position: absolute;
     margin: 2%;
-    background: rgb(255, 255, 255);
-    border-radius: 10px;
-    max-width: 380px;
-    padding: 20px;
-    max-height: 580px;
-    overflow: hidden;
+    max-width: 1000px;
+
+    .companyCard {
+        background: rgb(255, 255, 255);
+        border-radius: 10px;
+        max-width: 320px;
+        max-height: 580px;
+        overflow: hidden;
+        margin-right: 10px;
+
+        .companyTitle {
+            width: 100%;
+            background: rgba(238, 238, 238, 0.8);
+            padding: 18px 0 13px 19px;
+            font-style: normal;
+            font-weight: 600;
+            font-size: 14px;
+            line-height: 19px;
+        }
+
+        .companyImage {
+            width: 100%;
+            height: auto;
+            
+            img {
+                width: 100%;
+                height: auto;
+            }
+        }
+
+        .companyMark {
+            display: flex;
+            align-items: center;
+            background-color: #EEEEEE;
+
+            .markCount {
+                display: flex;
+            }
+        }
+
+        .markAction {
+            padding: 15px 0;
+            display: flex;
+            
+
+            .markEst {
+                width: 25px;
+                height: 25px;
+            }
+        }
+    }
+
+    .categoryCard {
+        background: rgb(255, 255, 255);
+        border-radius: 10px;
+        max-width: 380px;
+        padding: 20px;
+        max-height: 580px;
+        overflow: hidden;
+        margin-right: 10px;
+    }
 
     form {
         margin-top: 25px;
@@ -72,6 +149,33 @@
                     color: #5B5B5B;
                 }
             }
+
+            .workTimeTitle {
+                text-align: center;
+            }
+
+            .workTime {
+                font-weight: normal;
+                display: flex;
+                justify-content: center;
+                align-items: center;
+
+                span {
+                    padding: 0;
+                    padding-right: 10px;
+                    color: #555;
+                    margin-bottom: 9px;
+                    font-weight: 600;
+                }
+
+                .workTimeInput {
+                    max-width: 100px;
+                    margin-right: 10px;
+                    text-align: center;
+                    padding: 18px 0;
+
+                }
+            }
         }
 
         button {
@@ -92,6 +196,33 @@
             font-weight: 600;
             margin-bottom: 15px;
             margin-top: 0;
+        }
+
+        .fileUpload {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background-color: #e8e8e8;
+            border-radius: 5px;
+            padding: 15px 20px;
+
+            .fileUploadTitle {
+                font-weight: normal;
+                color: #5c5c5c;
+            }
+
+            .fileUploadCancel {
+                border-radius: 5px;
+                background-color: #d2d0d0;
+                padding: 10px;
+                color: #5c5c5c;
+                cursor: pointer;
+
+                &:hover {
+                    background-color: #2F75FB;
+                    color: #fff;
+                }
+            }
         }
     }
 
@@ -136,7 +267,6 @@
     .cardCategories {
         .categoriesTitle {
             color: #313131;
-            margin-top: 25px;
         }
 
         .categoriesList {
@@ -195,6 +325,8 @@
 
     }
 }
+
+
 
 .scroll {
     overflow-y: scroll;

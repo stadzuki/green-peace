@@ -1,4 +1,4 @@
-import React, { useRef, useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import AppContext from "./context";
 
 import MapGL, { Marker } from "react-map-gl";
@@ -20,27 +20,9 @@ const url = 'http://7bbd-188-119-45-172.ngrok.io'
 
 function App() {
 
-  // const [mm, setMM] = useState(false)
+  const [isLoader, setIsLoader] = useState(false);
 
-  const city = [
-    {name: 'minsk', latitude: 53.893009, longitude: 27.567444},
-    {name: 'grodno', latitude: 53.669353, longitude: 23.813131},
-    {name: 'pinsk', latitude: 52.129272, longitude: 26.074677},
-  ]
-
-  const [markers, setMarkers] = useState([
-    {name: 'minsk', latitude: 53.893009, longitude: 27.567444},
-    {name: 'grodno', latitude: 53.669353, longitude: 23.813131},
-  ]);
-
-  const mapMarkers = React.useMemo(() => markers.map(
-    c => (
-      <Marker key={c.name} longitude={c.longitude} latitude={c.latitude} >
-        <Pin size={20} />
-      </Marker>
-    )
-  ), [markers]);
-
+  //Map
   const [mapCoord, setMapCoord] = useState({
     latitude: 53.893009,
     longitude: 	27.567444,
@@ -48,10 +30,6 @@ function App() {
     bearing: 0,
     pitch: 0,
   });
-
-  const [isLoader, setIsLoader] = useState(false);
-
-  //Map
   const [isGettedLocate, setIsGettedLocate] = useState(false);
 
   //Auth
@@ -63,8 +41,27 @@ function App() {
   const [isAuthorize, setIsAuthorize] = useState(false);
 
   //Marker
+  const [isMarkersLoaded, setIsMarkersLoaded] = useState(false);
+  const [isMarkerCreate, setIsMarkerCreate] = useState(false)
   const [target, setTarget] = useState(false);
-  /* login, icon, email, socialAuth*/
+  const [markers, setMarkers] = useState([]);
+  const [markerCategories, setMarkerCategories] = useState([]);
+  const [newMarker, setNewMarker] = useState({})
+
+  const createMarker = (marker) => {
+    return (
+      <Marker key={marker.id} longitude={marker.longitude} latitude={marker.latitude} >
+        {/* <Pin count={2} color={['red', 'black']} /> */}
+        <img src="/img/map-marker.png" alt="marker" width="50" height="50"/>
+      </Marker>
+    )
+  }
+
+  const mapMarkers = React.useMemo(() => markers.map(
+    marker => (
+        createMarker(marker)
+    )
+  ), [markers]);
 
   const createMarkerHanlder = () => {
     // if(isAuthorize) {
@@ -93,14 +90,15 @@ function App() {
   };
 
   function getMarkers() {
-    axios.get(`${url}/api/Company/GetCompanies`)
+    // axios.get(`${url}/api/Company/GetCompanies`)
+    axios.get(`https://api.npoint.io/006b6af2e5a326dd4301`)
       .then((response) => {
-        setMarkers(response.data)
-        console.log(markers);
+        setMarkers(response.data.data)
       })
       .catch((error) => {
         console.log(error);
       })
+      setIsMarkersLoaded(true)
   }
 
   useEffect(() => {
@@ -149,16 +147,18 @@ function App() {
     }
   });
 
-  // useEffect(() => {
-  //   axios.get(`${url}/api/Company/GetCompanies`)
-  //     .then((response) => {
-  //       markers = response.data;
-  //       console.log(markers);
-  //     })
-  //     .catch((error) => {
-  //       console.log(error);
-  //     })
-  // })
+  useEffect(() => {
+    if(isMarkersLoaded) return 1;
+    getMarkers()
+  })
+
+  const mapClickHandler = (e) => {
+    if(isMarkerCreate === true) {
+      setNewMarker({id: 0, latitude: e.lngLat[1], longitude: e.lngLat[0]})
+      setMarkers((prev) => [...prev, {id: 0, latitude: e.lngLat[1], longitude: e.lngLat[0]}])
+      setIsMarkerCreate('INIT')
+    }
+  }
 
   return (
     <AppContext.Provider
@@ -170,9 +170,16 @@ function App() {
         setIsAuthorize,
         target,
         setTarget,
+        markers,
+        setMarkers,
+        isMarkerCreate,
+        setIsMarkerCreate,  
+        setMarkerCategories,
+        newMarker
       }}
     >
       <div className="App">
+        
         {isLoader ? <Loader /> : ""}
 
         <Login method={loginMethod} onClose={() => setLoginMethod("")} />
@@ -181,13 +188,6 @@ function App() {
 
         <Card />
 
-        <button onClick={(e) => {
-          e.preventDefault();
-          setMarkers((prev) => {
-            return [...prev, {name: 'pinsk', latitude: 52.129272, longitude: 26.074677}]
-          })
-        }}>123213213213213213123213</button>
-
         <MapGL
           {...mapCoord}
           width="100vw"
@@ -195,6 +195,7 @@ function App() {
           mapStyle="mapbox://styles/babichdima/cksj6yk2baq5217pja2fqa5r8"
           onViewportChange={setMapCoord}
           mapboxApiAccessToken={TOKEN}
+          onClick={mapClickHandler}
         >
           {mapMarkers}
         </MapGL>
