@@ -6,6 +6,7 @@ import Category from '../Category';
 import Place from '../Place';
 
 import styles from './Card.module.scss';
+import transcription from '../../transcription';
 
 let selectedCategory = [];
 let selectedItem;
@@ -29,7 +30,7 @@ function Card() {
     const [photoFile, setPhotoFile] = useState([])
 
     const [isSelectedCategory, setIsSelectedCategory] = React.useState(false)
-    const {target, setTarget, isMarkerCreate, setIsMarkerCreate, setMarkers, markers, setMarkerCategories, newMarker} = React.useContext(AppContext)
+    const {target, setTarget, isMarkerCreate, setIsMarkerCreate, setMarkers, markers, setMarkerCategories, newMarker, currentLang} = React.useContext(AppContext)
 
 
     const categories = [
@@ -281,7 +282,7 @@ function Card() {
         <div className={`${styles.cardContainer} ${styles.categoryCard} ${target ? styles.scroll : ''}`}>
             <div className={styles.cardCategories}>
                 <p className={styles.categoriesTitle}>
-                    {!target ? 'Что хотите сдать?' : 'Выберите категорию(и) для метки'}
+                    {!target ? transcription[currentLang].cardCategoryTitle : 'Выберите категорию(и) для метки'}
                 </p>
                 <ul className={styles.categoriesList}>
                     {categories.map((category, idx) => {
@@ -297,8 +298,8 @@ function Card() {
             { isSelectedCategory && !target
                 ? <div className={styles.aboutPlace}>
                     <div className={styles.locate}>
-                        <div className={`${styles.locateBtn} ${styles.activeLocate}`}>Ближайшие</div>
-                        <div className={styles.locateBtn}>Весь город</div>
+                        <div className={`${styles.locateBtn} ${styles.activeLocate}`}>{transcription[currentLang].cardCategoryClose}</div>
+                        <div className={styles.locateBtn}>{transcription[currentLang].cardCategoryAll}</div>
                     </div>
                     <ul className={styles.places}>
                         <Place/>

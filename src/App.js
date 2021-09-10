@@ -21,6 +21,20 @@ const url = 'http://92e6-188-119-45-172.ngrok.io'
 
 function App() {
 
+  //transcription
+  const [currentLang, setCurrentLang] = useState(() => {
+    switch(window.navigator.language) {
+      case 'ru':
+        return 'ru'
+        break;
+      case 'en':
+        return 'en'
+        break;
+      default:
+        return 'ru'
+    }
+  });
+
   //Loader
   const [isLoader, setIsLoader] = useState(false);
 
@@ -183,7 +197,9 @@ function App() {
         isMarkerCreate,
         setIsMarkerCreate,  
         setMarkerCategories,
-        newMarker
+        newMarker,
+        currentLang,
+        setCurrentLang
       }}
     >
       <div className="App">
@@ -202,10 +218,11 @@ function App() {
           onViewportChange={setMapCoord}
           mapboxApiAccessToken={TOKEN}
           onClick={mapClickHandler}
+          scrollZoom={false}
         >
           {mapMarkers}
         </MapGL>
-        <MarkerCreator changeTarget={createMarkerHanlder} />
+        <MarkerCreator changeTarget={createMarkerHanlder} currentLang={currentLang}/>
       </div>
     </AppContext.Provider>
   );

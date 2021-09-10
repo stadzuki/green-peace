@@ -38,10 +38,6 @@ body {
   display: none;
 }
 
-.visible {
-    display: block;
-}
-
 .notif {
     color: #fff;
     background-color: rgb(49, 49, 49);
@@ -105,6 +101,74 @@ header {
     justify-content: space-between;
     align-items: center;
     padding: 20px 35px;
+
+    .header-logo {
+      display: flex;
+      align-items: center;
+    }
+
+    .righSideWrapper {
+      display: flex;
+    }
+
+    .langSelector {
+      position: relative;
+      margin-left: 25px;
+      background-color: #eaeaea;
+      font-weight: 600;
+      color: #333;
+      border-radius: 5px;
+      
+      .langSelectorWrapper {
+        display: flex;
+        align-items: center;
+        padding: 10px 15px;
+        border-radius: 5px;
+
+        p {
+          margin-right: 5px;
+        }
+
+        &:hover {
+          background-color: #2F75FB;
+          color: #fff;
+          cursor: pointer;
+
+          svg path {
+            fill: #fff;
+          }
+        }
+      }
+
+      .langDropDown {
+        display: none;
+        z-index: 55;
+        top: 110%;
+        border-radius: 5px;
+        left: 0;
+        position: absolute;
+        padding: 10px 26px;
+        background-color: #eaeaea;
+        text-transform: uppercase;
+        
+        .selectedLang {
+          color: #2F75FB;
+        }
+
+        .lang {
+          padding: 5px 0;
+
+          &:hover {
+            cursor: pointer;
+            color: #2F75FB;
+          }
+        }
+      }
+
+      .visible {
+        display: block;
+      }
+    }
 
     .btns-wrapper {
         display: flex;
@@ -379,4 +443,8 @@ header {
   position: absolute;
   margin: 2%;
   max-width: 1000px;
+}
+
+.visible {
+  display: block;
 }
