@@ -3,327 +3,251 @@
     margin: 0 auto;
 }
 
-// .container {
-//     max-width: 250px;
-//     margin: 0 auto;
-//     overflow: hidden;
-// }
 
-// .modal {
-//     z-index: 5;
-//     position: absolute;
-//     top: 13%;
-//     left: 23%;
-//     border-radius: 5px;
-//     background-color: #fff;
-//     padding: 20px;
+.categoryCard {
+    vertical-align: top;
+    display: inline-block;
+    background: rgb(255, 255, 255);
+    border-radius: 10px;
+    max-width: 380px;
+    padding: 20px;
+    max-height: 580px;
+    overflow: hidden;
+    margin-right: 10px;
+}
 
-//     .modalDescription {
-//         font-weight: 600;
-//         font-size: 14px;
-//     }
-// }
+form {
+    margin-top: 25px;
 
-.innerCard {
-    display: flex;
-    z-index: 1;
-    position: absolute;
-    margin: 2%;
-    max-width: 1000px;
-
-    .companyCard {
-        background: rgb(255, 255, 255);
-        border-radius: 10px;
-        max-width: 320px;
-        max-height: 580px;
-        overflow: hidden;
-        margin-right: 10px;
-
-        .companyTitle {
-            width: 100%;
-            background: rgba(238, 238, 238, 0.8);
-            padding: 18px 0 13px 19px;
-            font-style: normal;
-            font-weight: 600;
-            font-size: 14px;
-            line-height: 19px;
+    p {
+        font-weight: 500;
+        color: #1C1D22;
+        line-height: 16px;
+        display: flex;
+        flex-direction: column;
+        font-weight: 600;
+        
+        span {
+            padding-left: 15px;
         }
 
-        .companyImage {
-            width: 100%;
-            height: auto;
-            
-            img {
-                width: 100%;
-                height: auto;
-            }
-        }
-
-        .companyMark {
-            display: flex;
-            align-items: center;
-            background-color: #EEEEEE;
-
-            .markCount {
-                display: flex;
-            }
-        }
-
-        .markAction {
-            padding: 15px 0;
-            display: flex;
-            
-
-            .markEst {
-                width: 25px;
-                height: 25px;
-            }
-        }
-    }
-
-    .categoryCard {
-        background: rgb(255, 255, 255);
-        border-radius: 10px;
-        max-width: 380px;
-        padding: 20px;
-        max-height: 580px;
-        overflow: hidden;
-        margin-right: 10px;
-    }
-
-    form {
-        margin-top: 25px;
-
-        p {
-            font-weight: 500;
-            color: #1C1D22;
-            line-height: 16px;
-            display: flex;
-            flex-direction: column;
-            font-weight: 600;
-            
-            span {
-                padding-left: 15px;
-            }
-
-            input {
-                margin-top: 6px;
-                padding: 18px 0px 18px 14px;
-                background: #E8E8E8;
-                border-radius: 4px;
-                margin-bottom: 15px;
-                border: none;
-
-                &:focus {
-                    outline: none;
-                    border: 0.5px solid #1877F2;
-                    color: #5B5B5B;
-                }
-
-                &::placeholder {
-                    font-size: 14px;
-                    line-height: 16px;
-                    color: #5B5B5B;
-                }
-            }
-
-            textarea {
-                margin-top: 5px;
-                padding: 18px 0px 18px 14px;
-                background: #E8E8E8;
-                border-radius: 4px;
-                height: 125px;
-                resize: none;
-                border: none;
-
-                &:focus {
-                    outline: none;
-                    border: 0.5px solid #1877F2;
-                    color: #5B5B5B;
-                }
-
-                &::placeholder {
-                    font-size: 14px;
-                    font-family: 'Open Sans', sans-serif;
-                    line-height: 16px;
-                    color: #5B5B5B;
-                }
-            }
-
-            .workTimeTitle {
-                text-align: center;
-            }
-
-            .workTime {
-                font-weight: normal;
-                display: flex;
-                justify-content: center;
-                align-items: center;
-
-                span {
-                    padding: 0;
-                    padding-right: 10px;
-                    color: #555;
-                    margin-bottom: 9px;
-                    font-weight: 600;
-                }
-
-                .workTimeInput {
-                    max-width: 100px;
-                    margin-right: 10px;
-                    text-align: center;
-                    padding: 18px 0;
-
-                }
-            }
-        }
-
-        button {
-            width: 323px;
-            background: #2ECC6E;
-            border-radius: 5px;
-            border: none;
-            font-weight: 600;
-            color: #FFFFFF;
-            padding: 16px 0px;
-            margin-top: 10px;
-            text-transform: uppercase;
-            cursor: pointer;
-        }
-
-        .pointOnMap {
-            font-size: 12px;
-            font-weight: 600;
+        input {
+            margin-top: 6px;
+            padding: 18px 0px 18px 14px;
+            background: #E8E8E8;
+            border-radius: 4px;
             margin-bottom: 15px;
-            margin-top: 0;
-        }
+            border: none;
 
-        .fileUpload {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            background-color: #e8e8e8;
-            border-radius: 5px;
-            padding: 15px 20px;
-
-            .fileUploadTitle {
-                font-weight: normal;
-                color: #5c5c5c;
-            }
-
-            .fileUploadCancel {
-                border-radius: 5px;
-                background-color: #d2d0d0;
-                padding: 10px;
-                color: #5c5c5c;
-                cursor: pointer;
-
-                &:hover {
-                    background-color: #2F75FB;
-                    color: #fff;
-                }
-            }
-        }
-    }
-
-    .selectList {
-        position: relative;
-        select {
-            max-width: 330px;
-            width: 330px;
-            padding: 15px 12px;
-            background: rgba(238, 238, 238, 0.6);
-            border: 0.5px solid #BCBCBC;
-            border-radius: 90px;
-            color: #686868;
-            -webkit-appearance: none;
-            -moz-appearance: none;
-            appearance: none;
-
-            option {
-                background-color:#fff;
+            &:focus {
                 outline: none;
-                border: none;
-                border-radius: 5px;
-                color: #000000;
-                font-size: 14px;
-                margin: 50px 0;
-                font-style: normal;
-                font-weight: normal;
+                border: 0.5px solid #1877F2;
+                color: #5B5B5B;
+            }
 
-                &:hover {
-                    background-color: red;
-                }
+            &::placeholder {
+                font-size: 14px;
+                line-height: 16px;
+                color: #5B5B5B;
             }
         }
 
-        .dropIcon {
-            position: absolute;
-            top: 35%;
-            right: 5%;
-        }
-    }
+        textarea {
+            margin-top: 5px;
+            padding: 18px 0px 18px 14px;
+            background: #E8E8E8;
+            border-radius: 4px;
+            height: 125px;
+            resize: none;
+            border: none;
 
-    .cardCategories {
-        .categoriesTitle {
-            color: #313131;
+            &:focus {
+                outline: none;
+                border: 0.5px solid #1877F2;
+                color: #5B5B5B;
+            }
+
+            &::placeholder {
+                font-size: 14px;
+                font-family: 'Open Sans', sans-serif;
+                line-height: 16px;
+                color: #5B5B5B;
+            }
         }
 
-        .categoriesList {
+        .workTimeTitle {
+            text-align: center;
+        }
+
+        .workTime {
+            font-weight: normal;
             display: flex;
-            flex-wrap: wrap;
-        }
-    }
-
-    .aboutPlace {
-        margin-top: 20px;
-
-        .locate {
-            display: flex;
-            justify-content: space-evenly;
+            justify-content: center;
             align-items: center;
 
-            .locateBtn {
-                background-color: #f5f5f5;
-                width: 100%;
-                text-align: center;
-                border-top-right-radius: 5px;
-                border-bottom-right-radius: 5px;
-                padding: 10px 0;
+            span {
+                padding: 0;
+                padding-right: 10px;
+                color: #555;
+                margin-bottom: 9px;
                 font-weight: 600;
-                font-size: 14px;
-                line-height: 19px;
-
-                &:hover {
-                    color: #fff;
-                    background-color: #2f75fb;
-                }
-
-                &:first-child {
-                    border-top-right-radius: 0px;
-                    border-bottom-right-radius: 0px;
-                    border-top-left-radius: 5px;
-                    border-bottom-left-radius: 5px;
-                }
             }
 
-            .activeLocate {
-                background-color: #2ECC6E;
+            .workTimeInput {
+                max-width: 100px;
+                margin-right: 10px;
+                text-align: center;
+                padding: 18px 0;
+
+            }
+        }
+    }
+
+    button {
+        width: 323px;
+        background: #2ECC6E;
+        border-radius: 5px;
+        border: none;
+        font-weight: 600;
+        color: #FFFFFF;
+        padding: 16px 0px;
+        margin-top: 10px;
+        text-transform: uppercase;
+        cursor: pointer;
+    }
+
+    .pointOnMap {
+        font-size: 12px;
+        font-weight: 600;
+        margin-bottom: 15px;
+        margin-top: 0;
+    }
+
+    .fileUpload {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        background-color: #e8e8e8;
+        border-radius: 5px;
+        padding: 15px 20px;
+
+        .fileUploadTitle {
+            font-weight: normal;
+            color: #5c5c5c;
+        }
+
+        .fileUploadCancel {
+            border-radius: 5px;
+            background-color: #d2d0d0;
+            padding: 10px;
+            color: #5c5c5c;
+            cursor: pointer;
+
+            &:hover {
+                background-color: #2F75FB;
                 color: #fff;
             }
         }
+    }
+}
 
-        .places {
-            width: 100%;
-            background-color: #f5f5f5;
+.selectList {
+    position: relative;
+    select {
+        max-width: 330px;
+        width: 330px;
+        padding: 15px 12px;
+        background: rgba(238, 238, 238, 0.6);
+        border: 0.5px solid #BCBCBC;
+        border-radius: 90px;
+        color: #686868;
+        -webkit-appearance: none;
+        -moz-appearance: none;
+        appearance: none;
+
+        option {
+            background-color:#fff;
+            outline: none;
+            border: none;
             border-radius: 5px;
-            padding: 20px;
-            margin-top: 20px;
-            overflow: scroll;
-            max-height: 185px;
+            color: #000000;
+            font-size: 14px;
+            margin: 50px 0;
+            font-style: normal;
+            font-weight: normal;
+
+            &:hover {
+                background-color: red;
+            }
+        }
+    }
+
+    .dropIcon {
+        position: absolute;
+        top: 35%;
+        right: 5%;
+    }
+}
+
+.cardCategories {
+    .categoriesTitle {
+        color: #313131;
+    }
+
+    .categoriesList {
+        display: flex;
+        flex-wrap: wrap;
+    }
+}
+
+.aboutPlace {
+    margin-top: 20px;
+
+    .locate {
+        display: flex;
+        justify-content: space-evenly;
+        align-items: center;
+
+        .locateBtn {
+            background-color: #f5f5f5;
+            width: 100%;
+            text-align: center;
+            border-top-right-radius: 5px;
+            border-bottom-right-radius: 5px;
+            padding: 10px 0;
+            font-weight: 600;
+            font-size: 14px;
+            line-height: 19px;
+
+            &:hover {
+                color: #fff;
+                background-color: #2f75fb;
+            }
+
+            &:first-child {
+                border-top-right-radius: 0px;
+                border-bottom-right-radius: 0px;
+                border-top-left-radius: 5px;
+                border-bottom-left-radius: 5px;
+            }
         }
 
+        .activeLocate {
+            background-color: #2ECC6E;
+            color: #fff;
+        }
     }
+
+    .places {
+        width: 100%;
+        background-color: #f5f5f5;
+        border-radius: 5px;
+        padding: 20px;
+        margin-top: 20px;
+        overflow: scroll;
+        max-height: 185px;
+    }
+
 }
 
 

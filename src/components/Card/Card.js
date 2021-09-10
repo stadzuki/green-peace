@@ -10,12 +10,15 @@ import styles from './Card.module.scss';
 let selectedCategory = [];
 let selectedItem;
 
-const url = 'http://d824-188-119-45-172.ngrok.io'
+const url = 'http://92e6-188-119-45-172.ngrok.io'
 
-//Снимать selected с категорий
+// добавить notif
+// добавить регулярку на время работы
+// при наведении на маркер выводить мета инфу
 
 function Card() {
     const [category, setCategory] = useState([])
+    const [city, setCity] = useState('')
     const [adress, setAdress] = useState('')
     const [namePlace, setNamePlace] = useState('')
     const [timeWorkStart, setTimeWorkStart] = useState('')
@@ -137,7 +140,10 @@ function Card() {
     const createMarkerOnClick = (e) => {
         e.preventDefault();
 
-        //create notif
+        if(city.length <= 0) {
+            return console.log('Вы не указали название города');
+        }
+
         if(category.length <= 0) {
             return console.log('Вы не указали категории');
         }
@@ -220,8 +226,8 @@ function Card() {
             }
         }
 
-        // const formData = new FormData();
-        // formData.append('image', photoFile[0]);
+        const formData = new FormData();
+        formData.append('image', photoFile[0]);
 
         const data = {
             id: 0,
@@ -230,20 +236,32 @@ function Card() {
             latitude: newMarker.latitude,
             longitude: newMarker.longitude,
             address: adress,
-            workTime: timeWorkStart + '-' + timeWorkFinish,
+            workStart: timeWorkStart,
+            workFinish: timeWorkFinish,
             phoneNumber: phoneNumber,
+            city: city.toLowerCase(),
             webSiteUrl: website,
             imageUrl: 'service.ru/img.png',
             categoriesId
         }
 
-        // axios.post(`${url}/api/Company/AddCompany`, data)
-        //     .then((resp) => {
-        //         console.log(resp);
-        //     })
-        //     .catch((error) => {
-        //         console.log(error);
-        //     })
+        axios.post(`${url}/api/Company/AddCompany`, data)
+            .then((resp) => {
+                console.log(resp);
+            })
+            .catch((error) => {
+                console.log(error);
+            })
+
+        axios.post(`${url}/api/Company/AddFile`, formData, {
+            headers: {
+                "Content-Type": "multipart/form-data"
+            }
+        }).then((resp) => {
+            console.log(resp);
+        }).catch((error) => {
+            console.log(error);
+        })
 
         setCategory([])
         setAdress('')
@@ -255,11 +273,12 @@ function Card() {
         setDescriptionPlace('')
         setPhotoFile([])
         setTarget(false)
+
+        document.querySelectorAll('.category-item').forEach(item => item.classList.remove('selected'))
     }
 
     return (
-        <div className={`${styles.innerCard} ${styles.cardContainer} ${target ? styles.scroll : ''}`}>
-            <div className={styles.categoryCard}>
+        <div className={`${styles.cardContainer} ${styles.categoryCard} ${target ? styles.scroll : ''}`}>
             <div className={styles.cardCategories}>
                 <p className={styles.categoriesTitle}>
                     {!target ? 'Что хотите сдать?' : 'Выберите категорию(и) для метки'}
@@ -275,7 +294,7 @@ function Card() {
                     })}
                 </ul>
             </div>
-            { isSelectedCategory 
+            { isSelectedCategory && !target
                 ? <div className={styles.aboutPlace}>
                     <div className={styles.locate}>
                         <div className={`${styles.locateBtn} ${styles.activeLocate}`}>Ближайшие</div>
@@ -290,6 +309,10 @@ function Card() {
                 : ''}
             { target
                 ? <form>
+                    <p>
+                        <span>Город</span>
+                        <input type="text" value={city} onChange={(e) => inputHandler(e, setCity)} placeholder="Укажите город пункта приема"/>
+                    </p>
                     <p>
                         <span>Адрес</span>
                         <input type="text" value={adress} onChange={(e) => inputHandler(e, setAdress)} placeholder="Укажите адрес пункта приема"/>
@@ -337,7 +360,7 @@ function Card() {
                             <div className={styles.fileUploadCancel} onClick={cancelUploadHandler}>Отменить</div>
                         </div>
                         : <div className="input__wrapper">
-                            <p className="upload-file-title">Укажите фото пункта приема</p>
+                            <p className="upload-file-title">Выберите фото пункта приема</p>
                             <input name="file" type="file" value={photoFile} id="input__file" className="input input__file" multiple onChange={uploadPhotoHandler}/>
                             <label htmlFor="input__file" className="input__file-button">
                                 <span className="input__file-icon-wrapper"><img className="input__file-icon" src="/img/add.svg" alt="Выбрать файл" width="25" /></span>
@@ -350,51 +373,6 @@ function Card() {
                     <button onClick={createMarkerOnClick}>Создать метку</button>
                 </form>
                 : '' }
-            </div>
-            <div className={styles.companyCard}>
-                <p className={styles.companyTitle}>Прием бумаги - Дубки у Валентины</p>
-                <div className={styles.companyImage}>
-                    <img src="/img/mock-comp.png" alt="company photo"/>
-                </div>
-                <div className={styles.companyMark}>
-                    <div className={styles.markCount}>
-                        <div className={styles.markNumber}>1</div>
-                        <p className={styles.markText}>1 оценка</p>
-                    </div>
-                    <div className={styles.markAction}>
-                        <div className={`${styles.markLike} ${styles.markEst}`}>
-                            <img src="/img/like.png" width="25" height="25" alt="like"/>
-                        </div>
-                        <div className={`${styles.markDislike} ${styles.markEst}`}>
-                            <img src="/img/dislike.png" width="25" height="25" alt="dislike"/>
-                        </div>
-                    </div>
-                </div>
-                <div className={styles.communicate}>
-                    <ul className={styles.communicateList}>
-                        <li className={styles.communicateItem}>
-                            <img src="/img/report.png" width="35" height="35" alt="report icon"/>
-                        </li>
-                        <li className={styles.communicateItem}>
-                            <img src="/img/phone.png" width="35" height="35" alt="phone icon"/>
-                        </li>
-                        <li className={styles.communicateItem}>
-                            <img src="/img/route.png" width="35" height="35" alt="route icon"/>
-                        </li>
-                        <li className={styles.communicateItem}>
-                            <img src="/img/comment.png" width="35" height="35" alt="comment icon"/>
-                        </li>
-                    </ul>
-                </div>
-                <div className={styles.companyLocate}>г. Москва, Петровка улица 24</div>
-                <div className={styles.specialize}><span>Принимают:</span> бумага, крышечки</div>
-                <div className={styles.generalInfo}>
-                    <div className={styles.generalTitle}>Общая информация</div>
-                    <p className={styles.generalDescription}>В контейнер для "Добрых крышечек" можно сдать:
-                    ЧИСТЫЕ пластиковые отвинчивающиеся крышечки от напитков. Собранные крышки направляются
-                    "Добрые крышечки" - благотворительный проект по сбору пластиковых крышечек для помощи детям с </p>
-                </div>
-            </div>
         </div>
     )
 }

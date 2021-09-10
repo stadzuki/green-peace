@@ -1,0 +1,159 @@
+.visible {
+    display: inline-block;
+}
+
+.companyCard {
+    display: inline-block;
+    vertical-align: top;
+    overflow-y: scroll;
+    background: rgb(255, 255, 255);
+    border-radius: 10px;
+    max-width: 320px;
+    max-height: 580px;
+    margin-right: 10px;
+
+    .companyTitle {
+        width: 100%;
+        background: rgba(238, 238, 238, 0.8);
+        padding: 18px 0 13px 19px;
+        font-style: normal;
+        font-weight: 600;
+        font-size: 14px;
+        line-height: 19px;
+    }
+
+    .companyClose {
+        position: absolute;
+        right: 20px;
+        top: 12px;
+    }
+
+    .companyImage {
+        width: 320px;
+        height: 214px;
+        
+        img {
+            max-width: 320px;
+        }
+    }
+
+    .companyMark {
+        max-height: 50px;
+        display: flex;
+        align-items: center;
+        background-color: #EEEEEE;
+        overflow: hidden;
+        justify-content: space-between;
+
+        .markCount {
+            display: flex;
+            align-items: center;
+
+            .markNumber {
+                font-style: normal;
+                font-weight: 600;
+                font-size: 18px;
+                line-height: 25px;
+                color: #fff;
+                background-color: #2ECC6E;
+                padding: 15px 20px;
+            }
+
+            .markText {
+                margin-left: 20px;
+            }
+        }
+    }
+
+    .markAction {
+        // padding: 15px 0;s
+        display: flex;
+        
+        .selectedLike {
+            background-color: #2ECC6E;
+        }
+
+        .selectedDislike {
+            background-color: #2ECC6E;
+        }
+
+        .markEst {
+            padding: 12px;
+
+            &:hover {
+                background-color: #2F75FB;
+            }
+        }
+    }
+
+    .communicate {
+        border-bottom: 0.5px solid #C9C9C9;
+
+        .communicateList {
+            display: flex;
+            justify-content: space-evenly;
+            margin-top: 15px;
+            margin-bottom: 10px;
+
+            li {
+                display: flex;
+                flex-direction: column;
+                justify-content: center;
+                align-items: center;
+                padding: 5px;
+
+                p {
+                    margin-top: 10px;
+                    font-size: 10px;
+                }
+
+                &:hover {
+                    background: rgba(238, 238, 238, 0.8);
+                    border-radius: 5px;
+                }
+            }
+        }
+    }
+
+    .companyLocate {
+        padding: 25px 0;
+        margin-left: 25px;
+        text-align: center;
+        background: url("../../images/companyLocate.png") no-repeat left center;
+        background-size: 23px 23px;
+    }
+
+    .specialize {
+        padding: 17px 30px;
+        font-size: 12px;
+        line-height: 16px;
+        border-top: 0.5px solid #C9C9C9;
+
+        span {
+            font-weight: 600;
+        }
+    }
+
+    .generalInfo {
+
+        .generalTitle {
+            padding: 12px 0;
+            font-weight: 600;
+            // background: ;
+            font-size: 12px;
+            line-height: 16px;
+            padding-left: 60px;
+            background: #EEEEEE url("../../images/info.png") no-repeat left center;
+            background-size: 23px 23px;
+            background-position-x: 20px;
+        }
+
+        .generalDescription {
+            padding: 0 20px 15px 20px;
+            margin-top: 12px;
+            font-size: 12px;
+            line-height: 16px;
+            text-align: left;
+        }
+    }
+}

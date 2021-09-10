@@ -128,10 +128,6 @@ header {
 
 // Card categories
 
-.selected-category {
-    background: #367EEA;
-}
-
 .category-item {
     background: #9A9A9A;
     padding: 12px;
@@ -378,33 +374,9 @@ header {
     cursor: pointer;
   }
 
-  // .markerPin {
-  //   display: block;
-  //   width: 70px;
-  //   height: 70px;
-  //   background: url('./components/map-marker.png') no-repeat center;
-  //   background-size: contain;
-  //   position: relative;
-  //   display: flex;
-  //   justify-content: center;
-  //   align-items: center;
-
-  //   ul {
-  //     top: 20%;
-  //     left: 25%;
-  //     position: absolute;
-  //     max-width: 40%;
-  //     flex-wrap: wrap;
-  //     display: flex;
-
-  //     li {
-  //       width: 5px;
-  //       height: 5px;
-  //       display: block;
-  //       background-color: #000000;
-  //       border-radius: 100%;
-  //       margin-left: 2px;
-  //       margin-top: 2px;
-  //     }
-  //   }
-  // }
+.innerCard {
+  z-index: 1;
+  position: absolute;
+  margin: 2%;
+  max-width: 1000px;
+}

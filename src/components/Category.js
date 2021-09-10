@@ -2,7 +2,7 @@ import React from 'react';
 
 function Category({type, img, onCategoryClick}) {
     return (
-        <li className={`category-item selected-category ${type}`}
+        <li className={`category-item ${type}`}
             onClick={onCategoryClick}
         >
             <img src={img}

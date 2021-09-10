@@ -8,6 +8,7 @@ import Login from "./components/Login/Login";
 import Card from "./components/Card/Card";
 import Loader from "./components/Loader";
 import MarkerCreator from "./components/MarkerCreator";
+import CardCompany from "./components/CardCompany/CardCompany"
 
 import jwtDecode from "jwt-decode";
 import axios from "axios";
@@ -16,10 +17,11 @@ import Pin from "./components/Pin";
 
 const TOKEN = 'pk.eyJ1IjoibG9saWsyMCIsImEiOiJja3N6NDhlZ2oycGxnMndvZHVkbGV0MTZ1In0.JkdOOOgJTsu1Sl2qO-5VAA';
 
-const url = 'http://7bbd-188-119-45-172.ngrok.io'
+const url = 'http://92e6-188-119-45-172.ngrok.io'
 
 function App() {
 
+  //Loader
   const [isLoader, setIsLoader] = useState(false);
 
   //Map
@@ -48,11 +50,21 @@ function App() {
   const [markerCategories, setMarkerCategories] = useState([]);
   const [newMarker, setNewMarker] = useState({})
 
+  //Company
+  const [isCompanySelected, setIsCompanySelected] = useState(false)
+  const [currentCompany, setCurrentCompany] = useState({})
+
+  const onMarkerClick = (id) => {
+    const targetCompany = markers.find(m => m.id === id);
+    setCurrentCompany(targetCompany);
+    setIsCompanySelected(true);
+  }
+
   const createMarker = (marker) => {
     return (
-      <Marker key={marker.id} longitude={marker.longitude} latitude={marker.latitude} >
+      <Marker key={marker.id} longitude={marker.longitude} latitude={marker.latitude}>
         {/* <Pin count={2} color={['red', 'black']} /> */}
-        <img src="/img/map-marker.png" alt="marker" width="50" height="50"/>
+        <img src="/img/map-marker.png" alt="marker" width="50" height="50" onClick={() => onMarkerClick(marker.id)}/>
       </Marker>
     )
   }
@@ -91,9 +103,9 @@ function App() {
 
   function getMarkers() {
     // axios.get(`${url}/api/Company/GetCompanies`)
-    axios.get(`https://api.npoint.io/006b6af2e5a326dd4301`)
+    axios.get(`https://api.npoint.io/66155237175de1dd9dc7`)
       .then((response) => {
-        setMarkers(response.data.data)
+        setMarkers(response.data)
       })
       .catch((error) => {
         console.log(error);
@@ -115,8 +127,6 @@ function App() {
       ) {
         const payloads = jwtDecode(tokenJWT);
 
-        console.log("zashel");
-
         axios
           .get(`${url}/Users/${payloads.id}`, {
             headers: { Authorization: `${tokenJWT}` },
@@ -128,8 +138,6 @@ function App() {
               login: response.data.name,
               icon: response.data.avatarUrl,
             });
-            console.log(response);
-            console.log(user);
             setIsAuthorize(true);
           })
           .catch((error) => {
@@ -179,15 +187,13 @@ function App() {
       }}
     >
       <div className="App">
-        
         {isLoader ? <Loader /> : ""}
-
         <Login method={loginMethod} onClose={() => setLoginMethod("")} />
-
         <Header />
-
-        <Card />
-
+        <div className="innerCard">
+          <Card />
+          {isCompanySelected ? <CardCompany company={currentCompany} onClose={() => setIsCompanySelected(false)}/> : ''}
+        </div>
         <MapGL
           {...mapCoord}
           width="100vw"
