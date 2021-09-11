@@ -104,7 +104,7 @@ form {
     }
 
     button {
-        width: 323px;
+        width: 100%;
         background: #2ECC6E;
         border-radius: 5px;
         border: none;
@@ -194,7 +194,14 @@ form {
         color: #313131;
     }
 
+    .compayClose {
+        position: absolute;
+        right: 20px;
+        top: 12px;
+    }
+
     .categoriesList {
+        margin-bottom: 15px;
         display: flex;
         flex-wrap: wrap;
     }

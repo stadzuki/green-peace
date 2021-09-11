@@ -1,5 +1,5 @@
 import axios from 'axios';
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import AppContext from '../../context';
 
 import Category from '../Category';
@@ -29,7 +29,7 @@ function Card() {
     const [descriptionPlace, setDescriptionPlace] = useState('')
     const [photoFile, setPhotoFile] = useState([])
 
-    const [isSelectedCategory, setIsSelectedCategory] = React.useState(false)
+    const [isSelectedCategory, setIsSelectedCategory] = useState(false)
     const {target, setTarget, isMarkerCreate, setIsMarkerCreate, setMarkers, markers, setMarkerCategories, newMarker, currentLang} = React.useContext(AppContext)
 
 
@@ -48,6 +48,12 @@ function Card() {
         {type: 'beer', img: '/img/category/beer.png'},
         {type: 'tires', img: '/img/category/tires.png'},
     ]
+
+    useEffect(() => {
+        if(target) {
+            document.querySelectorAll('.category-item').forEach(item => item.classList.remove('selected'))
+        }
+    })
 
     const clickCategoryHandler = (evt, typeCategory) => {
         if(target) {
@@ -136,6 +142,21 @@ function Card() {
         setMarkers((prev) => {
             return prev.filter(obj => obj.id !== 0)
         })
+    }
+
+    const onClose = () => {
+        setCategory([])
+        setAdress('')
+        setNamePlace('')
+        setTimeWorkStart('')
+        setTimeWorkFinish('')
+        setPhoneNumber('')
+        setWebsite('')
+        setDescriptionPlace('')
+        setPhotoFile([])
+        setTarget(false)
+
+        document.querySelectorAll('.category-item').forEach(item => item.classList.remove('selected'))
     }
 
     const createMarkerOnClick = (e) => {
@@ -242,11 +263,10 @@ function Card() {
             phoneNumber: phoneNumber,
             city: city.toLowerCase(),
             webSiteUrl: website,
-            imageUrl: 'service.ru/img.png',
             categoriesId
         }
 
-        axios.post(`${url}/api/Company/AddCompany`, data)
+        axios.post(`${url}/api/Company/AddCompany`, data)//наверное изменить запрос
             .then((resp) => {
                 console.log(resp);
             })
@@ -264,26 +284,16 @@ function Card() {
             console.log(error);
         })
 
-        setCategory([])
-        setAdress('')
-        setNamePlace('')
-        setTimeWorkStart('')
-        setTimeWorkFinish('')
-        setPhoneNumber('')
-        setWebsite('')
-        setDescriptionPlace('')
-        setPhotoFile([])
-        setTarget(false)
-
-        document.querySelectorAll('.category-item').forEach(item => item.classList.remove('selected'))
+        onClose();
     }
 
     return (
         <div className={`${styles.cardContainer} ${styles.categoryCard} ${target ? styles.scroll : ''}`}>
             <div className={styles.cardCategories}>
                 <p className={styles.categoriesTitle}>
-                    {!target ? transcription[currentLang].cardCategoryTitle : 'Выберите категорию(и) для метки'}
+                    {!target ? transcription[currentLang].cardCategoryTitle : transcription[currentLang].createCompanyTitle}
                 </p>
+                {target ? <img className={styles.compayClose} width="10" src="/img/cancel.png" alt="close" onClick={onClose}/> : ''}
                 <ul className={styles.categoriesList}>
                     {categories.map((category, idx) => {
                         return <Category 
@@ -311,11 +321,11 @@ function Card() {
             { target
                 ? <form>
                     <p>
-                        <span>Город</span>
+                        <span>{transcription[currentLang].inputsTitles.city}</span>
                         <input type="text" value={city} onChange={(e) => inputHandler(e, setCity)} placeholder="Укажите город пункта приема"/>
                     </p>
                     <p>
-                        <span>Адрес</span>
+                        <span>{transcription[currentLang].inputsTitles.adress}</span>
                         <input type="text" value={adress} onChange={(e) => inputHandler(e, setAdress)} placeholder="Укажите адрес пункта приема"/>
                         {isMarkerCreate
                             ? isMarkerCreate === 'INIT' 
@@ -331,7 +341,7 @@ function Card() {
                         }
                     </p>
                     <p>
-                        <span className={styles.workTimeTitle}>Период работы</span>
+                        <span className={styles.workTimeTitle}>{transcription[currentLang].inputsTitles.workTime}</span>
                         <div className={styles.workTime}>
                             <span>с</span>
                             <input className={styles.workTimeInput} type="text" value={timeWorkStart} onChange={(e) => inputHandler(e, setTimeWorkStart)} placeholder="8:00"/>
@@ -340,19 +350,19 @@ function Card() {
                         </div>
                     </p>
                     <p>
-                        <span>Название</span>
+                        <span>{transcription[currentLang].inputsTitles.name}</span>
                         <input type="text" value={namePlace} onChange={(e) => inputHandler(e, setNamePlace)} placeholder="Укажите название пункта приема"/>
                     </p>
                     <p>
-                        <span>Номер телефона</span>
+                        <span>{transcription[currentLang].inputsTitles.phone}</span>
                         <input type="text" value={phoneNumber} onChange={(e) => inputHandler(e, setPhoneNumber)} placeholder="Укажите номер телефона пункта приема"/>
                     </p>
                     <p>
-                        <span>Сайт</span>
+                        <span>{transcription[currentLang].inputsTitles.webSite}</span>
                         <input type="text" value={website} onChange={(e) => inputHandler(e, setWebsite)} placeholder="Укажите сайт пункта приема"/>
                     </p>
                     <p>
-                        <span>Описание</span>
+                        <span>{transcription[currentLang].inputsTitles.description}</span>
                         <textarea type="text" value={descriptionPlace} onChange={(e) => inputHandler(e, setDescriptionPlace)} placeholder="Укажите описание пункта приема"></textarea>
                     </p>
                     {photoFile.length > 0 
@@ -361,7 +371,7 @@ function Card() {
                             <div className={styles.fileUploadCancel} onClick={cancelUploadHandler}>Отменить</div>
                         </div>
                         : <div className="input__wrapper">
-                            <p className="upload-file-title">Выберите фото пункта приема</p>
+                            <p className="upload-file-title">{transcription[currentLang].inputsTitles.img}</p>
                             <input name="file" type="file" value={photoFile} id="input__file" className="input input__file" multiple onChange={uploadPhotoHandler}/>
                             <label htmlFor="input__file" className="input__file-button">
                                 <span className="input__file-icon-wrapper"><img className="input__file-icon" src="/img/add.svg" alt="Выбрать файл" width="25" /></span>

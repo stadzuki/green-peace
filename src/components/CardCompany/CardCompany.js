@@ -1,9 +1,9 @@
 import React from 'react';
 
 import styles from './CardCompany.module.scss'
+import transcription from '../../transcription';
 
 function CardCompany({company, onClose}) {
-
     const categoriesToString = () => {
         let outStr = '';
         for(let category of company.categoriesId) {
@@ -56,11 +56,11 @@ function CardCompany({company, onClose}) {
     return (
         <div className={`${styles.companyCard}`}>
             <p className={styles.companyTitle}>{company.title}</p>
-            <img className={styles.companyClose} width="10" src="/img/cancel.png" alt="close" onClick={onClose}/>
+            {onClose ? <img className={styles.companyClose} width="10" src="/img/cancel.png" alt="close" onClick={onClose}/> : ''}
             <div className={styles.companyImage}>
                 <img src={company.imageUrl} alt="company photo"/>
             </div>
-            <div className={styles.companyMark}>
+            {onClose ? <div className={styles.companyMark}>
                 <div className={styles.markCount}>
                     <div className={styles.markNumber}>1</div>
                     <p className={styles.markText}>1 оценка</p>
@@ -73,8 +73,8 @@ function CardCompany({company, onClose}) {
                         <img src="/img/dislike.png" width="25" height="25" alt="dislike"/>
                     </div>
                 </div>
-            </div>
-            <div className={styles.communicate}>
+            </div> : ''}
+            {onClose ? <div className={styles.communicate}>
                 <ul className={styles.communicateList}>
                     <li className={styles.communicateItem}>
                         <img src="/img/report.png" width="35" height="35" alt="report icon"/>
@@ -93,8 +93,8 @@ function CardCompany({company, onClose}) {
                         <p>Комментарии</p>
                     </li>
                 </ul>
-            </div>
-            <div className={styles.companyLocate}>{company.address}</div>
+            </div> : ''}
+            <div className={styles.companyLocate}>{company.city}, {company.address}</div>
             <div className={styles.specialize}><span>Принимают:</span>{categoriesToString()}</div>
             <div className={styles.generalInfo}>
                 <div className={styles.generalTitle}>Общая информация</div>

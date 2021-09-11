@@ -193,6 +193,7 @@ header {
 // Card categories
 
 .category-item {
+    max-width: 49px;
     background: #9A9A9A;
     padding: 12px;
     margin-top: 15px;
@@ -419,7 +420,6 @@ header {
    
   .input__file-button {
     width: 100%;
-    max-width: 330px;
     height: 60px;
     background: #2ECC6E;
     color: #fff;
@@ -447,4 +447,106 @@ header {
 
 .visible {
   display: block;
+}
+
+.adminPage {
+  background-color: rgb(235, 235, 235);
+  overflow: auto;
+  width: 100vw;
+  height: 100vh;
+  padding: 50px;
+
+  h3 {
+    font-weight: 600;
+    font-size: 24px;
+    margin-bottom: 25px;
+  }
+
+  .btnWrapper {
+    display: flex;
+    align-items: center;
+    
+    .adminBtn {
+      padding: 10px 20px;
+      margin-left: 20px;
+      border-radius: 5px;
+      color: #fff;
+      font-weight: 600;
+      cursor: pointer;
+      margin-top: 10px;
+
+      &:first-child {
+        margin-left: 0;
+      }
+
+      &:hover {
+        background-color: #2F75FB;
+      }
+    }
+
+    .acceptCompany {
+      background-color: rgb(47, 190, 83);
+    }
+
+    .dismissCompany {
+      background-color: rgb(228, 72, 72);
+    }
+  }
+}
+
+.catalogWrapper {
+  display: flex;
+  height: 100vh;
+  width: 100vw;
+  overflow: hidden;
+
+  .filters {
+    height: 100%;
+    width: 22%;
+    background-color: #fff;
+    padding-left: 15px;
+    padding-top: 15px;
+
+    .filtersTitle {
+      text-transform: uppercase;
+      font-weight: 600;
+      font-size: 16px;
+      color: rgb(41, 41, 41);
+    }
+
+    .filter {
+      margin-top: 25px;
+      color: #333;
+      text-transform: uppercase;
+
+      p {
+        margin-bottom: 10px;
+      }
+    }
+
+    .filterTypes {
+      margin-bottom: 15px;
+      display: flex;
+      flex-wrap: wrap;
+    }
+  }
+
+  .catalogView {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    width: 78%;
+
+    .mapContainer {
+      height: 50%;
+      overflow: hidden;
+      width: auto;
+    }
+
+    .compnayContainer {
+      height: 50%;
+      background-color: blue;
+      width: auto;
+    }
+  }
 }

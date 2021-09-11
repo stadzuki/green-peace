@@ -61,7 +61,6 @@ function App() {
   const [isMarkerCreate, setIsMarkerCreate] = useState(false)
   const [target, setTarget] = useState(false);
   const [markers, setMarkers] = useState([]);
-  const [markerCategories, setMarkerCategories] = useState([]);
   const [newMarker, setNewMarker] = useState({})
 
   //Company
@@ -196,7 +195,6 @@ function App() {
         setMarkers,
         isMarkerCreate,
         setIsMarkerCreate,  
-        setMarkerCategories,
         newMarker,
         currentLang,
         setCurrentLang
@@ -218,7 +216,6 @@ function App() {
           onViewportChange={setMapCoord}
           mapboxApiAccessToken={TOKEN}
           onClick={mapClickHandler}
-          scrollZoom={false}
         >
           {mapMarkers}
         </MapGL>

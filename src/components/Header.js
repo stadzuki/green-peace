@@ -18,6 +18,9 @@ function Header() {
                 </Link>
             </div>
             <div className="righSideWrapper">
+                <div>
+                    <Link to="/admin">Админка</Link>
+                </div>
                 <div className="langSelector">
                     <div className="langSelectorWrapper" onClick={closeSwitchLang}>
                         <p>{currentLang.toUpperCase()}</p>
