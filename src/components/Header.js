@@ -3,8 +3,9 @@ import { Link } from 'react-router-dom';
 import AppContext from '../context';
 import transcription from '../transcription';
 
-function Header() {
-    const {setLoginMethod, isAuthorize, user, currentLang, setCurrentLang} = React.useContext(AppContext)
+function Header({user}) {
+    console.log(user);
+    const {setLoginMethod, isAuthorize, currentLang, setCurrentLang} = React.useContext(AppContext)
 
     const closeSwitchLang = () => {
         document.querySelector('.langDropDown').classList.toggle('visible')
@@ -18,9 +19,28 @@ function Header() {
                 </Link>
             </div>
             <div className="righSideWrapper">
-                <div>
+                {/* <div>
                     <Link to="/admin">Админка</Link>
+                </div> */}
+                <div className="headerNavBtn">
+                    <Link to="catalog" className="navBtn">{transcription[currentLang].btnCatalog}</Link>
                 </div>
+                
+                {isAuthorize && user
+                ? <div className="btns-wrapper">
+                    <div className="header-btn">
+                        <div className="btn">{user.login}</div>
+                    </div>
+                </div>
+                : <div className="btns-wrapper">
+                    <div className="header-btn" onClick={() => setLoginMethod('signIn')}>
+                        <div className="btn auth-btn">{transcription[currentLang].btnLogin}</div>
+                    </div>
+                    <div className="header-btn" onClick={() => setLoginMethod('signUp')}>
+                        <div className="btn register-btn">{transcription[currentLang].btnRegister}</div>
+                    </div>
+                </div>
+                }
                 <div className="langSelector">
                     <div className="langSelectorWrapper" onClick={closeSwitchLang}>
                         <p>{currentLang.toUpperCase()}</p>
@@ -44,21 +64,6 @@ function Header() {
                         <div className={`lang langEn ${currentLang === 'en' ? 'selectedLang' : ''}`} onClick={() => (setCurrentLang('en'), document.querySelector('.langDropDown').classList.toggle('visible'))}>En</div>
                     </div>
                 </div>
-                {isAuthorize 
-                ? <div className="btns-wrapper">
-                    <div className="header-btn">
-                        <div className="btn">{user.login}</div>
-                    </div>
-                </div>
-                : <div className="btns-wrapper">
-                    <div className="header-btn" onClick={() => setLoginMethod('signIn')}>
-                        <div className="btn auth-btn">{transcription[currentLang].btnLogin}</div>
-                    </div>
-                    <div className="header-btn" onClick={() => setLoginMethod('signUp')}>
-                        <div className="btn register-btn">{transcription[currentLang].btnRegister}</div>
-                    </div>
-                </div>
-                }
             </div>
             
         </header>

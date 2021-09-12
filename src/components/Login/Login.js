@@ -8,7 +8,7 @@ import styles from './Login.module.scss';
 import Loader from '../Loader';
 
 function Login({method, onClose}) {
-    const url = 'http://5f63-188-119-45-172.ngrok.io';
+    const url = 'https://e6bd-188-119-45-172.ngrok.io';
 
     const {setLoginMethod, setUser, setIsAuthorize} = React.useContext(AppContext)
 
@@ -148,7 +148,17 @@ function Login({method, onClose}) {
                     console.log(error);
                 }) 
             } else if(method === 'signIn') {
-                console.log('auth');
+                axios.post(`${url}/Users/authenticate`, {
+                    username: email,
+                    password: password
+                }).then(response => {
+                    defineUser(
+                        response.data.id,
+                        response.data.token
+                    )
+                }).catch(error => {
+                    console.log(error);
+                }) 
             }
 
             closeHandler();

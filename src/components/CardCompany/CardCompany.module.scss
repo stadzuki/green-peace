@@ -25,15 +25,18 @@
     .companyClose {
         position: absolute;
         right: 20px;
+        cursor: pointer;
         top: 12px;
     }
 
     .companyImage {
         width: 320px;
         height: 214px;
+        overflow: hidden;
         
         img {
             max-width: 320px;
+            width: 100%;
         }
     }
 

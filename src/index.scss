@@ -111,6 +111,20 @@ header {
       display: flex;
     }
 
+    .headerNavBtn {
+      display: flex;
+      align-items: center;
+
+      .navBtn {
+        padding: 11.5px 15px;
+        border-radius: 5px;
+        text-transform: uppercase;
+        font-weight: 600;
+        background-color: #2F75FB;
+        color: #Fff;
+      }
+     }
+
     .langSelector {
       position: relative;
       margin-left: 25px;
@@ -122,7 +136,7 @@ header {
       .langSelectorWrapper {
         display: flex;
         align-items: center;
-        padding: 10px 15px;
+        padding: 11.5px 15px;
         border-radius: 5px;
 
         p {
@@ -506,6 +520,7 @@ header {
     background-color: #fff;
     padding-left: 15px;
     padding-top: 15px;
+    position: relative;
 
     .filtersTitle {
       text-transform: uppercase;
@@ -529,6 +544,21 @@ header {
       display: flex;
       flex-wrap: wrap;
     }
+
+    .toHome {
+      position: absolute;
+      bottom: 0;
+      width: 100%;
+      left: 0;
+      text-align: center;
+      padding: 15px 0px;
+      background-color: #9a9a9a;
+      color: #fff;
+
+      &:hover {
+        background-color: #2F75FB;
+      }
+    }
   }
 
   .catalogView {
@@ -538,15 +568,44 @@ header {
     width: 78%;
 
     .mapContainer {
-      height: 50%;
+      height: 70%;
       overflow: hidden;
       width: auto;
     }
 
     .compnayContainer {
+      overflow-x: hidden;
+      overflow-y: scroll;
       height: 50%;
-      background-color: blue;
+      background-color: #f4f3f3;
       width: auto;
+      padding: 50px;
+      display: flex;
+      flex-direction: column;
+
+      .catalogCompanyCard {
+        padding: 20px;
+        margin-bottom: 20px;
+        margin-right: 20px;
+        background-color: #fff;
+        width: 100%;
+        max-height: 300px;
+
+        .companyCardTitle {
+          font-weight: 600;
+          color: #101010;
+        }
+
+        .compnayTake {
+          margin-top: 5px;
+          color: #101010;
+          font-weight: 600;
+
+          .companyCardCategories {
+            font-weight: normal;
+          }
+        }
+      }
     }
   }
 }

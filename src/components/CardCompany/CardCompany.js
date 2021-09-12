@@ -9,40 +9,40 @@ function CardCompany({company, onClose}) {
         for(let category of company.categoriesId) {
             switch(category) {
                 case 1:
-                    outStr += ' бумага'
+                    outStr += ' бумага,'
                     break;
                 case 2:
-                    outStr += ' стекло'
+                    outStr += ' стекло,'
                     break;
                 case 3:
-                    outStr += ' пластик'
+                    outStr += ' пластик,'
                     break;
                 case 4:
-                    outStr += ' металл'
+                    outStr += ' металл,'
                     break;
                 case 5:
-                    outStr += ' одежда'
+                    outStr += ' одежда,'
                     break;
                 case 6:
-                    outStr += ' иное'
+                    outStr += ' иное,'
                     break;
                 case 7:
-                    outStr += ' опасные отходы'
+                    outStr += ' опасные отходы,'
                     break;
                 case 8:
-                    outStr += ' батарейки'
+                    outStr += ' батарейки,'
                     break;
                 case 9:
-                    outStr += ' лампочки'
+                    outStr += ' лампочки,'
                     break;
                 case 10:
-                    outStr += ' бытовая техника'
+                    outStr += ' бытовая техника,'
                     break;
                 case 11:
-                    outStr += ' тетра пак'
+                    outStr += ' тетра пак,'
                     break;
                 case 12:
-                    outStr += ' крышечки'
+                    outStr += ' крышечки,'
                     break;
                 case 13:
                     outStr += ' шины'
@@ -50,7 +50,11 @@ function CardCompany({company, onClose}) {
             }
         }
 
-        return outStr;
+        if(outStr.endsWith(',')) {
+            outStr = outStr.slice(0, outStr.length - 1)
+        }
+        
+        return outStr
     }
 
     return (
@@ -58,7 +62,7 @@ function CardCompany({company, onClose}) {
             <p className={styles.companyTitle}>{company.title}</p>
             {onClose ? <img className={styles.companyClose} width="10" src="/img/cancel.png" alt="close" onClick={onClose}/> : ''}
             <div className={styles.companyImage}>
-                <img src={company.imageUrl} alt="company photo"/>
+                <img src={"data:image/jpeg;base64," + company.imageUrl} alt="company photo"/>
             </div>
             {onClose ? <div className={styles.companyMark}>
                 <div className={styles.markCount}>

@@ -17,7 +17,7 @@ import Pin from "./components/Pin";
 
 const TOKEN = 'pk.eyJ1IjoibG9saWsyMCIsImEiOiJja3N6NDhlZ2oycGxnMndvZHVkbGV0MTZ1In0.JkdOOOgJTsu1Sl2qO-5VAA';
 
-const url = 'http://92e6-188-119-45-172.ngrok.io'
+const url = 'http://e6bd-188-119-45-172.ngrok.io'
 
 function App() {
 
@@ -36,7 +36,7 @@ function App() {
   });
 
   //Loader
-  const [isLoader, setIsLoader] = useState(false);
+  const [isLoader, setIsLoader] = useState(true);
 
   //Map
   const [mapCoord, setMapCoord] = useState({
@@ -67,6 +67,8 @@ function App() {
   const [isCompanySelected, setIsCompanySelected] = useState(false)
   const [currentCompany, setCurrentCompany] = useState({})
 
+  let userDublicate = {}
+
   const onMarkerClick = (id) => {
     const targetCompany = markers.find(m => m.id === id);
     setCurrentCompany(targetCompany);
@@ -75,7 +77,7 @@ function App() {
 
   const createMarker = (marker) => {
     return (
-      <Marker key={marker.id} longitude={marker.longitude} latitude={marker.latitude}>
+      <Marker key={marker.id} longitude={+marker.longitude} latitude={+marker.latitude}>
         {/* <Pin count={2} color={['red', 'black']} /> */}
         <img src="/img/map-marker.png" alt="marker" width="50" height="50" onClick={() => onMarkerClick(marker.id)}/>
       </Marker>
@@ -90,7 +92,7 @@ function App() {
 
   const createMarkerHanlder = () => {
     // if(isAuthorize) {
-    setTarget(true);
+      setTarget(true);
     // } else {
     //   alert('Вы не авторизованы!')
     // }
@@ -115,8 +117,7 @@ function App() {
   };
 
   function getMarkers() {
-    // axios.get(`${url}/api/Company/GetCompanies`)
-    axios.get(`https://api.npoint.io/66155237175de1dd9dc7`)
+    axios.get(`${url}/api/Company/GetCompanies`)
       .then((response) => {
         setMarkers(response.data)
       })
@@ -126,7 +127,7 @@ function App() {
       setIsMarkersLoaded(true)
   }
 
-  useEffect(() => {
+  useEffect( async () => {
     // getMarkers()
 
     if (token === "") {
@@ -145,19 +146,27 @@ function App() {
             headers: { Authorization: `${tokenJWT}` },
           })
           .then((response) => {
+
+            userDublicate = {
+              id: response.data.id,
+              email: response.data.email,
+              login: response.data.name,
+              icon: response.data.avatarUrl,
+            }
+
             setUser({
               id: response.data.id,
               email: response.data.email,
               login: response.data.name,
               icon: response.data.avatarUrl,
             });
-            setIsAuthorize(true);
           })
           .catch((error) => {
             console.log(error);
-          });
+        });
 
         setToken(tokenJWT);
+        setIsAuthorize(true);
       }
 
       setIsLoader(false);
@@ -203,7 +212,9 @@ function App() {
       <div className="App">
         {isLoader ? <Loader /> : ""}
         <Login method={loginMethod} onClose={() => setLoginMethod("")} />
-        <Header />
+        
+        {isAuthorize && Object.keys(userDublicate).length > 0 ? <Header user={userDublicate}/> : <Header />}
+
         <div className="innerCard">
           <Card />
           {isCompanySelected ? <CardCompany company={currentCompany} onClose={() => setIsCompanySelected(false)}/> : ''}

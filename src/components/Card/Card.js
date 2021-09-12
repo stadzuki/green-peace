@@ -11,7 +11,7 @@ import transcription from '../../transcription';
 let selectedCategory = [];
 let selectedItem;
 
-const url = 'http://92e6-188-119-45-172.ngrok.io'
+const url = 'http://e6bd-188-119-45-172.ngrok.io'
 
 // добавить notif
 // добавить регулярку на время работы
@@ -30,7 +30,7 @@ function Card() {
     const [photoFile, setPhotoFile] = useState([])
 
     const [isSelectedCategory, setIsSelectedCategory] = useState(false)
-    const {target, setTarget, isMarkerCreate, setIsMarkerCreate, setMarkers, markers, setMarkerCategories, newMarker, currentLang} = React.useContext(AppContext)
+    const {target, setTarget, isMarkerCreate, setIsMarkerCreate, setMarkers, markers, newMarker, currentLang} = React.useContext(AppContext)
 
 
     const categories = [
@@ -51,14 +51,13 @@ function Card() {
 
     useEffect(() => {
         if(target) {
-            document.querySelectorAll('.category-item').forEach(item => item.classList.remove('selected'))
+            // document.querySelectorAll('.category-item').forEach(item => item.classList.remove('selected'))
         }
     })
 
     const clickCategoryHandler = (evt, typeCategory) => {
         if(target) {
             if(selectedCategory.includes(typeCategory)) {
-                console.log('include');
                 selectedCategory = selectedCategory.filter(item => item !== typeCategory);
 
                 if(evt.target.tagName === 'IMG') {
@@ -78,7 +77,9 @@ function Card() {
             }
 
             selectedCategory.push(typeCategory)
-            setCategory(selectedCategory)
+            setCategory(selectedCategory);
+            console.log(category);
+            console.log(selectedCategory);
         } else {
             let eTarget;
             if(evt.target.tagName === 'IMG') {
@@ -126,11 +127,16 @@ function Card() {
 
         if(category.length <= 0) return console.log('Вы не указали категории');
         setIsMarkerCreate(true)
-        setMarkerCategories(category)
     }
 
-    const uploadPhotoHandler = (e) => {
-        setPhotoFile(e.target.files);
+    function uploadPhotoHandler(e) {
+        console.log(e);
+        let file = e.target.files[0];
+        let reader = new FileReader();
+        reader.onloadend = function() {
+            setPhotoFile(reader.result.slice(23));
+        }
+        reader.readAsDataURL(file);
     }
 
     const cancelUploadHandler = (e) => {
@@ -145,6 +151,7 @@ function Card() {
     }
 
     const onClose = () => {
+        setCity('')
         setCategory([])
         setAdress('')
         setNamePlace('')
@@ -155,6 +162,7 @@ function Card() {
         setDescriptionPlace('')
         setPhotoFile([])
         setTarget(false)
+        setIsMarkerCreate(false);
 
         document.querySelectorAll('.category-item').forEach(item => item.classList.remove('selected'))
     }
@@ -203,9 +211,8 @@ function Card() {
         }
 
         let categoriesId = [];
-
-        for(let item of category) {
-            switch(item.type) {
+        for(let item of selectedCategory) {
+            switch(item) {
                 case 'paper':
                     categoriesId.push(1)
                     break;
@@ -247,10 +254,6 @@ function Card() {
                     break;
             }
         }
-
-        const formData = new FormData();
-        formData.append('image', photoFile[0]);
-
         const data = {
             id: 0,
             title: namePlace,
@@ -263,26 +266,20 @@ function Card() {
             phoneNumber: phoneNumber,
             city: city.toLowerCase(),
             webSiteUrl: website,
+            imageUrl: photoFile,
             categoriesId
         }
-
-        axios.post(`${url}/api/Company/AddCompany`, data)//наверное изменить запрос
+        
+        console.log(data.categoriesId);
+        console.log(data);
+        
+        axios.post(`${url}/api/Company/AddCompany`, data)
             .then((resp) => {
                 console.log(resp);
             })
             .catch((error) => {
                 console.log(error);
             })
-
-        axios.post(`${url}/api/Company/AddFile`, formData, {
-            headers: {
-                "Content-Type": "multipart/form-data"
-            }
-        }).then((resp) => {
-            console.log(resp);
-        }).catch((error) => {
-            console.log(error);
-        })
 
         onClose();
     }
@@ -322,66 +319,66 @@ function Card() {
                 ? <form>
                     <p>
                         <span>{transcription[currentLang].inputsTitles.city}</span>
-                        <input type="text" value={city} onChange={(e) => inputHandler(e, setCity)} placeholder="Укажите город пункта приема"/>
+                        <input type="text" value={city} onChange={(e) => inputHandler(e, setCity)} placeholder={transcription[currentLang].inputsPlaceholders.city}/>
                     </p>
                     <p>
                         <span>{transcription[currentLang].inputsTitles.adress}</span>
-                        <input type="text" value={adress} onChange={(e) => inputHandler(e, setAdress)} placeholder="Укажите адрес пункта приема"/>
+                        <input type="text" value={adress} onChange={(e) => inputHandler(e, setAdress)} placeholder={transcription[currentLang].inputsPlaceholders.city}/>
                         {isMarkerCreate
                             ? isMarkerCreate === 'INIT' 
                                 ? <div className={styles.fileUpload} style={{marginBottom: 10}}>
-                                    <p className={styles.fileUploadTitle}>Метка создана</p>
-                                    <div className={styles.fileUploadCancel} onClick={removeMarker}>Отменить</div>
+                                    <p className={styles.fileUploadTitle}>{transcription[currentLang].pointTag}</p>
+                                    <div className={styles.fileUploadCancel} onClick={removeMarker}>{transcription[currentLang].pointCancel}</div>
                                 </div>
                                 : <div className={styles.fileUpload} style={{marginBottom: 10}}>
-                                    <p className={styles.fileUploadTitle}>Создайте метку на карте</p>
+                                    <p className={styles.fileUploadTitle}>{transcription[currentLang].pointTitle}</p>
                                 </div>
                             
-                            : <button className={styles.pointOnMap} onClick={createMarkerHandler}>Указать на карте</button>
+                            : <button className={styles.pointOnMap} onClick={createMarkerHandler}>{transcription[currentLang].pointOnMap}</button>
                         }
                     </p>
                     <p>
-                        <span className={styles.workTimeTitle}>{transcription[currentLang].inputsTitles.workTime}</span>
+                        <span className={styles.workTimeTitle}>{transcription[currentLang].inputsTitles.timeWork}</span>
                         <div className={styles.workTime}>
-                            <span>с</span>
+                            <span>{transcription[currentLang].inputsTitles.workFrom}</span>
                             <input className={styles.workTimeInput} type="text" value={timeWorkStart} onChange={(e) => inputHandler(e, setTimeWorkStart)} placeholder="8:00"/>
-                            <span>до</span>
+                            <span>{transcription[currentLang].inputsTitles.workUntil}</span>
                             <input className={styles.workTimeInput} type="text" value={timeWorkFinish} onChange={(e) => inputHandler(e, setTimeWorkFinish)} placeholder="22:00"/>
                         </div>
                     </p>
                     <p>
                         <span>{transcription[currentLang].inputsTitles.name}</span>
-                        <input type="text" value={namePlace} onChange={(e) => inputHandler(e, setNamePlace)} placeholder="Укажите название пункта приема"/>
+                        <input type="text" value={namePlace} onChange={(e) => inputHandler(e, setNamePlace)} placeholder={transcription[currentLang].inputsPlaceholders.name}/>
                     </p>
                     <p>
                         <span>{transcription[currentLang].inputsTitles.phone}</span>
-                        <input type="text" value={phoneNumber} onChange={(e) => inputHandler(e, setPhoneNumber)} placeholder="Укажите номер телефона пункта приема"/>
+                        <input type="text" value={phoneNumber} onChange={(e) => inputHandler(e, setPhoneNumber)} placeholder={transcription[currentLang].inputsPlaceholders.phone}/>
                     </p>
                     <p>
                         <span>{transcription[currentLang].inputsTitles.webSite}</span>
-                        <input type="text" value={website} onChange={(e) => inputHandler(e, setWebsite)} placeholder="Укажите сайт пункта приема"/>
+                        <input type="text" value={website} onChange={(e) => inputHandler(e, setWebsite)} placeholder={transcription[currentLang].inputsPlaceholders.webSite}/>
                     </p>
                     <p>
                         <span>{transcription[currentLang].inputsTitles.description}</span>
-                        <textarea type="text" value={descriptionPlace} onChange={(e) => inputHandler(e, setDescriptionPlace)} placeholder="Укажите описание пункта приема"></textarea>
+                        <textarea type="text" value={descriptionPlace} onChange={(e) => inputHandler(e, setDescriptionPlace)} placeholder={transcription[currentLang].inputsPlaceholders.description}></textarea>
                     </p>
                     {photoFile.length > 0 
                         ? <div className={styles.fileUpload} style={{marginTop: 10}}>
-                            <p className={styles.fileUploadTitle}>Файл загружен</p>
-                            <div className={styles.fileUploadCancel} onClick={cancelUploadHandler}>Отменить</div>
+                            <p className={styles.fileUploadTitle}>{transcription[currentLang].fileUpload}</p>
+                            <div className={styles.fileUploadCancel} onClick={cancelUploadHandler}>{transcription[currentLang].fileCancel}</div>
                         </div>
                         : <div className="input__wrapper">
                             <p className="upload-file-title">{transcription[currentLang].inputsTitles.img}</p>
-                            <input name="file" type="file" value={photoFile} id="input__file" className="input input__file" multiple onChange={uploadPhotoHandler}/>
+                            <input name="file" type="file" accept="image/jpeg" value={photoFile} id="input__file" className="input input__file" multiple onChange={uploadPhotoHandler}/>
                             <label htmlFor="input__file" className="input__file-button">
                                 <span className="input__file-icon-wrapper"><img className="input__file-icon" src="/img/add.svg" alt="Выбрать файл" width="25" /></span>
-                                <span className="input__file-button-text">Выберите файл</span>
+                                <span className="input__file-button-text">{transcription[currentLang].chooseFile}</span>
                             </label>
                         </div>
                     }
                     
 
-                    <button onClick={createMarkerOnClick}>Создать метку</button>
+                    <button onClick={createMarkerOnClick}>{transcription[currentLang].createPoint}</button>
                 </form>
                 : '' }
         </div>

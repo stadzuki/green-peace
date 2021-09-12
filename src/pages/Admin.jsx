@@ -3,6 +3,7 @@ import React from "react";
 import CardCompany from "../components/CardCompany/CardCompany";
 
 let validCompany = {};
+const url = 'http://e6bd-188-119-45-172.ngrok.io';
 
 function Admin() {
     const [companies, setCompanies] = React.useState([])
@@ -15,8 +16,9 @@ function Admin() {
     })
 
     function getMarkers() {
-        axios.get(`https://api.npoint.io/bc76838cad204a2dc795`)
+        axios.get(`${url}/api/Company/GetCompaniesInAdminPanel`)
             .then((response) => {
+                console.log(response.data);
                 setCompanies(response.data);
             })
             .catch((error) => {
@@ -30,29 +32,29 @@ function Admin() {
     }
 
     const acceptCompany = async () => {
-        validCompany = companies[companyIndex];
+        validCompany = {id: companies[companyIndex].id}
 
-        // axios.post(`${url}/api/Company/AddCompany`, validCompany)
-        //     .then((resp) => {
-        //         console.log(resp);
-        //     })
-        //     .catch((error) => {
-        //         console.log(error);
-        //     })
+        axios.post(`${url}/api/Company/ApproveCompany/${validCompany.id}`)
+            .then((resp) => {
+                console.log(resp);
+            })
+            .catch((error) => {
+                console.log(error);
+            })
 
         nextCard();
     }
 
     const dismissCompany = async () => {
-        validCompany = companies[companyIndex];
+        validCompany = {id: companies[companyIndex].id}
 
-        // axios.post(`${url}/api/Company/DeleteCompany`, validCompany)
-        //     .then((resp) => {
-        //         console.log(resp);
-        //     })
-        //     .catch((error) => {
-        //         console.log(error);
-        //     })
+        axios.post(`${url}/api/Company/DeclineCompany/${validCompany.id}`)
+            .then((resp) => {
+                console.log(resp);
+            })
+            .catch((error) => {
+                console.log(error);
+            })
 
         nextCard();
     }
