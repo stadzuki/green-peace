@@ -7,11 +7,12 @@ import Place from '../Place';
 
 import styles from './Card.module.scss';
 import transcription from '../../transcription';
+import Select from '../Select/Select';
 
 let selectedCategory = [];
 let selectedItem;
 
-const url = 'http://e6bd-188-119-45-172.ngrok.io'
+const url = 'https://38d6-188-119-45-172.ngrok.io'
 
 // добавить notif
 // добавить регулярку на время работы
@@ -287,6 +288,7 @@ function Card() {
     return (
         <div className={`${styles.cardContainer} ${styles.categoryCard} ${target ? styles.scroll : ''}`}>
             <div className={styles.cardCategories}>
+                {!target ? <Select/> : ''}
                 <p className={styles.categoriesTitle}>
                     {!target ? transcription[currentLang].cardCategoryTitle : transcription[currentLang].createCompanyTitle}
                 </p>

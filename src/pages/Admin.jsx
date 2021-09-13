@@ -3,7 +3,7 @@ import React from "react";
 import CardCompany from "../components/CardCompany/CardCompany";
 
 let validCompany = {};
-const url = 'http://e6bd-188-119-45-172.ngrok.io';
+const url = 'https://38d6-188-119-45-172.ngrok.io';
 
 function Admin() {
     const [companies, setCompanies] = React.useState([])

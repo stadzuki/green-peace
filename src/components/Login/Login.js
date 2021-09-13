@@ -8,7 +8,7 @@ import styles from './Login.module.scss';
 import Loader from '../Loader';
 
 function Login({method, onClose}) {
-    const url = 'https://e6bd-188-119-45-172.ngrok.io';
+    const url = 'https://38d6-188-119-45-172.ngrok.io';
 
     const {setLoginMethod, setUser, setIsAuthorize} = React.useContext(AppContext)
 
@@ -59,7 +59,7 @@ function Login({method, onClose}) {
     }
 
     const defineUser = (id, token) => {
-
+        setIsLoader(true);
         axios.get(`${url}/Users/${id}`, { headers: {"Authorization" : `${token}`}})
         .then(response => {
             setUser({
@@ -85,7 +85,7 @@ function Login({method, onClose}) {
     }
 
     const responseGoogle = (response) => {
-        setIsLoader(true);
+        
         axios.post(`${url}/Users/LogWithGoogle`, {
                 tokenId:response.tokenId
             })
@@ -175,8 +175,6 @@ function Login({method, onClose}) {
     }
 
     const overlayClose = (e) => {
-        console.log(e)
-        console.log(e.target)
         if(e.target.matches('.Login_overlay__1KxoY')) {
             closeHandler();
         }
@@ -234,7 +232,6 @@ function Login({method, onClose}) {
                                 />
                                 <FacebookLogin
                                     appId="1088597931155576"
-                                    autoLoad
                                     callback={responseFacebook}
                                     render={renderProps => (
                                         <button 

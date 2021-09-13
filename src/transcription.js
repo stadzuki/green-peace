@@ -2,7 +2,7 @@ const lang = {
     ru: {
         //Header btn
         btnLogin: 'Войти',
-        btnRegister: 'Зарегистрироватсья',
+        btnRegister: 'Зарегистрироваться',
         btnCatalog: 'Каталог',
         //Card
         cardCategoryTitle: 'Что хотите сдать?',

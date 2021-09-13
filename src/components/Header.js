@@ -4,7 +4,6 @@ import AppContext from '../context';
 import transcription from '../transcription';
 
 function Header({user}) {
-    console.log(user);
     const {setLoginMethod, isAuthorize, currentLang, setCurrentLang} = React.useContext(AppContext)
 
     const closeSwitchLang = () => {

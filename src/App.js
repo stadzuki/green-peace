@@ -17,7 +17,7 @@ import Pin from "./components/Pin";
 
 const TOKEN = 'pk.eyJ1IjoibG9saWsyMCIsImEiOiJja3N6NDhlZ2oycGxnMndvZHVkbGV0MTZ1In0.JkdOOOgJTsu1Sl2qO-5VAA';
 
-const url = 'http://e6bd-188-119-45-172.ngrok.io'
+const url = 'https://38d6-188-119-45-172.ngrok.io'
 
 function App() {
 
@@ -125,6 +125,7 @@ function App() {
         console.log(error);
       })
       setIsMarkersLoaded(true)
+      setIsLoader(false)
   }
 
   useEffect( async () => {
@@ -169,7 +170,7 @@ function App() {
         setIsAuthorize(true);
       }
 
-      setIsLoader(false);
+      // setIsLoader(false);
     }
 
     if (!isGettedLocate) {
@@ -210,10 +211,11 @@ function App() {
       }}
     >
       <div className="App">
+        {/* <Pin count={2} color={['red', 'black']} /> */}
         {isLoader ? <Loader /> : ""}
         <Login method={loginMethod} onClose={() => setLoginMethod("")} />
         
-        {isAuthorize && Object.keys(userDublicate).length > 0 ? <Header user={userDublicate}/> : <Header />}
+        {isAuthorize && Object.keys(user).length > 0 ? <Header user={user}/> : <Header />}
 
         <div className="innerCard">
           <Card />

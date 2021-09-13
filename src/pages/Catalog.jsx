@@ -7,11 +7,9 @@ import Category from '../components/Category';
 import transcription from '../transcription';
 
 const TOKEN = 'pk.eyJ1IjoibG9saWsyMCIsImEiOiJja3N6NDhlZ2oycGxnMndvZHVkbGV0MTZ1In0.JkdOOOgJTsu1Sl2qO-5VAA';
-const targetCategories = [];
-const url = 'http://e6bd-188-119-45-172.ngrok.io';
+const url = 'https://38d6-188-119-45-172.ngrok.io';
 
 let selectedCategory = [];
-let mass = [];
 
 function Catalog() {
     const [isMarkersLoaded, setIsMarkersLoaded] = useState(false)
@@ -137,12 +135,12 @@ function Catalog() {
 
         return outStr;
     }
-
+    //{/* onClick={() => onMarkerClick(marker.id)}*/}
     const createMarker = (marker) => {
+        console.log(marker);
         return (
-          <Marker key={marker.id} longitude={marker.longitude} latitude={marker.latitude}>
-            {/* <Pin count={2} color={['red', 'black']} /> */}
-            <img src="/img/map-marker.png" alt="marker" width="50" height="50"/> {/* onClick={() => onMarkerClick(marker.id)}*/}
+          <Marker key={marker.id} longitude={+marker.longitude} latitude={+marker.latitude}>
+            <img src="/img/map-marker.png" alt="marker" width="50" height="50"/> 
           </Marker>
         )
     }
@@ -176,12 +174,12 @@ function Catalog() {
         axios.get(`${url}/api/Company/GetCompanies`)
             .then((response) => {
                 setMarkers(response.data)
+                console.log(markers);
             })
             .catch((error) => {
             console.log(error);
             })
         setIsMarkersLoaded(true)
-        console.log(markers);
     }
 
     useEffect(() => {
