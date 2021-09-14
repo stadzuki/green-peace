@@ -9,6 +9,8 @@ import styles from './Card.module.scss';
 import transcription from '../../transcription';
 import Select from '../Select/Select';
 
+import categories from '../shared/categories'
+
 let selectedCategory = [];
 let selectedCategoryC = [];
 
@@ -52,22 +54,6 @@ function Card() {
     //     {name: 'website', title: transcription[currentLang].inputsTitles.webSite, value: website, setter: setWebsite, placeholder: transcription[currentLang].inputsPlaceholders.webSite},
     //     {name: 'descriptionPlace', title: transcription[currentLang].inputsTitles.description, value: descriptionPlace, setter: setDescriptionPlace, placeholder: transcription[currentLang].inputsPlaceholders.description},
     // ]
-
-    const categories = [
-        {type: 'paper', img: '/img/category/paper.png'},
-        {type: 'glass', img: '/img/category/glass.png'},
-        {type: 'bottle', img: '/img/category/bottle.png'},
-        {type: 'tin', img: '/img/category/tin.png'},
-        {type: 'clothes', img: '/img/category/clothes.png'},
-        {type: 'gadget', img: '/img/category/gadget.png'},
-        {type: 'radioactive', img: '/img/category/radioactive.png'},
-        {type: 'battery', img: '/img/category/battery.png'},
-        {type: 'lamp', img: '/img/category/lamp.png'},
-        {type: 'technique', img: '/img/category/technique.png'},
-        {type: 'package', img: '/img/category/package.png'},
-        {type: 'beer', img: '/img/category/beer.png'},
-        {type: 'tires', img: '/img/category/tires.png'},
-    ]
 
     const chooseCity = (company) => {
         setMapCoord((prev) => {

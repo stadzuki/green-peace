@@ -3,7 +3,7 @@ import React from 'react';
 import styles from './CardCompany.module.scss'
 import transcription from '../../transcription';
 
-function CardCompany({company, onClose}) {
+function CardCompany({company, userPos, onClose}) {
     const categoriesToString = () => {
         let outStr = '';
         for(let category of company.categoriesId) {
@@ -57,6 +57,10 @@ function CardCompany({company, onClose}) {
         return outStr
     }
 
+    const createRoute = () => {
+        console.log(userPos);
+    }
+
     return (
         <div className={`${styles.companyCard}`}>
             <p className={styles.companyTitle}>{company.title}</p>
@@ -88,7 +92,7 @@ function CardCompany({company, onClose}) {
                         <img src="/img/phone.png" width="35" height="35" alt="phone icon"/>
                         <p>Позвонить</p>
                     </li>
-                    <li className={styles.communicateItem}>
+                    <li className={styles.communicateItem} onClick={createRoute}>
                         <img src="/img/route.png" width="35" height="35" alt="route icon"/>
                         <p>Маршрут</p>
                     </li>

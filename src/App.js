@@ -12,6 +12,8 @@ import CardCompany from "./components/CardCompany/CardCompany"
 
 import jwtDecode from "jwt-decode";
 import axios from "axios";
+import categories from "./components/shared/categories";
+import typeCategories from "./components/shared/typeCategories";
 
 import Pin from "./components/Pin";
 
@@ -20,32 +22,34 @@ const TOKEN = 'pk.eyJ1IjoibG9saWsyMCIsImEiOiJja3N6NDhlZ2oycGxnMndvZHVkbGV0MTZ1In
 const url = 'https://38d6-188-119-45-172.ngrok.io'
 
 
-const data1 = {
-  datasets: [
-    {
-      data: [12, 19, 3, 5, 2, 3],
-      backgroundColor: [
-        'rgba(255, 99, 132, 0.2)',
-        'rgba(54, 162, 235, 0.2)',
-        'rgba(255, 206, 86, 0.2)',
-        'rgba(75, 192, 192, 0.2)',
-        'rgba(153, 102, 255, 0.2)',
-        'rgba(255, 159, 64, 0.2)',
-      ],
-      borderColor: [
-        'rgba(255, 99, 132, 1)',
-        'rgba(54, 162, 235, 1)',
-        'rgba(255, 206, 86, 1)',
-        'rgba(75, 192, 192, 1)',
-        'rgba(153, 102, 255, 1)',
-        'rgba(255, 159, 64, 1)',
-      ],
-      borderWidth: 1,
-    },
-  ],
-};
+// const data1 = {
+//   datasets: [
+//     {
+//       data: [12, 19, 3, 5, 2, 3],
+//       backgroundColor: [
+//         'rgba(255, 99, 132, 0.2)',
+//         'rgba(54, 162, 235, 0.2)',
+//         'rgba(255, 206, 86, 0.2)',
+//         'rgba(75, 192, 192, 0.2)',
+//         'rgba(153, 102, 255, 0.2)',
+//         'rgba(255, 159, 64, 0.2)',
+//       ],
+//       borderColor: [
+//         'rgba(255, 99, 132, 1)',
+//         'rgba(54, 162, 235, 1)',
+//         'rgba(255, 206, 86, 1)',
+//         'rgba(75, 192, 192, 1)',
+//         'rgba(153, 102, 255, 1)',
+//         'rgba(255, 159, 64, 1)',
+//       ],
+//       borderWidth: 1,
+//     },
+//   ],
+// };
 
 function App() {
+
+  const [isMetaVisible, setIsMetaVisible] = useState(false)
 
   //transcription
   const [currentLang, setCurrentLang] = useState(() => {
@@ -79,6 +83,7 @@ function App() {
   //User
   const [user, setUser] = useState({});
   const [isAuthorize, setIsAuthorize] = useState(false);
+  const [currentPos, setCurrentPos] = useState({})
 
   //Marker
   const [isMarkersLoaded, setIsMarkersLoaded] = useState(false);
@@ -103,7 +108,37 @@ function App() {
     return (
       <Marker key={marker.id} longitude={+marker.longitude} latitude={+marker.latitude}>
         {/* <Pin count={2} color={['red', 'black']} /> */}
-        <img src="/img/map-marker.png" alt="marker" width="50" height="50" onClick={() => onMarkerClick(marker.id)}/>
+        <div className={`markerMetaWrapper ${isMetaVisible}`}>
+          <p>{marker.title}</p>
+          <ul className="metaCategoriesWrapper">
+            {marker.categoriesId.map((item, idx) => {
+              const categoryMeta = typeCategories(item)
+              let target;
+              categories.forEach(item => {
+                if(categoryMeta === item.type) {
+                  target = item;
+                }
+              })
+              return (
+                <li className={`category-item ${target.type}-meta`}>
+                    <img src={target.img}
+                    width="25"
+                    height="25"
+                    alt={`${target.type} category`} 
+                /></li>
+              )
+            })}
+          </ul>
+        </div>
+        <img 
+          src="/img/map-marker.png"
+          alt="marker"
+          width="25"
+          height="25"
+          onClick={() => onMarkerClick(marker.id)}
+          onMouseEnter={() => setIsMetaVisible(true)}
+          onMouseLeave={() => setIsMetaVisible(false)}
+        />
       </Marker>
     )
   }
@@ -131,6 +166,7 @@ function App() {
           setMapCoord((prev) => {
             return {...prev, latitude: position.coords.latitude, longitude: position.coords.longitude}
           })
+          setCurrentPos({latitude: position.coords.latitude, longitude: position.coords.longitude})
         },
         () => {
           console.log("Unable to retrieve your location");
@@ -251,7 +287,7 @@ function App() {
 
         <div className="innerCard">
           <Card />
-          {isCompanySelected ? <CardCompany company={currentCompany} onClose={() => setIsCompanySelected(false)}/> : ''}
+          {isCompanySelected ? <CardCompany company={currentCompany} userPos={currentPos} onClose={() => setIsCompanySelected(false)}/> : ''}
         </div>
         <MapGL
           {...mapCoord}
