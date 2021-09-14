@@ -12,10 +12,11 @@ import Select from '../Select/Select';
 let selectedCategory = [];
 let selectedCategoryC = [];
 
+const timeRegex = /^[0-9]{0,1}[0-9]?\:[0-9]{2}$/
+const phoneRegex = /^\+[0-9]+$/
+
 const url = 'https://38d6-188-119-45-172.ngrok.io'
 
-// добавить notif
-// добавить регулярку на время работы
 // при наведении на маркер выводить мета инфу
 
 function Card() {
@@ -30,6 +31,7 @@ function Card() {
     const [website, setWebsite] = useState('')
     const [descriptionPlace, setDescriptionPlace] = useState('')
     const [photoFile, setPhotoFile] = useState([])
+    const [invalidField, setInvalidField] = useState('')
 
     const [isSelectedCategory, setIsSelectedCategory] = useState(false)
     const {target,
@@ -42,6 +44,14 @@ function Card() {
             currentLang,
             setMapCoord} = React.useContext(AppContext)
 
+    // const fields = [
+    //     {name: 'city', title: transcription[currentLang].inputsTitles.city, value: city, setter: setCity, placeholder: transcription[currentLang].inputsPlaceholders.city},
+    //     {name: 'adress', title: transcription[currentLang].inputsTitles.adress, value: adress, setter: setAdress, placeholder: transcription[currentLang].inputsPlaceholders.adress},
+    //     {name: 'namePlace', title: transcription[currentLang].inputsTitles.name, value: namePlace, setter: setNamePlace, placeholder: transcription[currentLang].inputsPlaceholders.name},
+    //     {name: 'phoneNumber', title: transcription[currentLang].inputsTitles.phone, value: phoneNumber, setter: setPhoneNumber, placeholder: transcription[currentLang].inputsPlaceholders.phone},
+    //     {name: 'website', title: transcription[currentLang].inputsTitles.webSite, value: website, setter: setWebsite, placeholder: transcription[currentLang].inputsPlaceholders.webSite},
+    //     {name: 'descriptionPlace', title: transcription[currentLang].inputsTitles.description, value: descriptionPlace, setter: setDescriptionPlace, placeholder: transcription[currentLang].inputsPlaceholders.description},
+    // ]
 
     const categories = [
         {type: 'paper', img: '/img/category/paper.png'},
@@ -234,8 +244,18 @@ function Card() {
 
     }
 
-    const inputHandler = (evt, model) => {
+    const inputHandler = (evt, model, regex = '') => {
         const {target} = evt;
+
+        if(regex) {
+            if(target.value.search(regex) === -1) {
+                target.style.border = '0.5px solid #b8233c';
+            } else {
+                target.style.border = '0.5px solid #23b839';
+            }
+            model(target.value)
+            return;
+        } 
 
         if(target.value.length <= 0) {
             target.style.border = '0.5px solid #b8233c';
@@ -295,43 +315,51 @@ function Card() {
         e.preventDefault();
 
         if(city.length <= 0) {
-            return console.log('Вы не указали название города');
+            return setInvalidField('Вы не указали название города');
         }
 
         if(category.length <= 0) {
-            return console.log('Вы не указали категории');
+            return setInvalidField('Вы не указали категории');
         }
 
         if(adress.length <= 0) {
-            return console.log('Вы не указали адрес компании');
+            return setInvalidField('Вы не указали адрес компании');
         }
 
         if(namePlace.length <= 0) {
-            return console.log('Вы не указали название компании');
+            return setInvalidField('Вы не указали название компании');
         }
 
         if(timeWorkStart.length <= 0) {
-            return console.log('Вы не указали начало рабочего дня');
+            return setInvalidField('Вы не указали начало рабочего дня');
+        }
+
+        if(timeWorkStart.search(timeRegex) === -1 || timeWorkFinish.search(timeRegex)) {
+            return setInvalidField('Время рабочего дня указано некорректно');
         }
 
         if(timeWorkFinish.length <= 0) {
-            return console.log('Вы не указали конец рабочего дня');
+            return setInvalidField('Вы не указали конец рабочего дня');
         }
 
         if(phoneNumber.length <= 0) {
-            return console.log('Вы не указали номер телефона компании');
+            return setInvalidField('Вы не указали номер телефона компании');
+        }
+
+        if(phoneNumber.search(phoneRegex) === -1) {
+            return setInvalidField('Вы некорректно указали номер телефона компании');
         }
 
         if(website.length <= 0) {
-            return console.log('Вы не указали сайт компании');
+            return setInvalidField('Вы не указали сайт компании');
         }
 
         if(descriptionPlace.length <= 0) {
-            return console.log('Вы не указали описание компании');
+            return setInvalidField('Вы не указали описание компании');
         }
 
         if(photoFile.length <= 0) {
-            return console.log('Вы не прикрепили фото компании');
+            return setInvalidField('Вы не прикрепили фото компании');
         }
 
         let categoriesId = [];
@@ -394,9 +422,6 @@ function Card() {
             categoriesId
         }
         
-        console.log(data.categoriesId);
-        console.log(data);
-        
         axios.post(`${url}/api/Company/AddCompany`, data)
             .then((resp) => {
                 console.log(resp);
@@ -448,7 +473,7 @@ function Card() {
                     </p>
                     <p>
                         <span>{transcription[currentLang].inputsTitles.adress}</span>
-                        <input type="text" value={adress} onChange={(e) => inputHandler(e, setAdress)} placeholder={transcription[currentLang].inputsPlaceholders.city}/>
+                        <input type="text" value={adress} onChange={(e) => inputHandler(e, setAdress)} placeholder={transcription[currentLang].inputsPlaceholders.adress}/>
                         {isMarkerCreate
                             ? isMarkerCreate === 'INIT' 
                                 ? <div className={styles.fileUpload} style={{marginBottom: 10}}>
@@ -466,9 +491,9 @@ function Card() {
                         <span className={styles.workTimeTitle}>{transcription[currentLang].inputsTitles.timeWork}</span>
                         <div className={styles.workTime}>
                             <span>{transcription[currentLang].inputsTitles.workFrom}</span>
-                            <input className={styles.workTimeInput} type="text" value={timeWorkStart} onChange={(e) => inputHandler(e, setTimeWorkStart)} placeholder="8:00"/>
+                            <input className={styles.workTimeInput} type="text" value={timeWorkStart} onChange={(e) => inputHandler(e, setTimeWorkStart, timeRegex)} placeholder="8:00"/>
                             <span>{transcription[currentLang].inputsTitles.workUntil}</span>
-                            <input className={styles.workTimeInput} type="text" value={timeWorkFinish} onChange={(e) => inputHandler(e, setTimeWorkFinish)} placeholder="22:00"/>
+                            <input className={styles.workTimeInput} type="text" value={timeWorkFinish} onChange={(e) => inputHandler(e, setTimeWorkFinish, timeRegex)} placeholder="22:00"/>
                         </div>
                     </p>
                     <p>
@@ -477,7 +502,7 @@ function Card() {
                     </p>
                     <p>
                         <span>{transcription[currentLang].inputsTitles.phone}</span>
-                        <input type="text" value={phoneNumber} onChange={(e) => inputHandler(e, setPhoneNumber)} placeholder={transcription[currentLang].inputsPlaceholders.phone}/>
+                        <input type="text" value={phoneNumber} onChange={(e) => inputHandler(e, setPhoneNumber, phoneRegex)} placeholder={transcription[currentLang].inputsPlaceholders.phone}/>
                     </p>
                     <p>
                         <span>{transcription[currentLang].inputsTitles.webSite}</span>
@@ -502,7 +527,7 @@ function Card() {
                         </div>
                     }
                     
-
+                    <small style={{textAlign: 'center', color: '#ff002b'}}>{invalidField}</small>
                     <button onClick={createMarkerOnClick}>{transcription[currentLang].createPoint}</button>
                 </form>
                 : '' }
