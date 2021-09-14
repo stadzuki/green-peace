@@ -10,7 +10,7 @@ import transcription from '../../transcription';
 import Select from '../Select/Select';
 
 let selectedCategory = [];
-let selectedItem;
+let selectedCategoryC = [];
 
 const url = 'https://38d6-188-119-45-172.ngrok.io'
 
@@ -25,13 +25,22 @@ function Card() {
     const [namePlace, setNamePlace] = useState('')
     const [timeWorkStart, setTimeWorkStart] = useState('')
     const [timeWorkFinish, setTimeWorkFinish] = useState('')
+    const [markersCopy, setMarkersCopy] = useState([]);
     const [phoneNumber, setPhoneNumber] = useState('')
     const [website, setWebsite] = useState('')
     const [descriptionPlace, setDescriptionPlace] = useState('')
     const [photoFile, setPhotoFile] = useState([])
 
     const [isSelectedCategory, setIsSelectedCategory] = useState(false)
-    const {target, setTarget, isMarkerCreate, setIsMarkerCreate, setMarkers, markers, newMarker, currentLang} = React.useContext(AppContext)
+    const {target,
+            setTarget,
+            isMarkerCreate,
+            setIsMarkerCreate,
+            setMarkers,
+            markers,
+            newMarker,
+            currentLang,
+            setMapCoord} = React.useContext(AppContext)
 
 
     const categories = [
@@ -50,11 +59,81 @@ function Card() {
         {type: 'tires', img: '/img/category/tires.png'},
     ]
 
+    const chooseCity = (company) => {
+        setMapCoord((prev) => {
+            return {...prev, latitude: company.latitude,  longitude: company.longitude}
+        })
+    }
+
     useEffect(() => {
         if(target) {
             // document.querySelectorAll('.category-item').forEach(item => item.classList.remove('selected'))
         }
     })
+
+    const appendCategory = (evt, typeCategory) => {
+        if(selectedCategory.includes(typeCategory)) {
+            selectedCategory = selectedCategory.filter(item => item !== typeCategory);
+
+            if(evt.target.tagName === 'IMG') {
+                evt.target.parentNode.classList.remove('selected');
+            } else {
+                evt.target.classList.remove('selected');
+            }
+            return 1;
+        }
+
+        if(evt.target.tagName === 'IMG') {
+            evt.target.parentNode.classList.add('selected');
+        } else {
+            evt.target.classList.add('selected');
+        }
+
+        selectedCategory.push(typeCategory)
+    } 
+
+    function removeDuplicates(arr) {
+
+        const result = [];
+        const duplicatesIndices = [];
+    
+        // Перебираем каждый элемент в исходном массиве
+        arr.forEach((current, index) => {
+        
+            if (duplicatesIndices.includes(index)) return;
+        
+            result.push(current);
+        
+            // Сравниваем каждый элемент в массиве после текущего
+            for (let comparisonIndex = index + 1; comparisonIndex < arr.length; comparisonIndex++) {
+            
+                const comparison = arr[comparisonIndex];
+                const currentKeys = Object.keys(current);
+                const comparisonKeys = Object.keys(comparison);
+                
+                // Проверяем длину массивов
+                if (currentKeys.length !== comparisonKeys.length) continue;
+                
+                // Проверяем значение ключей
+                const currentKeysString = currentKeys.sort().join("").toLowerCase();
+                const comparisonKeysString = comparisonKeys.sort().join("").toLowerCase();
+                if (currentKeysString !== comparisonKeysString) continue;
+                
+                // Проверяем индексы ключей
+                let valuesEqual = true;
+                for (let i = 0; i < currentKeys.length; i++) {
+                    const key = currentKeys[i];
+                    if ( current[key] !== comparison[key] ) {
+                        valuesEqual = false;
+                        break;
+                    }
+                }
+                if (valuesEqual) duplicatesIndices.push(comparisonIndex);
+                
+            } // Конец цикла
+        });  
+        return result;
+    }
 
     const clickCategoryHandler = (evt, typeCategory) => {
         if(target) {
@@ -82,31 +161,75 @@ function Card() {
             console.log(category);
             console.log(selectedCategory);
         } else {
-            let eTarget;
-            if(evt.target.tagName === 'IMG') {
-                eTarget = evt.target.parentNode;
-            } else {
-                eTarget = evt.target;
+            let sortFrom;
+
+            switch(typeCategory) {
+                case 'paper':
+                    sortFrom = 1;
+                    break;
+                case 'glass':
+                    sortFrom = 2;
+                    break;
+                case 'bottle':
+                    sortFrom = 3;
+                    break;
+                case 'tin':
+                    sortFrom = 4;
+                    break;
+                case 'clothes':
+                    sortFrom = 5;
+                    break;
+                case 'gadget':
+                    sortFrom = 6;
+                    break;
+                case 'radioactive':
+                    sortFrom = 7;
+                    break;
+                case 'battery':
+                    sortFrom = 8;
+                    break;
+                case 'lamp':
+                    sortFrom = 9;
+                    break;
+                case 'technique':
+                    sortFrom = 10;
+                    break;
+                case 'package':
+                    sortFrom = 11;
+                    break;
+                case 'beer':
+                    sortFrom = 12;
+                    break;
+                case 'tires':
+                    sortFrom = 13;
+                    break;
+                default: 
+                    sortFrom = 1;
+                    break;
             }
 
-            if(!isSelectedCategory) {
-                eTarget.classList.add('selected');
-                selectedItem = eTarget;
-                setIsSelectedCategory(true)
+            if(selectedCategoryC.includes(typeCategory)) {
+                setMarkers(prev => prev.filter(e => !e.categoriesId.includes(sortFrom)))
+            } else if(selectedCategoryC.length > 0) {
+                let sorted = [...markers];
+                let newSort = [];
+
+                newSort = [...markersCopy]
+                newSort.filter(m => m.categoriesId.includes(sortFrom))
+                newSort = [...sorted, ...newSort.filter(m => m.categoriesId.includes(sortFrom))]
+                sorted = [...newSort]
+                sorted = removeDuplicates(sorted)
+                
+                setMarkers(sorted)
             }
 
-            if(isSelectedCategory) {
-                if(selectedItem === eTarget) {
-                    eTarget.classList.remove('selected');
-                    setIsSelectedCategory(false)
-                } else {
-                    selectedItem.classList.remove('selected')
-                    eTarget.classList.add('selected')
-                    selectedItem = eTarget;
-                }
+
+            if(selectedCategoryC.length <= 0) {
+                setMarkersCopy(markers)
+                setMarkers((prev) => prev.filter(m => m.categoriesId.includes(sortFrom)))
             }
 
-            // Описать логику получения данных о категории в опеределенном выбранном городе!
+            appendCategory(evt, typeCategory);
         }
 
     }
@@ -288,7 +411,7 @@ function Card() {
     return (
         <div className={`${styles.cardContainer} ${styles.categoryCard} ${target ? styles.scroll : ''}`}>
             <div className={styles.cardCategories}>
-                {!target ? <Select/> : ''}
+                {!target ? <Select companies={markers} cityClick={chooseCity}/> : ''}
                 <p className={styles.categoriesTitle}>
                     {!target ? transcription[currentLang].cardCategoryTitle : transcription[currentLang].createCompanyTitle}
                 </p>

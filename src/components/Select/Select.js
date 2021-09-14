@@ -44,7 +44,7 @@ function Select({companies, cityClick}) {
                 </svg>
             </div>
             <div className={`${isSelectOpen ? styles.visible : ''} ${styles.selectList}`}>
-                <ul className={styles.citiesList}>
+                {companies.length > 0  ? <ul className={styles.citiesList}>
                     {cities2.map((city, idx) => {
                         return <li key={idx} className={styles.city}>{city}</li>
                     })}
@@ -53,6 +53,7 @@ function Select({companies, cityClick}) {
                         return <li key={idx} className={styles.city} onClick={() => clickHandler(company)}>{company.city}</li>
                     })} */}
                 </ul>
+                : <p className={styles.cityEmpty}>Города отсутсвуют</p>}
             </div>
         </div>
     )

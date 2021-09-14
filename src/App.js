@@ -19,6 +19,32 @@ const TOKEN = 'pk.eyJ1IjoibG9saWsyMCIsImEiOiJja3N6NDhlZ2oycGxnMndvZHVkbGV0MTZ1In
 
 const url = 'https://38d6-188-119-45-172.ngrok.io'
 
+
+const data1 = {
+  datasets: [
+    {
+      data: [12, 19, 3, 5, 2, 3],
+      backgroundColor: [
+        'rgba(255, 99, 132, 0.2)',
+        'rgba(54, 162, 235, 0.2)',
+        'rgba(255, 206, 86, 0.2)',
+        'rgba(75, 192, 192, 0.2)',
+        'rgba(153, 102, 255, 0.2)',
+        'rgba(255, 159, 64, 0.2)',
+      ],
+      borderColor: [
+        'rgba(255, 99, 132, 1)',
+        'rgba(54, 162, 235, 1)',
+        'rgba(255, 206, 86, 1)',
+        'rgba(75, 192, 192, 1)',
+        'rgba(153, 102, 255, 1)',
+        'rgba(255, 159, 64, 1)',
+      ],
+      borderWidth: 1,
+    },
+  ],
+};
+
 function App() {
 
   //transcription
@@ -26,12 +52,10 @@ function App() {
     switch(window.navigator.language) {
       case 'ru':
         return 'ru'
-        break;
       case 'en':
         return 'en'
-        break;
       default:
-        return 'ru'
+        return 'ua'
     }
   });
 
@@ -191,6 +215,12 @@ function App() {
     }
   }
 
+  // var MyComponent = React.createClass({
+  //   render: function() {
+  //     return <Doughbut data={chartData} options={chartOptions}/>
+  //   }
+  // });
+
   return (
     <AppContext.Provider
       value={{
@@ -207,10 +237,12 @@ function App() {
         setIsMarkerCreate,  
         newMarker,
         currentLang,
-        setCurrentLang
+        setCurrentLang,
+        setMapCoord
       }}
     >
       <div className="App">
+        {/* <Doughnut data={data1} /> */}
         {/* <Pin count={2} color={['red', 'black']} /> */}
         {isLoader ? <Loader /> : ""}
         <Login method={loginMethod} onClose={() => setLoginMethod("")} />

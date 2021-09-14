@@ -1,4 +1,49 @@
 const lang = {
+    ua: {
+        //Header btn
+        btnLogin: 'Увійти',
+        btnRegister: 'Зареєструватися',
+        btnCatalog: 'Каталог',
+        //Card
+        cardCategoryTitle: 'Що хочете здати?',
+        cardCategoryClose: 'Найближчі',
+        cardCategoryAll: 'Все місто',
+        MarkerCreatorTitle: 'Додати нову компанію',
+        //Card create
+        createCompanyTitle: 'Виберіть категорію (і) для мітки',
+        pointOnMap: 'Вказати на мапі',
+        pointTag: 'Мітка створена',
+        pointCancel: 'Скасувати',
+        pointTitle: 'Створіть мітку на карті',
+        inputsTitles: {
+            city: 'Місто',
+            adress: 'Адреса',
+            timeWork: 'Період роботи',
+            workFrom: 'з',
+            workUntil: 'до',
+            name: 'Назва',
+            phone: 'Номер телефону',
+            webSite: 'Сайт',
+            description: 'Опис',
+            img: 'Виберіть фото пункту прийому'
+        },
+        inputsPlaceholders: {
+            city: 'Вкажіть місто пункту прийому',
+            adress: 'Вкажіть адресу пункту прийому',
+            name: 'Вкажіть назву пункту прийому',
+            phone: 'Вкажіть номер телефону пункту прийому',
+            webSite: 'Вкажіть сайт пункту прийому',
+            description: 'Вкажіть опис пункту прийому'
+        },
+        chooseFile: 'Виберіть файл',
+        fileUpload: 'Файл завантажений',
+        fileCancel: 'Скасувати',
+        createPoint: 'Створити мітку',
+        // /catalog
+        filterTitle: 'Фільтр пошуку',
+        filterCity: 'Місто',
+        filterCategory: 'Категорії'
+    },
     ru: {
         //Header btn
         btnLogin: 'Войти',

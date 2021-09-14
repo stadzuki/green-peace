@@ -61,6 +61,7 @@ function Header({user}) {
                     <div className="langDropDown">
                         <div className={`lang langRu ${currentLang === 'ru' ? 'selectedLang' : ''}`} onClick={() => (setCurrentLang('ru'), document.querySelector('.langDropDown').classList.toggle('visible'))}>Ru</div>
                         <div className={`lang langEn ${currentLang === 'en' ? 'selectedLang' : ''}`} onClick={() => (setCurrentLang('en'), document.querySelector('.langDropDown').classList.toggle('visible'))}>En</div>
+                        <div className={`lang langEn ${currentLang === 'ua' ? 'selectedLang' : ''}`} onClick={() => (setCurrentLang('ua'), document.querySelector('.langDropDown').classList.toggle('visible'))}>Ua</div>
                     </div>
                 </div>
             </div>

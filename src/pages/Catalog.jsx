@@ -4,6 +4,7 @@ import { Link } from 'react-router-dom';
 import axios from 'axios';
 
 import Category from '../components/Category';
+import Select from '../components/Select/Select';
 import transcription from '../transcription';
 
 const TOKEN = 'pk.eyJ1IjoibG9saWsyMCIsImEiOiJja3N6NDhlZ2oycGxnMndvZHVkbGV0MTZ1In0.JkdOOOgJTsu1Sl2qO-5VAA';
@@ -13,7 +14,6 @@ let selectedCategory = [];
 
 function Catalog() {
     const [isMarkersLoaded, setIsMarkersLoaded] = useState(false)
-    const [sortingMarkers, setSortingMarkers] = useState([])
     const [markers, setMarkers] = useState([]);
     const [markersCopy, setMarkersCopy] = useState([]);
     const [mapCoord, setMapCoord] = useState({
@@ -263,7 +263,7 @@ function Catalog() {
             let newSort = [];
 
             newSort = [...markersCopy]
-            newSort.filter(m => m.categoriesId.includes(sortFrom))
+            // newSort.filter(m => m.categoriesId.includes(sortFrom))
             newSort = [...sorted, ...newSort.filter(m => m.categoriesId.includes(sortFrom))]
             sorted = [...newSort]
             sorted = removeDuplicates(sorted)
@@ -280,13 +280,29 @@ function Catalog() {
         appendCategory(evt, type);
     }
 
+    const cityFilter = (company) => {
+        let sorted = [...markers];
+        let newSort = [];
+
+        newSort = [...markersCopy]
+        // newSort.filter(m => m.city === company.city)
+        newSort = [...sorted, ...newSort.filter(m => m.city === company.city)]
+        sorted = [...newSort]
+        sorted = removeDuplicates(sorted)
+        
+        setMarkers(sorted)
+        setMapCoord((prev) => {
+            return {...prev, latitude: company.latitude,  longitude: company.longitude}
+        })
+    }
+
     return (
         <div className="catalogWrapper">
             <div className="filters">
                 <p className="filtersTitle">Фильтр поиска</p>
                 <div className="filter filter-city">
-                    <p>Город</p>
-                    <small>Реализовать компонент селектора городов</small>
+                    <p className="filterCityText">Город</p>
+                    <Select companies={markers} cityClick={cityFilter}/>
                 </div>
                 <div className="filter filter-type">
                     <p>Категория</p>
@@ -317,7 +333,7 @@ function Catalog() {
                     </MapGL>
                 </div>
                 <div className="compnayContainer">
-                    {catalogItems}
+                    {markers.length > 0 ? catalogItems : <p style={{textAlign: 'center'}}>Компании отсутствуют</p>}
                 </div>
             </div>
         </div>
