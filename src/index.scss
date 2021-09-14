@@ -607,3 +607,15 @@ header {
     }
   }
 }
+
+.markerMetaWrapper {
+  display: none;
+}
+
+.visible {
+  display: block;
+}
+
+.metaCategoriesWrapper {
+  position: absolute;
+}

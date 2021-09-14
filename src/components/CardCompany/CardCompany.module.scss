@@ -5,6 +5,7 @@
 .companyCard {
     display: inline-block;
     vertical-align: top;
+    overflow-x: hidden;
     overflow-y: scroll;
     background: rgb(255, 255, 255);
     border-radius: 10px;

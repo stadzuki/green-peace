@@ -45,13 +45,13 @@ function Select({companies, cityClick}) {
             </div>
             <div className={`${isSelectOpen ? styles.visible : ''} ${styles.selectList}`}>
                 {companies.length > 0  ? <ul className={styles.citiesList}>
-                    {cities2.map((city, idx) => {
+                    {/* {cities2.map((city, idx) => {
                         return <li key={idx} className={styles.city}>{city}</li>
                     })}
-                    {/* ВОТ ТАК НАДО СДЕЛАТЬ
+                    ВОТ ТАК НАДО СДЕЛАТЬ */}
                     {companies.map((company, idx) => {
                         return <li key={idx} className={styles.city} onClick={() => clickHandler(company)}>{company.city}</li>
-                    })} */}
+                    })}
                 </ul>
                 : <p className={styles.cityEmpty}>Города отсутсвуют</p>}
             </div>

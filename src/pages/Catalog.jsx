@@ -8,7 +8,7 @@ import Select from '../components/Select/Select';
 import transcription from '../transcription';
 
 const TOKEN = 'pk.eyJ1IjoibG9saWsyMCIsImEiOiJja3N6NDhlZ2oycGxnMndvZHVkbGV0MTZ1In0.JkdOOOgJTsu1Sl2qO-5VAA';
-const url = 'https://38d6-188-119-45-172.ngrok.io';
+const url = 'https://648c-188-119-45-172.ngrok.io';
 
 let selectedCategory = [];
 
@@ -292,7 +292,7 @@ function Catalog() {
         
         setMarkers(sorted)
         setMapCoord((prev) => {
-            return {...prev, latitude: company.latitude,  longitude: company.longitude}
+            return {...prev, latitude: +company.latitude,  longitude: +company.longitude}
         })
     }
 

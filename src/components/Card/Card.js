@@ -17,7 +17,7 @@ let selectedCategoryC = [];
 const timeRegex = /^[0-9]{0,1}[0-9]?\:[0-9]{2}$/
 const phoneRegex = /^\+[0-9]+$/
 
-const url = 'https://38d6-188-119-45-172.ngrok.io'
+const url = 'https://648c-188-119-45-172.ngrok.io'
 
 // при наведении на маркер выводить мета инфу
 
@@ -57,7 +57,7 @@ function Card() {
 
     const chooseCity = (company) => {
         setMapCoord((prev) => {
-            return {...prev, latitude: company.latitude,  longitude: company.longitude}
+            return {...prev, latitude: +company.latitude,  longitude: +company.longitude}
         })
     }
 
@@ -205,8 +205,13 @@ function Card() {
             }
 
             if(selectedCategoryC.includes(typeCategory)) {
-                setMarkers(prev => prev.filter(e => !e.categoriesId.includes(sortFrom)))
+                console.log(1);
+                let newSort = [...markersCopy]
+                newSort.filter(e => !e.categoriesId.includes(sortFrom))
+                // setMarkers(prev => prev.filter(e => !e.categoriesId.includes(sortFrom)))
+                setMarkers(newSort)
             } else if(selectedCategoryC.length > 0) {
+                console.log(2);
                 let sorted = [...markers];
                 let newSort = [];
 
@@ -221,8 +226,11 @@ function Card() {
 
 
             if(selectedCategoryC.length <= 0) {
+                console.log(markers);
+                console.log(3);
                 setMarkersCopy(markers)
                 setMarkers((prev) => prev.filter(m => m.categoriesId.includes(sortFrom)))
+                console.log(markers);
             }
 
             appendCategory(evt, typeCategory);
@@ -255,7 +263,7 @@ function Card() {
     const createMarkerHandler = (e) => {
         e.preventDefault();
 
-        if(category.length <= 0) return console.log('Вы не указали категории');
+        // if(category.length <= 0) return console.log('Вы не указали категории');
         setIsMarkerCreate(true)
     }
 

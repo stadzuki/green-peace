@@ -19,7 +19,7 @@ import Pin from "./components/Pin";
 
 const TOKEN = 'pk.eyJ1IjoibG9saWsyMCIsImEiOiJja3N6NDhlZ2oycGxnMndvZHVkbGV0MTZ1In0.JkdOOOgJTsu1Sl2qO-5VAA';
 
-const url = 'https://38d6-188-119-45-172.ngrok.io'
+const url = 'https://648c-188-119-45-172.ngrok.io'
 
 
 // const data1 = {
@@ -99,6 +99,7 @@ function App() {
   let userDublicate = {}
 
   const onMarkerClick = (id) => {
+    if(isMarkerCreate) return;
     const targetCompany = markers.find(m => m.id === id);
     setCurrentCompany(targetCompany);
     setIsCompanySelected(true);
@@ -108,7 +109,7 @@ function App() {
     return (
       <Marker key={marker.id} longitude={+marker.longitude} latitude={+marker.latitude}>
         {/* <Pin count={2} color={['red', 'black']} /> */}
-        <div className={`markerMetaWrapper ${isMetaVisible}`}>
+        {/* <div className={`markerMetaWrapper ${isMetaVisible ? 'visible' : ''}`}>
           <p>{marker.title}</p>
           <ul className="metaCategoriesWrapper">
             {marker.categoriesId.map((item, idx) => {
@@ -122,22 +123,21 @@ function App() {
               return (
                 <li className={`category-item ${target.type}-meta`}>
                     <img src={target.img}
-                    width="25"
-                    height="25"
+                    width="70"
+                    height="70"
                     alt={`${target.type} category`} 
-                /></li>
+                /></li>onMouseEnter={() => {setIsMetaVisible(true); console.log(1)}}
+                onMouseLeave={() => setIsMetaVisible(false)}
               )
             })}
           </ul>
-        </div>
+        </div> */}
         <img 
           src="/img/map-marker.png"
           alt="marker"
-          width="25"
-          height="25"
+          width="50"
+          height="50"
           onClick={() => onMarkerClick(marker.id)}
-          onMouseEnter={() => setIsMetaVisible(true)}
-          onMouseLeave={() => setIsMetaVisible(false)}
         />
       </Marker>
     )
