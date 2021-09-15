@@ -8,7 +8,7 @@ import Select from '../components/Select/Select';
 import transcription from '../transcription';
 
 const TOKEN = 'pk.eyJ1IjoibG9saWsyMCIsImEiOiJja3N6NDhlZ2oycGxnMndvZHVkbGV0MTZ1In0.JkdOOOgJTsu1Sl2qO-5VAA';
-const url = 'https://648c-188-119-45-172.ngrok.io';
+const url = 'https://api.npoint.io/66155237175de1dd9dc7';
 
 let selectedCategory = [];
 
@@ -137,7 +137,6 @@ function Catalog() {
     }
     //{/* onClick={() => onMarkerClick(marker.id)}*/}
     const createMarker = (marker) => {
-        console.log(marker);
         return (
           <Marker key={marker.id} longitude={+marker.longitude} latitude={+marker.latitude}>
             <img src="/img/map-marker.png" alt="marker" width="50" height="50"/> 
@@ -171,10 +170,10 @@ function Catalog() {
     ), [markers]);
 
     function getMarkers() {
-        axios.get(`${url}/api/Company/GetCompanies`)
+        axios.get(`${url}`)
+        // axios.get(`${url}/api/Company/GetCompanies`)
             .then((response) => {
                 setMarkers(response.data)
-                console.log(markers);
             })
             .catch((error) => {
             console.log(error);
@@ -256,9 +255,37 @@ function Catalog() {
                 break;
         }
 
+        // const categorySort = () => {
+        //     console.log(2);
+        //     let sorted = [...markers];
+        //     let newSort = [];
+
+        //     newSort = [...markersCopy]
+        //     // newSort.filter(m => m.categoriesId.includes(sortFrom))
+        //     newSort = [...sorted, ...newSort.filter(m => m.categoriesId.includes(sortFrom))]
+        //     sorted = [...newSort]
+        //     sorted = removeDuplicates(sorted)
+            
+        //     setMarkers(sorted)
+        // }
+
         if(selectedCategory.includes(type)) {
-            setMarkers(prev => prev.filter(e => !e.categoriesId.includes(sortFrom)))
-        } else if(selectedCategory.length > 0) {
+            console.log(1);//удаление из фильтра
+            // selectedCategory.filter(e => e !== type)
+            // let sorted = [...markers];
+            // for(let i = 0; i < selectedCategory.length; i++) {
+            //     const category = CategoryToNum(selectedCategory[i])
+            //     sorted.filter(c => c.categoriesId)
+            // }
+            if(selectedCategory.length === 1) {
+                setMarkers(markersCopy)
+            } else {
+                setMarkers(prev => prev.filter(e => !e.categoriesId.includes(sortFrom)))
+            }
+            console.log(selectedCategory);
+        } else 
+        if(selectedCategory.length > 0) {
+            console.log(2);//добавление в филтр
             let sorted = [...markers];
             let newSort = [];
 
@@ -269,15 +296,14 @@ function Catalog() {
             sorted = removeDuplicates(sorted)
             
             setMarkers(sorted)
-        }
-
-
-        if(selectedCategory.length <= 0) {
+        } else if(selectedCategory.length <= 0) {
+            console.log(3);
             setMarkersCopy(markers)
             setMarkers((prev) => prev.filter(m => m.categoriesId.includes(sortFrom)))
         }
 
         appendCategory(evt, type);
+        console.log(selectedCategory);
     }
 
     const cityFilter = (company) => {
