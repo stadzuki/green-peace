@@ -1,23 +1,31 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 
 import styles from './Select.module.scss'
-
-const cities2 = [
-    'Москва',
-    'Сочи',
-    'Минск',
-    'Гродно',
-    'Запарожье'
-]
-
-//Принимать название городов -> добавлять их в список li
-//Принимать функцию которая отвечает за назатие по выбранному городу
-
-//Принимаем company и отправляем этот объект в функцию, которая нам пришла
 
 function Select({companies, cityClick}) {
     const [selectedCity, setSelectedCity] = useState('Выберите город')
     const [isSelectOpen, setIsSelectOpen] = useState(false)
+    const [changedCompanies, setChangedCompanies] = useState(companies)
+    const [isCompanyLoaded, setIsCompanyLoaded] = useState(false)
+    
+    useEffect(() => {
+        if(isCompanyLoaded) return;
+        sortCity();
+    })
+
+    function sortCity() {
+        const cities = []
+        changedCompanies.forEach(item => {
+            if(cities.find(e => e.city === item.city)) {
+                return 1;
+            } 
+            cities.push(item);
+        })
+        setChangedCompanies(cities);
+        if(changedCompanies.length > 0) {
+            setIsCompanyLoaded(true)
+        }
+    }
 
     const clickHandler = (company) => {
         setSelectedCity(company.city)
@@ -44,12 +52,8 @@ function Select({companies, cityClick}) {
                 </svg>
             </div>
             <div className={`${isSelectOpen ? styles.visible : ''} ${styles.selectList}`}>
-                {companies.length > 0  ? <ul className={styles.citiesList}>
-                    {/* {cities2.map((city, idx) => {
-                        return <li key={idx} className={styles.city}>{city}</li>
-                    })}
-                    ВОТ ТАК НАДО СДЕЛАТЬ */}
-                    {companies.map((company, idx) => {
+                {changedCompanies.length > 0  ? <ul className={styles.citiesList}>
+                    {changedCompanies.map((company, idx) => {
                         return <li key={idx} className={styles.city} onClick={() => clickHandler(company)}>{company.city}</li>
                     })}
                 </ul>

@@ -205,11 +205,16 @@ function Card() {
             }
 
             if(selectedCategoryC.includes(typeCategory)) {
-                console.log(1);
-                let newSort = [...markersCopy]
-                newSort.filter(e => !e.categoriesId.includes(sortFrom))
-                // setMarkers(prev => prev.filter(e => !e.categoriesId.includes(sortFrom)))
-                setMarkers(newSort)
+                if(selectedCategoryC.length === 1) {
+                    setMarkers(markersCopy)
+                } else {
+                    setMarkers(prev => prev.filter(e => !e.categoriesId.includes(sortFrom)))
+                }
+                // console.log(1);
+                // let newSort = [...markersCopy]
+                // newSort.filter(e => !e.categoriesId.includes(sortFrom))
+                // // setMarkers(prev => prev.filter(e => !e.categoriesId.includes(sortFrom)))
+                // setMarkers(newSort)
             } else if(selectedCategoryC.length > 0) {
                 console.log(2);
                 let sorted = [...markers];
@@ -222,10 +227,7 @@ function Card() {
                 sorted = removeDuplicates(sorted)
                 
                 setMarkers(sorted)
-            }
-
-
-            if(selectedCategoryC.length <= 0) {
+            } else if(selectedCategoryC.length <= 0) {
                 console.log(markers);
                 console.log(3);
                 setMarkersCopy(markers)
@@ -430,7 +432,7 @@ function Card() {
     return (
         <div className={`${styles.cardContainer} ${styles.categoryCard} ${target ? styles.scroll : ''}`}>
             <div className={styles.cardCategories}>
-                {!target ? <Select companies={markers} cityClick={chooseCity}/> : ''}
+                {!target && markers.length > 0 ? <Select companies={markers} cityClick={chooseCity}/> : ''}
                 <p className={styles.categoriesTitle}>
                     {!target ? transcription[currentLang].cardCategoryTitle : transcription[currentLang].createCompanyTitle}
                 </p>

@@ -16,6 +16,7 @@ function Catalog() {
     const [isMarkersLoaded, setIsMarkersLoaded] = useState(false)
     const [markers, setMarkers] = useState([]);
     const [markersCopy, setMarkersCopy] = useState([]);
+    // const [categoryCollection, setCategoryCollection] = useState([])
     const [mapCoord, setMapCoord] = useState({
         latitude: 53.893009,
         longitude: 	27.567444,
@@ -136,10 +137,9 @@ function Catalog() {
         return outStr;
     }
     //{/* onClick={() => onMarkerClick(marker.id)}*/}
-    const createMarker = (marker) => {
-        console.log(marker);
+    const createMarker = (marker, id) => {
         return (
-          <Marker key={marker.id} longitude={+marker.longitude} latitude={+marker.latitude}>
+          <Marker key={id} longitude={+marker.longitude} latitude={+marker.latitude}>
             <img src="/img/map-marker.png" alt="marker" width="50" height="50"/> 
           </Marker>
         )
@@ -159,8 +159,8 @@ function Catalog() {
     }
     
     const mapMarkers = React.useMemo(() => markers.map(
-        marker => (
-            createMarker(marker)
+        (marker, idx) => (
+            createMarker(marker, idx)
         )
     ), [markers]);
 
@@ -171,10 +171,11 @@ function Catalog() {
     ), [markers]);
 
     function getMarkers() {
-        axios.get(`${url}/api/Company/GetCompanies`)
+        // axios.get(`${url}/api/Company/GetCompanies`)
+        axios.get(`https://api.npoint.io/66155237175de1dd9dc7`)
             .then((response) => {
                 setMarkers(response.data)
-                console.log(markers);
+                setMarkersCopy(response.data)
             })
             .catch((error) => {
             console.log(error);
@@ -187,26 +188,13 @@ function Catalog() {
         getMarkers()
     })
 
-    const appendCategory = (evt, typeCategory) => {
-        if(selectedCategory.includes(typeCategory)) {
-            selectedCategory = selectedCategory.filter(item => item !== typeCategory);
-
-            if(evt.target.tagName === 'IMG') {
-                evt.target.parentNode.classList.remove('selected');
-            } else {
-                evt.target.classList.remove('selected');
-            }
-            return 1;
-        }
-
+    const categoryAddStyle = (evt) => {
         if(evt.target.tagName === 'IMG') {
-            evt.target.parentNode.classList.add('selected');
+            evt.target.parentNode.classList.toggle('selected');
         } else {
-            evt.target.classList.add('selected');
+            evt.target.classList.toggle('selected');
         }
-
-        selectedCategory.push(typeCategory)
-    } 
+    }
 
     const onCategoryClick = (evt, type) => {     
         let sortFrom;
@@ -252,32 +240,23 @@ function Catalog() {
                 sortFrom = 13;
                 break;
             default: 
-                sortFrom = 1;
+                sortFrom = 0;
                 break;
         }
 
-        if(selectedCategory.includes(type)) {
-            setMarkers(prev => prev.filter(e => !e.categoriesId.includes(sortFrom)))
-        } else if(selectedCategory.length > 0) {
-            let sorted = [...markers];
-            let newSort = [];
-
-            newSort = [...markersCopy]
-            // newSort.filter(m => m.categoriesId.includes(sortFrom))
-            newSort = [...sorted, ...newSort.filter(m => m.categoriesId.includes(sortFrom))]
-            sorted = [...newSort]
-            sorted = removeDuplicates(sorted)
-            
-            setMarkers(sorted)
+        if(selectedCategory.includes(sortFrom)) {
+            selectedCategory = selectedCategory.filter(e => e !== sortFrom)
+            let sort = [...markersCopy]
+            for(let i = 0; i < selectedCategory.length; i++) {
+                sort = sort.filter(e => e.categoriesId.includes(selectedCategory[i]))
+            }
+            setMarkers(sort)
+        } else {
+            setMarkers(prev => prev.filter(e => e.categoriesId.includes(sortFrom)))
+            selectedCategory.push(sortFrom)
         }
 
-
-        if(selectedCategory.length <= 0) {
-            setMarkersCopy(markers)
-            setMarkers((prev) => prev.filter(m => m.categoriesId.includes(sortFrom)))
-        }
-
-        appendCategory(evt, type);
+        categoryAddStyle(evt)
     }
 
     const cityFilter = (company) => {
@@ -285,7 +264,6 @@ function Catalog() {
         let newSort = [];
 
         newSort = [...markersCopy]
-        // newSort.filter(m => m.city === company.city)
         newSort = [...sorted, ...newSort.filter(m => m.city === company.city)]
         sorted = [...newSort]
         sorted = removeDuplicates(sorted)
@@ -302,7 +280,7 @@ function Catalog() {
                 <p className="filtersTitle">Фильтр поиска</p>
                 <div className="filter filter-city">
                     <p className="filterCityText">Город</p>
-                    <Select companies={markers} cityClick={cityFilter}/>
+                    {/* <Select companies={markers} cityClick={cityFilter}/> */}
                 </div>
                 <div className="filter filter-type">
                     <p>Категория</p>
