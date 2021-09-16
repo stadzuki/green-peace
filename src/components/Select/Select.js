@@ -2,6 +2,9 @@ import React, { useEffect, useState } from 'react';
 
 import styles from './Select.module.scss'
 
+//Берем все города без повторений и пляшем от выбранного города
+// то есть берем все маркеры и делаем поиск по городам и сохраняем только те маркеры которые соответствую городу
+
 function Select({companies, cityClick}) {
     const [selectedCity, setSelectedCity] = useState('Выберите город')
     const [isSelectOpen, setIsSelectOpen] = useState(false)
@@ -9,26 +12,27 @@ function Select({companies, cityClick}) {
     const [isCompanyLoaded, setIsCompanyLoaded] = useState(false)
     
     useEffect(() => {
-        if(isCompanyLoaded) return;
+        if(isCompanyLoaded) return 1;
         sortCity();
     })
 
     function sortCity() {
         const cities = []
+        
         changedCompanies.forEach(item => {
             if(cities.find(e => e.city === item.city)) {
                 return 1;
             } 
             cities.push(item);
         })
+
         setChangedCompanies(cities);
-        if(changedCompanies.length > 0) {
-            setIsCompanyLoaded(true)
-        }
+        setIsCompanyLoaded(true)
     }
 
     const clickHandler = (company) => {
         setSelectedCity(company.city)
+        setIsSelectOpen(false)
         cityClick(company)
     }
 
@@ -54,7 +58,7 @@ function Select({companies, cityClick}) {
             <div className={`${isSelectOpen ? styles.visible : ''} ${styles.selectList}`}>
                 {changedCompanies.length > 0  ? <ul className={styles.citiesList}>
                     {changedCompanies.map((company, idx) => {
-                        return <li key={idx} className={styles.city} onClick={() => clickHandler(company)}>{company.city}</li>
+                        return <li key={idx} className={styles.city} onClick={() => clickHandler(companies, company.city, company.latitude, company.longitude)}>{company.city}</li>
                     })}
                 </ul>
                 : <p className={styles.cityEmpty}>Города отсутсвуют</p>}
