@@ -4,6 +4,7 @@ import { Link } from 'react-router-dom';
 import axios from 'axios';
 
 import Category from '../components/Category';
+import Toggle from '../components/Toggle/Toggle';
 import Select from '../components/Select/Select';
 import transcription from '../transcription';
 
@@ -11,10 +12,12 @@ const TOKEN = 'pk.eyJ1IjoibG9saWsyMCIsImEiOiJja3N6NDhlZ2oycGxnMndvZHVkbGV0MTZ1In
 const url = 'https://api.npoint.io/66155237175de1dd9dc7';
 
 let selectedCategory = [];
+let sorted = [];
 
 function Catalog() {
     const [isMarkersLoaded, setIsMarkersLoaded] = useState(false)
     const [markers, setMarkers] = useState([]);
+    const [isToggle, setIsToggle] = useState(true)
     const [markersCopy, setMarkersCopy] = useState([]);
     const [mapCoord, setMapCoord] = useState({
         latitude: 53.893009,
@@ -23,6 +26,22 @@ function Catalog() {
         bearing: 0,
         pitch: 0,
     });
+
+    const categories = [
+        {type: 'paper', img: '/img/category/paper.png'},
+        {type: 'glass', img: '/img/category/glass.png'},
+        {type: 'bottle', img: '/img/category/bottle.png'},
+        {type: 'tin', img: '/img/category/tin.png'},
+        {type: 'clothes', img: '/img/category/clothes.png'},
+        {type: 'gadget', img: '/img/category/gadget.png'},
+        {type: 'radioactive', img: '/img/category/radioactive.png'},
+        {type: 'battery', img: '/img/category/battery.png'},
+        {type: 'lamp', img: '/img/category/lamp.png'},
+        {type: 'technique', img: '/img/category/technique.png'},
+        {type: 'package', img: '/img/category/package.png'},
+        {type: 'beer', img: '/img/category/beer.png'},
+        {type: 'tires', img: '/img/category/tires.png'},
+    ]
 
     function removeDuplicates(arr) {
 
@@ -67,21 +86,6 @@ function Catalog() {
         return result;
     }
 
-    const categories = [
-        {type: 'paper', img: '/img/category/paper.png'},
-        {type: 'glass', img: '/img/category/glass.png'},
-        {type: 'bottle', img: '/img/category/bottle.png'},
-        {type: 'tin', img: '/img/category/tin.png'},
-        {type: 'clothes', img: '/img/category/clothes.png'},
-        {type: 'gadget', img: '/img/category/gadget.png'},
-        {type: 'radioactive', img: '/img/category/radioactive.png'},
-        {type: 'battery', img: '/img/category/battery.png'},
-        {type: 'lamp', img: '/img/category/lamp.png'},
-        {type: 'technique', img: '/img/category/technique.png'},
-        {type: 'package', img: '/img/category/package.png'},
-        {type: 'beer', img: '/img/category/beer.png'},
-        {type: 'tires', img: '/img/category/tires.png'},
-    ]
 
     const categoriesToString = (categories) => {
         let outStr = '';
@@ -135,31 +139,37 @@ function Catalog() {
 
         return outStr;
     }
-    //{/* onClick={() => onMarkerClick(marker.id)}*/}
-    const createMarker = (marker) => {
+    
+    const createMarker = (marker, id) => {
+        //{/* onClick={() => onMarkerClick(marker.id)}*/}
         return (
-          <Marker key={marker.id} longitude={+marker.longitude} latitude={+marker.latitude}>
+          <Marker key={id} longitude={+marker.longitude} latitude={+marker.latitude}>
             <img src="/img/map-marker.png" alt="marker" width="50" height="50"/> 
           </Marker>
         )
     }
 
-    const createCatalogItem = ({title, city, categoriesId}) => {
+    const createCatalogItem = ({id, title, city, categoriesId, imageUrl}) => {
         return (
-            <div className="catalogCompanyCard">
-                <p className="companyCardTitle">{title}
-                    <span className="companyCardCity"> {city}</span>
-                </p>
-                <p className="compnayTake">Мы принимаем:
-                    <span className="companyCardCategories"> {categoriesToString(categoriesId)}</span>
-                </p>
+            <div className="catalogCompanyCard" key={id}>
+                <div className="catalogImageWrapper">
+                    <img src={"data:image/jpeg;base64," + imageUrl} alt="company photo"/>
+                </div>
+                <div className="catalogCompanyContent">
+                    <p className="companyCardTitle">{title}
+                        <span className="companyCardCity"> {city}</span>
+                    </p>
+                    <p className="compnayTake">Мы принимаем:
+                        <span className="companyCardCategories"> {categoriesToString(categoriesId)}</span>
+                    </p>
+                </div>
             </div>
         )
     }
     
     const mapMarkers = React.useMemo(() => markers.map(
-        marker => (
-            createMarker(marker)
+        (marker, idx) => (
+            createMarker(marker, idx)
         )
     ), [markers]);
 
@@ -170,15 +180,16 @@ function Catalog() {
     ), [markers]);
 
     function getMarkers() {
-        axios.get(`${url}`)
         // axios.get(`${url}/api/Company/GetCompanies`)
+        axios.get(`https://api.npoint.io/66155237175de1dd9dc7`)
             .then((response) => {
                 setMarkers(response.data)
+                setMarkersCopy(response.data)
+                setIsMarkersLoaded(true)
             })
             .catch((error) => {
-            console.log(error);
+                console.log(error);
             })
-        setIsMarkersLoaded(true)
     }
 
     useEffect(() => {
@@ -186,26 +197,32 @@ function Catalog() {
         getMarkers()
     })
 
-    const appendCategory = (evt, typeCategory) => {
-        if(selectedCategory.includes(typeCategory)) {
-            selectedCategory = selectedCategory.filter(item => item !== typeCategory);
-
-            if(evt.target.tagName === 'IMG') {
-                evt.target.parentNode.classList.remove('selected');
-            } else {
-                evt.target.classList.remove('selected');
-            }
-            return 1;
-        }
-
+    const categoryAddStyle = (evt) => {
         if(evt.target.tagName === 'IMG') {
-            evt.target.parentNode.classList.add('selected');
+            evt.target.parentNode.classList.toggle('selected');
         } else {
-            evt.target.classList.add('selected');
+            evt.target.classList.toggle('selected');
         }
+    }
 
-        selectedCategory.push(typeCategory)
-    } 
+    const clearCategoriesFilter = () => {
+        const toggleElem = document.getElementById('toggle');
+        document.querySelectorAll('.category-item').forEach(item => item.classList.remove('selected'))
+
+        setMarkers(markersCopy)
+        sorted = []
+        selectedCategory = []
+
+        setIsToggle((prev) => {
+            if(prev) {
+                toggleElem.setAttribute("checked", "checked")
+            } else {
+                toggleElem.removeAttribute("checked")
+            }
+
+            return !prev
+        })
+    }
 
     const onCategoryClick = (evt, type) => {     
         let sortFrom;
@@ -251,76 +268,69 @@ function Catalog() {
                 sortFrom = 13;
                 break;
             default: 
-                sortFrom = 1;
+                sortFrom = 0;
                 break;
         }
 
-        // const categorySort = () => {
-        //     console.log(2);
-        //     let sorted = [...markers];
-        //     let newSort = [];
+        if(selectedCategory.includes(sortFrom)) {
+            selectedCategory = selectedCategory.filter(e => e !== sortFrom)
 
-        //     newSort = [...markersCopy]
-        //     // newSort.filter(m => m.categoriesId.includes(sortFrom))
-        //     newSort = [...sorted, ...newSort.filter(m => m.categoriesId.includes(sortFrom))]
-        //     sorted = [...newSort]
-        //     sorted = removeDuplicates(sorted)
-            
-        //     setMarkers(sorted)
-        // }
-
-        if(selectedCategory.includes(type)) {
-            console.log(1);//удаление из фильтра
-            // selectedCategory.filter(e => e !== type)
-            // let sorted = [...markers];
-            // for(let i = 0; i < selectedCategory.length; i++) {
-            //     const category = CategoryToNum(selectedCategory[i])
-            //     sorted.filter(c => c.categoriesId)
-            // }
-            if(selectedCategory.length === 1) {
-                setMarkers(markersCopy)
+            if(isToggle) {
+                let sort = [...markersCopy]
+                for(let i = 0; i < selectedCategory.length; i++) {
+                    sort = sort.filter(e => e.categoriesId.includes(selectedCategory[i]))
+                }
+                setMarkers(sort)
             } else {
-                setMarkers(prev => prev.filter(e => !e.categoriesId.includes(sortFrom)))
-            }
-            console.log(selectedCategory);
-        } else 
-        if(selectedCategory.length > 0) {
-            console.log(2);//добавление в филтр
-            let sorted = [...markers];
-            let newSort = [];
+                let sort = [...markers]
+                let newSort = [];
+                for(let i = 0; i < selectedCategory.length; i++) {
+                    sort = sort.filter(e => e.categoriesId.includes(selectedCategory[i]))
+                    newSort = removeDuplicates([...newSort, ...sort])
+                }
+                sorted = newSort;
+                setMarkers(newSort)
 
-            newSort = [...markersCopy]
-            // newSort.filter(m => m.categoriesId.includes(sortFrom))
-            newSort = [...sorted, ...newSort.filter(m => m.categoriesId.includes(sortFrom))]
-            sorted = [...newSort]
-            sorted = removeDuplicates(sorted)
+                if(selectedCategory.length <= 0) {
+                    sorted = []
+                }
+            }
             
-            setMarkers(sorted)
-        } else if(selectedCategory.length <= 0) {
-            console.log(3);
-            setMarkersCopy(markers)
-            setMarkers((prev) => prev.filter(m => m.categoriesId.includes(sortFrom)))
+        } else {
+            if(isToggle) {
+                setMarkers(prev => prev.filter(e => e.categoriesId.includes(sortFrom)))
+            } else {
+                let newSort = [...markersCopy]
+                newSort = newSort.filter(e => e.categoriesId.includes(sortFrom))
+
+                sorted = removeDuplicates([...sorted, ...newSort])
+
+                setMarkers(sorted)
+            }
+            
+            selectedCategory.push(sortFrom)
         }
 
-        appendCategory(evt, type);
-        console.log(selectedCategory);
+        categoryAddStyle(evt)
     }
 
-    const cityFilter = (company) => {
-        let sorted = [...markers];
-        let newSort = [];
+    // const cityFilter = (company, city, latitude, longitude) => {
+    //     console.log(company);
+    //     let sorted = [...markers];
+    //     let newSort = [];
 
-        newSort = [...markersCopy]
-        // newSort.filter(m => m.city === company.city)
-        newSort = [...sorted, ...newSort.filter(m => m.city === company.city)]
-        sorted = [...newSort]
-        sorted = removeDuplicates(sorted)
+    //     newSort = [...markersCopy]
+    //     newSort = [...sorted, ...newSort.filter(m => m.city === city)]
+    //     sorted = [...newSort]
+    //     sorted = removeDuplicates(sorted)
         
-        setMarkers(sorted)
-        setMapCoord((prev) => {
-            return {...prev, latitude: +company.latitude,  longitude: +company.longitude}
-        })
-    }
+    //     setMarkers(sorted)
+    //     setMarkersCopy(sorted)
+    //     console.log(sorted);
+    //     // setMapCoord((prev) => {
+    //     //     return {...prev, latitude: +latitude,  longitude: +longitude}
+    //     // })
+    // }
 
     return (
         <div className="catalogWrapper">
@@ -328,10 +338,10 @@ function Catalog() {
                 <p className="filtersTitle">Фильтр поиска</p>
                 <div className="filter filter-city">
                     <p className="filterCityText">Город</p>
-                    <Select companies={markers} cityClick={cityFilter}/>
+                    {isMarkersLoaded ? <Select companies={markers} setMap={setMapCoord} setMarkers={setMarkers} setCopy={setMarkersCopy}/> : ''}
                 </div>
                 <div className="filter filter-type">
-                    <p>Категория</p>
+                    <p>Категории</p>
                     <ul className="filterTypes">
                         {categories.map((category, idx) => {
                             return <Category 
@@ -343,6 +353,7 @@ function Catalog() {
                         })}
                     </ul>
                 </div>
+                <Toggle isToggle={isToggle} toggleClick={clearCategoriesFilter}/>
                 <Link to="/" className="toHome">На главную</Link>
             </div>
             <div className="catalogView">

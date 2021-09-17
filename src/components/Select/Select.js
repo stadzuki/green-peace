@@ -1,27 +1,46 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 
 import styles from './Select.module.scss'
 
-const cities2 = [
-    'Москва',
-    'Сочи',
-    'Минск',
-    'Гродно',
-    'Запарожье'
-]
+//Берем все города без повторений и пляшем от выбранного города
+// то есть берем все маркеры и делаем поиск по городам и сохраняем только те маркеры которые соответствую городу
 
-//Принимать название городов -> добавлять их в список li
-//Принимать функцию которая отвечает за назатие по выбранному городу
-
-//Принимаем company и отправляем этот объект в функцию, которая нам пришла
-
-function Select({companies, cityClick}) {
+function Select({companies, setMap, setMarkers, setCopy}) {
     const [selectedCity, setSelectedCity] = useState('Выберите город')
     const [isSelectOpen, setIsSelectOpen] = useState(false)
+    const [cities, setCities] = useState([])
+    const [isCompanyLoaded, setIsCompanyLoaded] = useState(false)
+    
+    useEffect(() => {
+        if(isCompanyLoaded) return 1;
+        sortCity();
+    })
 
-    const clickHandler = (company) => {
-        setSelectedCity(company.city)
-        cityClick(company)
+    function sortCity() {
+        const citiesArr = [...companies]
+        const catchCities = []
+        
+        citiesArr.forEach(item => {
+            if(catchCities.find(e => e === item.city)) {
+                return 1;
+            }
+            catchCities.push(item.city);
+        })
+        setCities(catchCities);
+        setIsCompanyLoaded(true)
+    }
+
+    const clickHandler = (city) => {
+        const company = [...companies.filter(c => c.city === city)]
+
+        setMap((prev) => {
+            return {...prev, latitude: +company[0].latitude,  longitude: +company[0].longitude}
+        })
+        setMarkers(company)
+        setCopy(company)
+
+        setSelectedCity(city)
+        setIsSelectOpen(false)
     }
 
     return (
@@ -44,13 +63,9 @@ function Select({companies, cityClick}) {
                 </svg>
             </div>
             <div className={`${isSelectOpen ? styles.visible : ''} ${styles.selectList}`}>
-                {companies.length > 0  ? <ul className={styles.citiesList}>
-                    {/* {cities2.map((city, idx) => {
-                        return <li key={idx} className={styles.city}>{city}</li>
-                    })}
-                    ВОТ ТАК НАДО СДЕЛАТЬ */}
-                    {companies.map((company, idx) => {
-                        return <li key={idx} className={styles.city} onClick={() => clickHandler(company)}>{company.city}</li>
+                {cities.length > 0  ? <ul className={styles.citiesList}>
+                    {cities.map((city, idx) => {
+                        return <li key={idx} className={styles.city} onClick={() => clickHandler(city)}>{city}</li>
                     })}
                 </ul>
                 : <p className={styles.cityEmpty}>Города отсутсвуют</p>}

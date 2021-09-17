@@ -177,7 +177,8 @@ function App() {
   };
 
   function getMarkers() {
-    axios.get(`${url}/api/Company/GetCompanies`)
+    // axios.get(`${url}/api/Company/GetCompanies`)
+    axios.get(`https://api.npoint.io/66155237175de1dd9dc7`)
       .then((response) => {
         setMarkers(response.data)
       })
@@ -189,7 +190,6 @@ function App() {
   }
 
   useEffect( async () => {
-    // getMarkers()
 
     if (token === "") {
       // setIsLoader(true)
