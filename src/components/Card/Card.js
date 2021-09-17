@@ -55,12 +55,6 @@ function Card() {
     //     {name: 'descriptionPlace', title: transcription[currentLang].inputsTitles.description, value: descriptionPlace, setter: setDescriptionPlace, placeholder: transcription[currentLang].inputsPlaceholders.description},
     // ]
 
-    const chooseCity = (company) => {
-        setMapCoord((prev) => {
-            return {...prev, latitude: +company.latitude,  longitude: +company.longitude}
-        })
-    }
-
     useEffect(() => {
         if(target) {
             // document.querySelectorAll('.category-item').forEach(item => item.classList.remove('selected'))
@@ -432,7 +426,7 @@ function Card() {
     return (
         <div className={`${styles.cardContainer} ${styles.categoryCard} ${target ? styles.scroll : ''}`}>
             <div className={styles.cardCategories}>
-                {!target && markers.length > 0 ? <Select companies={markers} cityClick={chooseCity}/> : ''}
+                {!target && markers.length > 0 ? <Select companies={markers} setMap={setMapCoord} setMarkers={setMarkers} setCopy={setMarkersCopy}/> : ''}
                 <p className={styles.categoriesTitle}>
                     {!target ? transcription[currentLang].cardCategoryTitle : transcription[currentLang].createCompanyTitle}
                 </p>

@@ -190,7 +190,6 @@ function App() {
   }
 
   useEffect( async () => {
-    // getMarkers()
 
     if (token === "") {
       // setIsLoader(true)

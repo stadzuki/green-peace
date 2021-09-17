@@ -185,11 +185,11 @@ function Catalog() {
             .then((response) => {
                 setMarkers(response.data)
                 setMarkersCopy(response.data)
+                setIsMarkersLoaded(true)
             })
             .catch((error) => {
-            console.log(error);
+                console.log(error);
             })
-        setIsMarkersLoaded(true)
     }
 
     useEffect(() => {
@@ -314,23 +314,23 @@ function Catalog() {
         categoryAddStyle(evt)
     }
 
-    const cityFilter = (company, city, latitude, longitude) => {
-        console.log(company);
-        let sorted = [...markers];
-        let newSort = [];
+    // const cityFilter = (company, city, latitude, longitude) => {
+    //     console.log(company);
+    //     let sorted = [...markers];
+    //     let newSort = [];
 
-        newSort = [...markersCopy]
-        newSort = [...sorted, ...newSort.filter(m => m.city === city)]
-        sorted = [...newSort]
-        sorted = removeDuplicates(sorted)
+    //     newSort = [...markersCopy]
+    //     newSort = [...sorted, ...newSort.filter(m => m.city === city)]
+    //     sorted = [...newSort]
+    //     sorted = removeDuplicates(sorted)
         
-        setMarkers(sorted)
-        setMarkersCopy(sorted)
-        console.log(sorted);
-        // setMapCoord((prev) => {
-        //     return {...prev, latitude: +latitude,  longitude: +longitude}
-        // })
-    }
+    //     setMarkers(sorted)
+    //     setMarkersCopy(sorted)
+    //     console.log(sorted);
+    //     // setMapCoord((prev) => {
+    //     //     return {...prev, latitude: +latitude,  longitude: +longitude}
+    //     // })
+    // }
 
     return (
         <div className="catalogWrapper">
@@ -338,7 +338,7 @@ function Catalog() {
                 <p className="filtersTitle">Фильтр поиска</p>
                 <div className="filter filter-city">
                     <p className="filterCityText">Город</p>
-                    {markers.length > 0 ? <Select companies={markers} cityClick={cityFilter}/> : ''}
+                    {isMarkersLoaded ? <Select companies={markers} setMap={setMapCoord} setMarkers={setMarkers} setCopy={setMarkersCopy}/> : ''}
                 </div>
                 <div className="filter filter-type">
                     <p>Категории</p>
