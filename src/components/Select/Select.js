@@ -4,7 +4,7 @@ import styles from './Select.module.scss'
 
 //Берем все города без повторений и пляшем от выбранного города
 // то есть берем все маркеры и делаем поиск по городам и сохраняем только те маркеры которые соответствую городу
-
+let copyMarkers = [];
 function Select({companies, setMap, setMarkers, setCopy}) {
     const [selectedCity, setSelectedCity] = useState('Выберите город')
     const [isSelectOpen, setIsSelectOpen] = useState(false)
@@ -18,21 +18,24 @@ function Select({companies, setMap, setMarkers, setCopy}) {
 
     function sortCity() {
         const citiesArr = [...companies]
+        copyMarkers = [...companies]
         const catchCities = []
         
         citiesArr.forEach(item => {
-            if(catchCities.find(e => e === item.city)) {
+            if(catchCities.find(e => e.toLowerCase() === item.city.toLowerCase())) {
                 return 1;
             }
             catchCities.push(item.city);
         })
+        
         setCities(catchCities);
         setIsCompanyLoaded(true)
     }
 
     const clickHandler = (city) => {
-        const company = [...companies.filter(c => c.city === city)]
-
+        console.log(copyMarkers);
+        const company = [...copyMarkers.filter(c => c.city === city)]
+        
         setMap((prev) => {
             return {...prev, latitude: +company[0].latitude,  longitude: +company[0].longitude}
         })
