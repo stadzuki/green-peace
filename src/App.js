@@ -16,36 +16,11 @@ import categories from "./components/shared/categories";
 import typeCategories from "./components/shared/typeCategories";
 
 import Pin from "./components/Pin";
+import getCategory from "./utils/getCategory";
 
 const TOKEN = 'pk.eyJ1IjoibG9saWsyMCIsImEiOiJja3N6NDhlZ2oycGxnMndvZHVkbGV0MTZ1In0.JkdOOOgJTsu1Sl2qO-5VAA';
 
 const url = 'https://648c-188-119-45-172.ngrok.io'
-
-
-// const data1 = {
-//   datasets: [
-//     {
-//       data: [12, 19, 3, 5, 2, 3],
-//       backgroundColor: [
-//         'rgba(255, 99, 132, 0.2)',
-//         'rgba(54, 162, 235, 0.2)',
-//         'rgba(255, 206, 86, 0.2)',
-//         'rgba(75, 192, 192, 0.2)',
-//         'rgba(153, 102, 255, 0.2)',
-//         'rgba(255, 159, 64, 0.2)',
-//       ],
-//       borderColor: [
-//         'rgba(255, 99, 132, 1)',
-//         'rgba(54, 162, 235, 1)',
-//         'rgba(255, 206, 86, 1)',
-//         'rgba(75, 192, 192, 1)',
-//         'rgba(153, 102, 255, 1)',
-//         'rgba(255, 159, 64, 1)',
-//       ],
-//       borderWidth: 1,
-//     },
-//   ],
-// };
 
 function App() {
 
@@ -86,11 +61,13 @@ function App() {
   const [currentPos, setCurrentPos] = useState({})
 
   //Marker
+  const [readonlyMarkers, setReadonlyMarkers] = useState([])
   const [isMarkersLoaded, setIsMarkersLoaded] = useState(false);
   const [isMarkerCreate, setIsMarkerCreate] = useState(false)
   const [target, setTarget] = useState(false);
   const [markers, setMarkers] = useState([]);
   const [newMarker, setNewMarker] = useState({})
+  const [markersCopy, setMarkersCopy] = useState([]);
 
   //Company
   const [isCompanySelected, setIsCompanySelected] = useState(false)
@@ -106,39 +83,89 @@ function App() {
   }
 
   const createMarker = (marker) => {
+    const colors = [];
+
+    for(let category of marker.categoriesId) {
+      colors.push(getCategory(+category).color)
+    }
+
     return (
-      <Marker key={marker.id} longitude={+marker.longitude} latitude={+marker.latitude}>
-        {/* <Pin count={2} color={['red', 'black']} /> */}
-        {/* <div className={`markerMetaWrapper ${isMetaVisible ? 'visible' : ''}`}>
-          <p>{marker.title}</p>
-          <ul className="metaCategoriesWrapper">
-            {marker.categoriesId.map((item, idx) => {
-              const categoryMeta = typeCategories(item)
-              let target;
-              categories.forEach(item => {
-                if(categoryMeta === item.type) {
-                  target = item;
-                }
-              })
-              return (
-                <li className={`category-item ${target.type}-meta`}>
-                    <img src={target.img}
-                    width="70"
-                    height="70"
-                    alt={`${target.type} category`} 
-                /></li>onMouseEnter={() => {setIsMetaVisible(true); console.log(1)}}
-                onMouseLeave={() => setIsMetaVisible(false)}
-              )
-            })}
-          </ul>
-        </div> */}
-        <img 
-          src="/img/map-marker.png"
-          alt="marker"
-          width="50"
-          height="50"
-          onClick={() => onMarkerClick(marker.id)}
-        />
+      <Marker 
+        key={marker.id} 
+        longitude={+marker.longitude} 
+        latitude={+marker.latitude} 
+        onClick={() => onMarkerClick(marker.id)}
+        onMouseOver={() => console.log(1)}
+      >
+        <div className='markerContainer'
+          onMouseOver={(e) => {
+            let parent;
+
+            if(e.target.tagName.toUpperCase() === 'CIRCLE') {
+              parent = e.target.parentNode.parentNode
+            } else if(e.target.tagName.toUpperCase() === 'SVG') {
+              parent = e.target.parentNode
+            } else if(e.target.tagName.toUpperCase() === 'ING') {
+              parent = e.target.parentNode.parentNode
+            } else {
+              parent = document.body;
+            }
+            
+            parent.querySelector('.markerMetaWrapper').classList.add('visible');
+          }}
+          onMouseOut={(e) => {
+            let parent;
+
+            if(e.target.tagName.toUpperCase() === 'CIRCLE') {
+              parent = e.target.parentNode.parentNode
+            } else if(e.target.tagName.toUpperCase() === 'SVG') {
+              parent = e.target.parentNode
+            } else if(e.target.tagName.toUpperCase() === 'ING') {
+              parent = e.target.parentNode.parentNode
+            } else {
+              parent = document.body;
+            }
+            
+            parent.querySelector('.markerMetaWrapper').classList.remove('visible');
+          }}
+        >
+          <Pin count={[...marker.categoriesId]} color={[...colors]} />
+          <div className={`markerMetaWrapper`}>
+            <p style={{whiteSpace: 'nowrap'}}>{marker.title}</p>
+            <ul className="metaCategoriesWrapper">
+              {marker.categoriesId.map((item, idx) => {
+                const categoryMeta = typeCategories(item)
+                let target;
+                categories.forEach(item => {
+                  if(categoryMeta === item.type) {
+                    target = item;
+                  }
+                })
+                return (
+                  <li 
+                    className={`category-item ${target.type}-meta category-item-meta`}
+                    style={{
+                      backgroundColor: getCategory(+item).color
+                    }}
+                  >
+                      <img src={target.img}
+                        width="15"
+                        height="15"
+                        alt={`${target.type} category`} 
+                      />
+                  </li>
+                )
+              })}
+            </ul>
+          </div>
+          <img 
+            src="/img/map-marker.png"
+            alt="marker"
+            style={{position: 'relative'}}
+            width="65"
+            height="65"
+          />
+        </div>
       </Marker>
     )
   }
@@ -152,6 +179,8 @@ function App() {
   const createMarkerHanlder = () => {
     // if(isAuthorize) {
       setTarget(true);
+      document.querySelectorAll('.category-item').forEach(item => item.classList.remove('selected'));
+      setMarkers(markersCopy)
     // } else {
     //   alert('Вы не авторизованы!')
     // }
@@ -181,6 +210,8 @@ function App() {
     axios.get(`https://api.npoint.io/66155237175de1dd9dc7`)
       .then((response) => {
         setMarkers(response.data)
+        setMarkersCopy(response.data)
+        setReadonlyMarkers(response.data)
       })
       .catch((error) => {
         console.log(error);
@@ -251,12 +282,6 @@ function App() {
     }
   }
 
-  // var MyComponent = React.createClass({
-  //   render: function() {
-  //     return <Doughbut data={chartData} options={chartOptions}/>
-  //   }
-  // });
-
   return (
     <AppContext.Provider
       value={{
@@ -274,12 +299,13 @@ function App() {
         newMarker,
         currentLang,
         setCurrentLang,
-        setMapCoord
+        setMapCoord,
+        markersCopy,
+        setMarkersCopy,
+        readonlyMarkers
       }}
     >
       <div className="App">
-        {/* <Doughnut data={data1} /> */}
-        {/* <Pin count={2} color={['red', 'black']} /> */}
         {isLoader ? <Loader /> : ""}
         <Login method={loginMethod} onClose={() => setLoginMethod("")} />
         
@@ -297,6 +323,7 @@ function App() {
           onViewportChange={setMapCoord}
           mapboxApiAccessToken={TOKEN}
           onClick={mapClickHandler}
+          // onViewStateChange={(e) => console.log(e)}
         >
           {mapMarkers}
         </MapGL>

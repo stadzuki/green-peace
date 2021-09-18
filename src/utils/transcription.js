@@ -42,7 +42,12 @@ const lang = {
         // /catalog
         filterTitle: 'Фільтр пошуку',
         filterCity: 'Місто',
-        filterCategory: 'Категорії'
+        filterCategory: 'Категорії',
+        // select
+        selectPlaceholder: 'Виберіть місто',
+        selectCitiesEmpty: 'Міста відсутні',
+        //toggle
+        toggleTitle: 'Показати пункти, які приймають відразу все вбрання'
     },
     ru: {
         //Header btn
@@ -87,7 +92,12 @@ const lang = {
         // /catalog
         filterTitle: 'Фильтр поиска',
         filterCity: 'Город',
-        filterCategory: 'Категории'
+        filterCategory: 'Категории',
+        // select
+        selectPlaceholder: 'Выберите город',
+        selectCitiesEmpty: 'Города отсутствуют',
+        //toggle
+        toggleTitle: 'Показать пункты, которые принимают сразу всё выбранное'
     },
     en: {
         //Header btn
@@ -132,7 +142,12 @@ const lang = {
         // /catalog
         filterTitle: 'Search filters',
         filterCity: 'City',
-        filterCategory: 'Categories'
+        filterCategory: 'Categories',
+        // select
+        selectPlaceholder: 'Select city',
+        selectCitiesEmpty: 'No cities',
+        //toggle
+        toggleTitle: 'Show items that accept all selections at once'
     }
 }
 

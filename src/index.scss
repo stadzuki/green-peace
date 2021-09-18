@@ -630,6 +630,24 @@ header {
 
 .markerMetaWrapper {
   display: none;
+  position: absolute;
+  max-width: 400px;
+  max-height: 110px;
+  width: auto;
+  background-color: #fff;
+  top: -190%;
+  border-radius: 5px;
+  padding: 20px;
+
+  &::after {
+    content: ''; 
+    position: absolute;
+    left: 9%;
+    bottom: -25px;
+    border: 15px solid transparent;
+    border-top: 15px solid #fff; 
+    border-radius: 5px;
+  }
 }
 
 .visible {
@@ -637,5 +655,8 @@ header {
 }
 
 .metaCategoriesWrapper {
-  position: absolute;
+  display: flex;
+  max-width: 400px;
+  max-height: 110px;
+  overflow: hidden;
 }

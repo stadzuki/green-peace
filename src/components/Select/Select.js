@@ -1,24 +1,27 @@
 import React, { useEffect, useState } from 'react';
 
+import transcription from '../../utils/transcription'
 import styles from './Select.module.scss'
 
 //Берем все города без повторений и пляшем от выбранного города
 // то есть берем все маркеры и делаем поиск по городам и сохраняем только те маркеры которые соответствую городу
 let copyMarkers = [];
-function Select({companies, setMap, setMarkers, setCopy}) {
-    const [selectedCity, setSelectedCity] = useState('Выберите город')
+function Select({setMap, setMarkers, setCopy, readonlyMarkers, lang}) {
+    const [selectedCity, setSelectedCity] = useState('')
     const [isSelectOpen, setIsSelectOpen] = useState(false)
     const [cities, setCities] = useState([])
     const [isCompanyLoaded, setIsCompanyLoaded] = useState(false)
     
     useEffect(() => {
         if(isCompanyLoaded) return 1;
-        sortCity();
+        if(readonlyMarkers.length > 0) {
+            sortCity();
+        }
     })
 
     function sortCity() {
-        const citiesArr = [...companies]
-        copyMarkers = [...companies]
+        const citiesArr = [...readonlyMarkers]
+        copyMarkers = [...readonlyMarkers]
         const catchCities = []
         
         citiesArr.forEach(item => {
@@ -33,7 +36,6 @@ function Select({companies, setMap, setMarkers, setCopy}) {
     }
 
     const clickHandler = (city) => {
-        console.log(copyMarkers);
         const company = [...copyMarkers.filter(c => c.city === city)]
         
         setMap((prev) => {
@@ -49,7 +51,7 @@ function Select({companies, setMap, setMarkers, setCopy}) {
     return (
         <div className={styles.selectWrapper}>
             <div className={styles.selectionTitle} onClick={() => setIsSelectOpen((prev) => !prev)}>
-                <p className={styles.outputSelection}>{selectedCity}</p>
+                <p className={styles.outputSelection}>{selectedCity === '' ? transcription[lang].selectPlaceholder : selectedCity}</p>
                 <svg className={isSelectOpen ? styles.rotateArrow : ''}
                     xmlns="http://www.w3.org/2000/svg"
                     width="15"
@@ -71,7 +73,7 @@ function Select({companies, setMap, setMarkers, setCopy}) {
                         return <li key={idx} className={styles.city} onClick={() => clickHandler(city)}>{city}</li>
                     })}
                 </ul>
-                : <p className={styles.cityEmpty}>Города отсутсвуют</p>}
+                : <p className={styles.cityEmpty}>{transcription[lang].selectCitiesEmpty}</p>}
             </div>
         </div>
     )

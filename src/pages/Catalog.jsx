@@ -6,7 +6,8 @@ import axios from 'axios';
 import Category from '../components/Category';
 import Toggle from '../components/Toggle/Toggle';
 import Select from '../components/Select/Select';
-import transcription from '../transcription';
+import transcription from '../utils/transcription';
+import removeDuplicates from '../utils/removeDuplicates';
 
 const TOKEN = 'pk.eyJ1IjoibG9saWsyMCIsImEiOiJja3N6NDhlZ2oycGxnMndvZHVkbGV0MTZ1In0.JkdOOOgJTsu1Sl2qO-5VAA';
 const url = 'https://api.npoint.io/66155237175de1dd9dc7';
@@ -14,8 +15,11 @@ const url = 'https://api.npoint.io/66155237175de1dd9dc7';
 let selectedCategory = [];
 let sorted = [];
 
+const currentLang = 'ru'
+
 function Catalog() {
     const [isMarkersLoaded, setIsMarkersLoaded] = useState(false)
+    const [readonlyMarkers, setReadonlyMarkers] = useState([]);
     const [markers, setMarkers] = useState([]);
     const [isToggle, setIsToggle] = useState(true)
     const [markersCopy, setMarkersCopy] = useState([]);
@@ -42,49 +46,6 @@ function Catalog() {
         {type: 'beer', img: '/img/category/beer.png'},
         {type: 'tires', img: '/img/category/tires.png'},
     ]
-
-    function removeDuplicates(arr) {
-
-        const result = [];
-        const duplicatesIndices = [];
-    
-        // Перебираем каждый элемент в исходном массиве
-        arr.forEach((current, index) => {
-        
-            if (duplicatesIndices.includes(index)) return;
-        
-            result.push(current);
-        
-            // Сравниваем каждый элемент в массиве после текущего
-            for (let comparisonIndex = index + 1; comparisonIndex < arr.length; comparisonIndex++) {
-            
-                const comparison = arr[comparisonIndex];
-                const currentKeys = Object.keys(current);
-                const comparisonKeys = Object.keys(comparison);
-                
-                // Проверяем длину массивов
-                if (currentKeys.length !== comparisonKeys.length) continue;
-                
-                // Проверяем значение ключей
-                const currentKeysString = currentKeys.sort().join("").toLowerCase();
-                const comparisonKeysString = comparisonKeys.sort().join("").toLowerCase();
-                if (currentKeysString !== comparisonKeysString) continue;
-                
-                // Проверяем индексы ключей
-                let valuesEqual = true;
-                for (let i = 0; i < currentKeys.length; i++) {
-                    const key = currentKeys[i];
-                    if ( current[key] !== comparison[key] ) {
-                        valuesEqual = false;
-                        break;
-                    }
-                }
-                if (valuesEqual) duplicatesIndices.push(comparisonIndex);
-                
-            } // Конец цикла
-        });  
-        return result;
-    }
 
 
     const categoriesToString = (categories) => {
@@ -185,6 +146,7 @@ function Catalog() {
             .then((response) => {
                 setMarkers(response.data)
                 setMarkersCopy(response.data)
+                setReadonlyMarkers(response.data)
                 setIsMarkersLoaded(true)
             })
             .catch((error) => {
@@ -196,14 +158,6 @@ function Catalog() {
         if(isMarkersLoaded) return 1;
         getMarkers()
     })
-
-    const categoryAddStyle = (evt) => {
-        if(evt.target.tagName === 'IMG') {
-            evt.target.parentNode.classList.toggle('selected');
-        } else {
-            evt.target.classList.toggle('selected');
-        }
-    }
 
     const clearCategoriesFilter = () => {
         const toggleElem = document.getElementById('toggle');
@@ -222,6 +176,14 @@ function Catalog() {
 
             return !prev
         })
+    }
+
+    const categoryAddStyle = (evt) => {
+        if(evt.target.tagName === 'IMG') {
+            evt.target.parentNode.classList.toggle('selected');
+        } else {
+            evt.target.classList.toggle('selected');
+        }
     }
 
     const onCategoryClick = (evt, type) => {     
@@ -314,31 +276,13 @@ function Catalog() {
         categoryAddStyle(evt)
     }
 
-    // const cityFilter = (company, city, latitude, longitude) => {
-    //     console.log(company);
-    //     let sorted = [...markers];
-    //     let newSort = [];
-
-    //     newSort = [...markersCopy]
-    //     newSort = [...sorted, ...newSort.filter(m => m.city === city)]
-    //     sorted = [...newSort]
-    //     sorted = removeDuplicates(sorted)
-        
-    //     setMarkers(sorted)
-    //     setMarkersCopy(sorted)
-    //     console.log(sorted);
-    //     // setMapCoord((prev) => {
-    //     //     return {...prev, latitude: +latitude,  longitude: +longitude}
-    //     // })
-    // }
-
     return (
         <div className="catalogWrapper">
             <div className="filters">
                 <p className="filtersTitle">Фильтр поиска</p>
                 <div className="filter filter-city">
                     <p className="filterCityText">Город</p>
-                    {isMarkersLoaded ? <Select companies={markers} setMap={setMapCoord} setMarkers={setMarkers} setCopy={setMarkersCopy}/> : ''}
+                    {isMarkersLoaded ? <Select lang={currentLang} readonlyMarkers={readonlyMarkers} setMap={setMapCoord} setMarkers={setMarkers} setCopy={setMarkersCopy}/> : ''}
                 </div>
                 <div className="filter filter-type">
                     <p>Категории</p>
@@ -353,7 +297,7 @@ function Catalog() {
                         })}
                     </ul>
                 </div>
-                <Toggle isToggle={isToggle} toggleClick={clearCategoriesFilter}/>
+                <Toggle lang={currentLang} isToggle={isToggle} toggleClick={clearCategoriesFilter}/>
                 <Link to="/" className="toHome">На главную</Link>
             </div>
             <div className="catalogView">

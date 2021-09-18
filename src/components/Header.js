@@ -1,7 +1,7 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import AppContext from '../context';
-import transcription from '../transcription';
+import transcription from '../utils/transcription';
 
 function Header({user}) {
     const {setLoginMethod, isAuthorize, currentLang, setCurrentLang} = React.useContext(AppContext)

@@ -1,9 +1,10 @@
 import React from 'react';
 
 import styles from './CardCompany.module.scss'
-import transcription from '../../transcription';
+import transcription from '../../utils/transcription';
 
 function CardCompany({company, userPos, onClose}) {
+    //???
     const categoriesToString = () => {
         let outStr = '';
         for(let category of company.categoriesId) {

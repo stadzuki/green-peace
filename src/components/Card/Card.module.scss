@@ -3,7 +3,6 @@
     margin: 0 auto;
 }
 
-
 .categoryCard {
     vertical-align: top;
     display: inline-block;
@@ -14,141 +13,6 @@
     max-height: 580px;
     overflow: hidden;
     margin-right: 10px;
-}
-
-form {
-    margin-top: 25px;
-
-    p {
-        font-weight: 500;
-        color: #1C1D22;
-        line-height: 16px;
-        display: flex;
-        flex-direction: column;
-        font-weight: 600;
-        
-        span {
-            padding-left: 15px;
-        }
-
-        input {
-            margin-top: 6px;
-            padding: 18px 0px 18px 14px;
-            background: #E8E8E8;
-            border-radius: 4px;
-            margin-bottom: 15px;
-            border: none;
-
-            &:focus {
-                outline: none;
-                border: 0.5px solid #1877F2;
-                color: #5B5B5B;
-            }
-
-            &::placeholder {
-                font-size: 14px;
-                line-height: 16px;
-                color: #5B5B5B;
-            }
-        }
-
-        textarea {
-            margin-top: 5px;
-            padding: 18px 0px 18px 14px;
-            background: #E8E8E8;
-            border-radius: 4px;
-            height: 125px;
-            resize: none;
-            border: none;
-
-            &:focus {
-                outline: none;
-                border: 0.5px solid #1877F2;
-                color: #5B5B5B;
-            }
-
-            &::placeholder {
-                font-size: 14px;
-                font-family: 'Open Sans', sans-serif;
-                line-height: 16px;
-                color: #5B5B5B;
-            }
-        }
-
-        .workTimeTitle {
-            text-align: center;
-        }
-
-        .workTime {
-            font-weight: normal;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-
-            span {
-                padding: 0;
-                padding-right: 10px;
-                color: #555;
-                margin-bottom: 9px;
-                font-weight: 600;
-            }
-
-            .workTimeInput {
-                max-width: 100px;
-                margin-right: 10px;
-                text-align: center;
-                padding: 18px 0;
-
-            }
-        }
-    }
-
-    button {
-        width: 100%;
-        background: #2ECC6E;
-        border-radius: 5px;
-        border: none;
-        font-weight: 600;
-        color: #FFFFFF;
-        padding: 16px 0px;
-        margin-top: 10px;
-        text-transform: uppercase;
-        cursor: pointer;
-    }
-
-    .pointOnMap {
-        font-size: 12px;
-        font-weight: 600;
-        margin-bottom: 15px;
-        margin-top: 0;
-    }
-
-    .fileUpload {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        background-color: #e8e8e8;
-        border-radius: 5px;
-        padding: 15px 20px;
-
-        .fileUploadTitle {
-            font-weight: normal;
-            color: #5c5c5c;
-        }
-
-        .fileUploadCancel {
-            border-radius: 5px;
-            background-color: #d2d0d0;
-            padding: 10px;
-            color: #5c5c5c;
-            cursor: pointer;
-
-            &:hover {
-                background-color: #2F75FB;
-                color: #fff;
-            }
-        }
-    }
 }
 
 .selectList {
@@ -192,13 +56,6 @@ form {
 .cardCategories {
     .categoriesTitle {
         color: #313131;
-    }
-
-    .compayClose {
-        cursor: pointer;
-        position: absolute;
-        right: 20px;
-        top: 12px;
     }
 
     .categoriesList {
@@ -260,6 +117,7 @@ form {
 
 
 
-.scroll {
+.editContainer {
     overflow-y: scroll;
+    max-width: 480px;
 }

@@ -1,5 +1,5 @@
 import React from 'react';
-import transcription from '../transcription'
+import transcription from '../utils/transcription'
 
 function MarkerCreator({changeTarget, currentLang}) {
     return (
