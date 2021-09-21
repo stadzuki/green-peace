@@ -104,6 +104,55 @@ form {
                 }
             }
         }
+        
+        .schedule {
+            margin: 0 0 10px 0;
+
+            .scheduleBtn {
+                text-align: center;
+                background-color: #2F75FB;
+                color: #fff;
+                padding: 15px 0;
+                border-radius: 5px;
+                cursor: pointer;
+            }
+
+            .scheduleOpened { 
+                background-color: #F1F5FD;
+                color: #686c73;
+            }
+
+            .scheduleContent {
+                margin-top: 10px;
+
+                .scheduleItem {
+                    display: flex;
+                    justify-content: space-between;
+
+                    .scheduleTitle {
+                        display: flex;
+                        align-items: center;
+                        justify-content: space-between;
+                        width: 50%;
+    
+                        p {
+                            margin-right: 15px;
+                        }
+                    }
+    
+                    .scheduleFields {
+                        
+                        input {
+                            max-width: 80px;
+                            text-align: center;
+                            padding: 20px;
+
+                            
+                        }
+                    }
+                }
+            }
+        }
     }
 
     button {

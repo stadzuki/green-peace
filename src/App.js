@@ -66,7 +66,7 @@ function App() {
   const [isMarkerCreate, setIsMarkerCreate] = useState(false)
   const [target, setTarget] = useState(false);
   const [markers, setMarkers] = useState([]);
-  const [newMarker, setNewMarker] = useState({})
+  const [newMarker, setNewMarker] = useState(false)
   const [markersCopy, setMarkersCopy] = useState([]);
 
   //Company
@@ -85,8 +85,10 @@ function App() {
   const createMarker = (marker) => {
     const colors = [];
 
-    for(let category of marker.categoriesId) {
-      colors.push(getCategory(+category).color)
+    if(isMarkerCreate !== 'INIT') {
+      for(let category of marker.categoriesId) {
+        colors.push(getCategory(+category).color)
+      }
     }
 
     return (
@@ -95,77 +97,86 @@ function App() {
         longitude={+marker.longitude} 
         latitude={+marker.latitude} 
         onClick={() => onMarkerClick(marker.id)}
-        onMouseOver={() => console.log(1)}
       >
-        <div className='markerContainer'
-          onMouseOver={(e) => {
-            let parent;
+        {isMarkerCreate !== 'INIT' 
+          ? <div className='markerContainer'
+            onMouseOver={(e) => {
+              let parent;
 
-            if(e.target.tagName.toUpperCase() === 'CIRCLE') {
-              parent = e.target.parentNode.parentNode
-            } else if(e.target.tagName.toUpperCase() === 'SVG') {
-              parent = e.target.parentNode
-            } else if(e.target.tagName.toUpperCase() === 'ING') {
-              parent = e.target.parentNode.parentNode
-            } else {
-              parent = document.body;
-            }
-            
-            parent.querySelector('.markerMetaWrapper').classList.add('visible');
-          }}
-          onMouseOut={(e) => {
-            let parent;
+              if(e.target.tagName.toUpperCase() === 'CIRCLE') {
+                parent = e.target.parentNode.parentNode
+              } else if(e.target.tagName.toUpperCase() === 'SVG') {
+                parent = e.target.parentNode
+              } else if(e.target.tagName.toUpperCase() === 'ING') {
+                parent = e.target.parentNode.parentNode
+              } else {
+                parent = document.body;
+              }
+              
+              parent.querySelector('.markerMetaWrapper').classList.add('visible');
+            }}
+            onMouseOut={(e) => {
+              let parent;
 
-            if(e.target.tagName.toUpperCase() === 'CIRCLE') {
-              parent = e.target.parentNode.parentNode
-            } else if(e.target.tagName.toUpperCase() === 'SVG') {
-              parent = e.target.parentNode
-            } else if(e.target.tagName.toUpperCase() === 'ING') {
-              parent = e.target.parentNode.parentNode
-            } else {
-              parent = document.body;
-            }
-            
-            parent.querySelector('.markerMetaWrapper').classList.remove('visible');
-          }}
-        >
-          <Pin count={[...marker.categoriesId]} color={[...colors]} />
-          <div className={`markerMetaWrapper`}>
-            <p style={{whiteSpace: 'nowrap'}}>{marker.title}</p>
-            <ul className="metaCategoriesWrapper">
-              {marker.categoriesId.map((item, idx) => {
-                const categoryMeta = typeCategories(item)
-                let target;
-                categories.forEach(item => {
-                  if(categoryMeta === item.type) {
-                    target = item;
-                  }
-                })
-                return (
-                  <li 
-                    className={`category-item ${target.type}-meta category-item-meta`}
-                    style={{
-                      backgroundColor: getCategory(+item).color
-                    }}
-                  >
-                      <img src={target.img}
-                        width="15"
-                        height="15"
-                        alt={`${target.type} category`} 
-                      />
-                  </li>
-                )
-              })}
-            </ul>
+              if(e.target.tagName.toUpperCase() === 'CIRCLE') {
+                parent = e.target.parentNode.parentNode
+              } else if(e.target.tagName.toUpperCase() === 'SVG') {
+                parent = e.target.parentNode
+              } else if(e.target.tagName.toUpperCase() === 'ING') {
+                parent = e.target.parentNode.parentNode
+              } else {
+                parent = document.body;
+              }
+              
+              parent.querySelector('.markerMetaWrapper').classList.remove('visible');
+            }}
+          >
+            <Pin count={[...marker.categoriesId]} color={[...colors]} />
+            <div className={`markerMetaWrapper`}>
+              <p style={{whiteSpace: 'nowrap'}}>{marker.title}</p>
+              <ul className="metaCategoriesWrapper">
+                {marker.categoriesId.map((item, idx) => {
+                  const categoryMeta = typeCategories(item)
+                  let target;
+                  categories.forEach(item => {
+                    if(categoryMeta === item.type) {
+                      target = item;
+                    }
+                  })
+                  return (
+                    <li 
+                      className={`category-item ${target.type}-meta category-item-meta`}
+                      style={{
+                        backgroundColor: getCategory(+item).color
+                      }}
+                    >
+                        <img src={target.img}
+                          width="15"
+                          height="15"
+                          alt={`${target.type} category`} 
+                        />
+                    </li>
+                  )
+                })}
+              </ul>
+            </div>
+            <img 
+              src="/img/map-marker.png"
+              alt="marker"
+              style={{position: 'relative'}}
+              width="65"
+              height="65"
+            />
           </div>
-          <img 
+          : <img 
             src="/img/map-marker.png"
             alt="marker"
             style={{position: 'relative'}}
-            width="65"
-            height="65"
+            width="45"
+            height="45"
           />
-        </div>
+        }
+        
       </Marker>
     )
   }
@@ -276,9 +287,9 @@ function App() {
 
   const mapClickHandler = (e) => {
     if(isMarkerCreate === true) {
+      setIsMarkerCreate('INIT')
       setNewMarker({id: 0, latitude: e.lngLat[1], longitude: e.lngLat[0]})
       setMarkers((prev) => [...prev, {id: 0, latitude: e.lngLat[1], longitude: e.lngLat[0]}])
-      setIsMarkerCreate('INIT')
     }
   }
 
@@ -297,6 +308,7 @@ function App() {
         isMarkerCreate,
         setIsMarkerCreate,  
         newMarker,
+        setNewMarker,
         currentLang,
         setCurrentLang,
         setMapCoord,

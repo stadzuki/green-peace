@@ -2,13 +2,13 @@ import React, { useState } from 'react';
 import AppContext from '../../context';
 import axios from 'axios';
 import Toggle from '../Toggle/Toggle';
-
+import removeDublicates from '../../utils/removeDuplicates'
 import transcription from '../../utils/transcription';
 import styles from './CreateCard.module.scss';
 
 const url = 'https://648c-188-119-45-172.ngrok.io'
 
-const timeRegex = /^[0-9]{0,1}[0-9]?\:[0-9]{2}$/
+const timeRegex = /^[0-9]{2}[0-9]?\:[0-9]{2}$/
 const phoneRegex = /^\+[0-9]+$/
 
 function CreateCard({category, setCategory}) {
@@ -17,20 +17,69 @@ function CreateCard({category, setCategory}) {
     const [namePlace, setNamePlace] = useState('')
     const [timeWorkStart, setTimeWorkStart] = useState('')
     const [timeWorkFinish, setTimeWorkFinish] = useState('')
+    const [timeCoffeeStart, setTimeCoffeeStart] = useState('')
+    const [timeCoffeeFinish, setTimeCoffeeFinish] = useState('')
+    const [isAllTime, setIsAllTime] = useState(false)
     const [phoneNumber, setPhoneNumber] = useState('')
     const [website, setWebsite] = useState('')
     const [descriptionPlace, setDescriptionPlace] = useState('')
     const [photoFile, setPhotoFile] = useState([])
+    const [schedule, setSchedule] = useState([
+        {id: 0, isToggle: false, firstFieldValue: '', secondFieldValue: ''},
+        {id: 1, isToggle: false, firstFieldValue: '', secondFieldValue: ''},
+        {id: 2, isToggle: false, firstFieldValue: '', secondFieldValue: ''},
+        {id: 3, isToggle: false, firstFieldValue: '', secondFieldValue: ''},
+        {id: 4, isToggle: false, firstFieldValue: '', secondFieldValue: ''},
+        {id: 5, isToggle: false, firstFieldValue: '', secondFieldValue: ''},
+        {id: 6, isToggle: false, firstFieldValue: '', secondFieldValue: ''}
+    ])
     const [invalidField, setInvalidField] = useState('')
+    const [isScheduleOpen, setIsScheduleOpen] = useState(false)
 
     const {
         setTarget,
         isMarkerCreate,
         setIsMarkerCreate,
         setMarkers,
+        setNewMarker,
         newMarker,
         currentLang
     } = React.useContext(AppContext)
+
+    const scheduleItems = [
+        {name: 'Понедельник', idx: 0},
+        {name: 'Вторник', idx: 1},
+        {name: 'Среда', idx: 2},
+        {name: 'Четверг', idx: 3},
+        {name: 'Пятница', idx: 4},
+        {name: 'Суббота', idx: 5},
+        {name: 'Воскресенье', idx: 6}
+    ]
+
+    const scheduleToggleClick = (idx) => {
+        const data = schedule[idx]
+        data.isToggle = !data.isToggle;
+        setSchedule((prev) => removeDublicates([...prev, data]))
+    }
+
+    const scheduleHandler = (evt, idx, field) => {
+        const {target} = evt;
+
+        if(target.value.search(timeRegex) === -1) {
+            target.style.border = '0.5px solid #b8233c';
+        } else {
+            target.style.border = '0.5px solid #23b839';
+        }
+
+        setSchedule(prev => prev.map((item, id) => {
+            if(id === idx) {
+                field === 'first' ? item.firstFieldValue = target.value : item.secondFieldValue = target.value
+            }
+
+            return item
+        }))
+        console.log(schedule);
+    }
 
     const inputHandler = (evt, model, regex = '') => {
         const {target} = evt;
@@ -73,6 +122,7 @@ function CreateCard({category, setCategory}) {
     }
 
     const removeMarker = () => {
+        setNewMarker(false)
         setIsMarkerCreate(false);
         setMarkers((prev) => {
             return prev.filter(obj => obj.id !== 0)
@@ -100,8 +150,38 @@ function CreateCard({category, setCategory}) {
     const createMarkerOnClick = (e) => {
         e.preventDefault();
 
+        const isScheduleClear = () => {
+            let rez = true;
+            for(let s of schedule) {
+                if(s.firstFieldValue || s.secondFieldValue) {
+                    rez = false;
+                    break;
+                }
+            }
+
+            return rez;
+        }
+
+        const isScheduleFullFileld = () => {
+            let rez = true;
+            for(let s of schedule) {
+                if(s.isToggle) {
+                    if(s.firstFieldValue.length <= 0 || s.secondFieldValue.length <= 0) {
+                        rez = false;
+                        break;
+                    }
+                }
+            }
+
+            return rez;
+        }
+
         if(city.length <= 0) {
             return setInvalidField('Вы не указали название города');
+        }
+
+        if(!newMarker) {
+            return setInvalidField('Вы не указали метку на карте');
         }
 
         if(category.length <= 0) {
@@ -116,16 +196,24 @@ function CreateCard({category, setCategory}) {
             return setInvalidField('Вы не указали название компании');
         }
 
-        if(timeWorkStart.length <= 0) {
-            return setInvalidField('Вы не указали начало рабочего дня');
+        if(
+            timeWorkStart.search(timeRegex) === -1
+            || timeWorkFinish.search(timeRegex) === -1
+        ) {
+            if(!isAllTime && isScheduleClear()) {
+                return setInvalidField('Время рабочего дня указано некорректно');
+            }
         }
 
-        if(timeWorkStart.search(timeRegex) === -1 || timeWorkFinish.search(timeRegex)) {
-            return setInvalidField('Время рабочего дня указано некорректно');
+        if(
+            timeCoffeeStart.search(timeRegex) === -1
+            || timeCoffeeFinish.search(timeRegex) === -1
+        ) {
+            return setInvalidField('Время перерыва указано некорректно');
         }
 
-        if(timeWorkFinish.length <= 0) {
-            return setInvalidField('Вы не указали конец рабочего дня');
+        if(!isScheduleClear() && !isScheduleFullFileld() && !isAllTime) {
+            return setInvalidField('Время рабочего дня заполнено не доконца');
         }
 
         if(phoneNumber.length <= 0) {
@@ -148,6 +236,33 @@ function CreateCard({category, setCategory}) {
             return setInvalidField('Вы не прикрепили фото компании');
         }
         
+        const getWorkTime = () => {
+            if(isAllTime) {//without weekends
+                return '24/7'
+            } else if(isScheduleFullFileld) {//with weekends
+                const work = [...schedule]
+                let time = '';
+
+                for(let i = 0; i < work.length; i++) {
+                    if(work[i].isToggle) {
+                        time += work[i].firstFieldValue + '-' + work[i].secondFieldValue + '+'
+                    } else {
+                        time += 'none-none+'
+                    }
+                }
+                
+                return time.slice(0, time.length - 1);
+            } else {//without weekends
+                let time = '';
+
+                for(let i = 1; i <= 7; i++) {
+                    time += timeWorkStart + '-' + timeWorkFinish + '+'
+                }
+
+                return time.slice(0, time.length - 1);
+            }
+        }
+
         const data = {
             id: 0,
             title: namePlace,
@@ -155,24 +270,27 @@ function CreateCard({category, setCategory}) {
             latitude: newMarker.latitude,
             longitude: newMarker.longitude,
             address: adress,
-            workStart: timeWorkStart,
-            workFinish: timeWorkFinish,
+            workTime: getWorkTime(),
+            coffeTime: timeCoffeeStart + '-' + timeCoffeeFinish,
             phoneNumber: phoneNumber,
+            isAllTime,
             city: city.toLowerCase(),
             webSiteUrl: website,
             imageUrl: photoFile,
             categoriesId: category
         }
         
-        axios.post(`${url}/api/Company/AddCompany`, data)
-            .then((resp) => {
-                console.log('resp');
-            })
-            .catch((error) => {
-                console.log(error);
-            })
+        // axios.post(`${url}/api/Company/AddCompany`, data)
+        //     .then((resp) => {
+        //         console.log('resp');
+        //     })
+        //     .catch((error) => {
+        //         console.log(error);
+        //     })
 
-        onClose();
+        // onClose();
+        console.log('request');
+        console.log(data);
     }
 
     return (
@@ -205,7 +323,7 @@ function CreateCard({category, setCategory}) {
                             <span className={styles.workTimeTitle}>{transcription[currentLang].inputsTitles.timeWork}</span>
                             <div className={styles.workTime}>
                                 {/* <span>{transcription[currentLang].inputsTitles.workFrom}</span> */}
-                                <input className={styles.workTimeInput} type="text" value={timeWorkStart} onChange={(e) => inputHandler(e, setTimeWorkStart, timeRegex)} placeholder="8:00"/>
+                                <input className={styles.workTimeInput} type="text" value={timeWorkStart} onChange={(e) => inputHandler(e, setTimeWorkStart, timeRegex)} placeholder="08:00"/>
                                 <span>-</span>
                                 <input className={styles.workTimeInput} style={{marginRight: 20}} type="text" value={timeWorkFinish} onChange={(e) => inputHandler(e, setTimeWorkFinish, timeRegex)} placeholder="22:00"/>
                             </div>
@@ -214,23 +332,73 @@ function CreateCard({category, setCategory}) {
                             <span className={styles.workTimeTitle}>{transcription[currentLang].inputsTitles.timeCoffee}</span>
                             <div className={styles.workTime}>
                                 {/* <span>{transcription[currentLang].inputsTitles.workFrom}</span> */}
-                                <input className={styles.workTimeInput} type="text" value={timeWorkStart} onChange={(e) => inputHandler(e, setTimeWorkStart, timeRegex)} placeholder="8:00"/>
+                                <input className={styles.workTimeInput} type="text" value={timeCoffeeStart} onChange={(e) => inputHandler(e, setTimeCoffeeStart, timeRegex)} placeholder="08:00"/>
                                 <span>-</span>
-                                <input className={styles.workTimeInput} type="text" value={timeWorkFinish} onChange={(e) => inputHandler(e, setTimeWorkFinish, timeRegex)} placeholder="22:00"/>
+                                <input className={styles.workTimeInput} type="text" value={timeCoffeeFinish} onChange={(e) => inputHandler(e, setTimeCoffeeFinish, timeRegex)} placeholder="22:00"/>
                             </div>
                         </div>
                     </div>
                 </p>
                 <p>
-                    <span>{transcription[currentLang].inputsTitles.name}</span>
-                    <input type="text" value={namePlace} onChange={(e) => inputHandler(e, setNamePlace)} placeholder={transcription[currentLang].inputsPlaceholders.name}/>
+                    <div className={styles.schedule}>
+                        <div
+                            className={`${styles.scheduleBtn} ${isScheduleOpen ? styles.scheduleOpened : ''}`}
+                            onClick={() => setIsScheduleOpen((prev) => !prev)}
+                        >
+                            {isScheduleOpen ? 'Скрыть варианты графика' : 'Больше вариантов графика'}
+                        </div>
+                        {isScheduleOpen 
+                            ? <div className={styles.scheduleContent}>
+                                {scheduleItems.map((item, idx) => {
+                                    return (
+                                        <div key={idx} className={styles.scheduleItem}>
+                                            <div className={styles.scheduleTitle}>
+                                                <p>{item.name}</p>
+                                                <Toggle
+                                                    lang={currentLang}
+                                                    id={idx}
+                                                    isToggle={schedule[idx].isToggle}
+                                                    toggleClick={() => scheduleToggleClick(idx)}
+                                                    isText={false}
+                                                />
+                                            </div>
+                                            <div className={styles.scheduleFields}>
+                                                <input 
+                                                    className={styles.workTimeInput}
+                                                    type="text" value={timeWorkStart}
+                                                    placeholder="08:00"
+                                                    disabled={!schedule[idx].isToggle}
+                                                    value={schedule[idx].firstFieldValue}
+                                                    onChange={(e) => scheduleHandler(e, idx, 'first')}
+                                                />
+                                                <span>-</span>
+                                                <input
+                                                    className={styles.workTimeInput}
+                                                    type="text" value={timeWorkFinish}
+                                                    placeholder="22:00"
+                                                    disabled={!schedule[idx].isToggle}
+                                                    value={schedule[idx].secondFieldValue}
+                                                    onChange={(e) => scheduleHandler(e, idx, 'second')}
+                                                />
+                                            </div>
+                                        </div>
+                                    )
+                                })}
+                            </div>
+                            : ''
+                        }
+                    </div>
                 </p>
                 <p>
                     <div className={styles.allTime}>
                         <span>{transcription[currentLang].inputsTitles.allTime}</span>
-                        <Toggle lang={currentLang} isToggle={false} toggleClick={() => console.log(1)} isText={false}/>
+                        <Toggle lang={currentLang} isToggle={isAllTime} toggleClick={() => setIsAllTime(prev => !prev)} isText={false}/>
                     </div>
                 </p>
+                <p>
+                    <span>{transcription[currentLang].inputsTitles.name}</span>
+                    <input type="text" value={namePlace} onChange={(e) => inputHandler(e, setNamePlace)} placeholder={transcription[currentLang].inputsPlaceholders.name}/>
+                </p>   
                 <p>
                     <span>{transcription[currentLang].inputsTitles.phone}</span>
                     <input type="text" value={phoneNumber} onChange={(e) => inputHandler(e, setPhoneNumber, phoneRegex)} placeholder={transcription[currentLang].inputsPlaceholders.phone}/>

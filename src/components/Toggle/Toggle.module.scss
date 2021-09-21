@@ -15,9 +15,10 @@
 
 // Mobile Toggle Switch
 .toggleWrapper {
-    margin-top: 30px;
+    // margin-top: 30px;
     display: flex;
     align-items: center;
+    position: relative;
 
     .toggleTitle {
         font-size: 12px;
