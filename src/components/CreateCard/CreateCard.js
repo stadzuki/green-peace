@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import AppContext from '../../context';
 import axios from 'axios';
+import Toggle from '../Toggle/Toggle';
 
 import transcription from '../../utils/transcription';
 import styles from './CreateCard.module.scss';
@@ -199,17 +200,36 @@ function CreateCard({category, setCategory}) {
                     }
                 </p>
                 <p>
-                    <span className={styles.workTimeTitle}>{transcription[currentLang].inputsTitles.timeWork}</span>
-                    <div className={styles.workTime}>
-                        <span>{transcription[currentLang].inputsTitles.workFrom}</span>
-                        <input className={styles.workTimeInput} type="text" value={timeWorkStart} onChange={(e) => inputHandler(e, setTimeWorkStart, timeRegex)} placeholder="8:00"/>
-                        <span>{transcription[currentLang].inputsTitles.workUntil}</span>
-                        <input className={styles.workTimeInput} type="text" value={timeWorkFinish} onChange={(e) => inputHandler(e, setTimeWorkFinish, timeRegex)} placeholder="22:00"/>
+                    <div className={styles.workTimeContainer}>
+                        <div className={styles.workTimeWrapper}>
+                            <span className={styles.workTimeTitle}>{transcription[currentLang].inputsTitles.timeWork}</span>
+                            <div className={styles.workTime}>
+                                {/* <span>{transcription[currentLang].inputsTitles.workFrom}</span> */}
+                                <input className={styles.workTimeInput} type="text" value={timeWorkStart} onChange={(e) => inputHandler(e, setTimeWorkStart, timeRegex)} placeholder="8:00"/>
+                                <span>-</span>
+                                <input className={styles.workTimeInput} style={{marginRight: 20}} type="text" value={timeWorkFinish} onChange={(e) => inputHandler(e, setTimeWorkFinish, timeRegex)} placeholder="22:00"/>
+                            </div>
+                        </div>
+                        <div className={styles.workTimeWrapper}>
+                            <span className={styles.workTimeTitle}>{transcription[currentLang].inputsTitles.timeCoffee}</span>
+                            <div className={styles.workTime}>
+                                {/* <span>{transcription[currentLang].inputsTitles.workFrom}</span> */}
+                                <input className={styles.workTimeInput} type="text" value={timeWorkStart} onChange={(e) => inputHandler(e, setTimeWorkStart, timeRegex)} placeholder="8:00"/>
+                                <span>-</span>
+                                <input className={styles.workTimeInput} type="text" value={timeWorkFinish} onChange={(e) => inputHandler(e, setTimeWorkFinish, timeRegex)} placeholder="22:00"/>
+                            </div>
+                        </div>
                     </div>
                 </p>
                 <p>
                     <span>{transcription[currentLang].inputsTitles.name}</span>
                     <input type="text" value={namePlace} onChange={(e) => inputHandler(e, setNamePlace)} placeholder={transcription[currentLang].inputsPlaceholders.name}/>
+                </p>
+                <p>
+                    <div className={styles.allTime}>
+                        <span>{transcription[currentLang].inputsTitles.allTime}</span>
+                        <Toggle lang={currentLang} isToggle={false} toggleClick={() => console.log(1)} isText={false}/>
+                    </div>
                 </p>
                 <p>
                     <span>{transcription[currentLang].inputsTitles.phone}</span>

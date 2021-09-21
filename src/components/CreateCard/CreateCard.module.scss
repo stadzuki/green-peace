@@ -57,14 +57,32 @@ form {
             }
         }
 
-        .workTimeTitle {
-            text-align: center;
+        .allTime {
+            background-color: #E8E8E8;
+            padding: 15px 0 15px 0;
+            align-items: center;
+            display: flex;
+            margin-bottom: 15px;
+            border-radius: 5px;
+
+            span {
+                margin-right: 20px;
+            }
+
+            .toggleWrapper {
+                margin-top: 0;
+            }
+        }
+
+        .workTimeContainer {
+            display: flex;
+            justify-content: space-between;
         }
 
         .workTime {
             font-weight: normal;
             display: flex;
-            justify-content: center;
+            justify-content: flex-start;
             align-items: center;
 
             span {
@@ -81,6 +99,9 @@ form {
                 text-align: center;
                 padding: 18px 0;
 
+                &:last-child {
+                    margin-right: 0px;
+                }
             }
         }
     }
