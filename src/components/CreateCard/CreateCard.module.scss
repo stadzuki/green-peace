@@ -153,6 +153,30 @@ form {
                 }
             }
         }
+
+        .weekendsContainer {
+            display: flex;
+            margin: 5px 0 15px;
+
+            .weekendsDay {
+                user-select: none;
+                padding: 15px;
+                margin-right: 15px;
+                border-radius: 5px;
+                background-color: #e8e8e8;
+                cursor: pointer;
+
+                &:hover {
+                    color: #fff;
+                    background-color: #2F75FB;
+                }
+            }
+
+            .weekendsDaySelected {
+                background: #2F75FB;
+                color: #fff;
+            }
+        }
     }
 
     button {

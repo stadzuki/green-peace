@@ -19,6 +19,7 @@ function CreateCard({category, setCategory}) {
     const [timeWorkFinish, setTimeWorkFinish] = useState('')
     const [timeCoffeeStart, setTimeCoffeeStart] = useState('')
     const [timeCoffeeFinish, setTimeCoffeeFinish] = useState('')
+    const [weekends, setWeekends] = useState('')
     const [isAllTime, setIsAllTime] = useState(false)
     const [phoneNumber, setPhoneNumber] = useState('')
     const [website, setWebsite] = useState('')
@@ -55,6 +56,16 @@ function CreateCard({category, setCategory}) {
         {name: 'Суббота', idx: 5},
         {name: 'Воскресенье', idx: 6}
     ]
+
+    const weekendsClickHanlder = (e, type) => {
+        const children = e.target.parentNode.childNodes.forEach(item => item.classList.remove(styles.weekendsDaySelected));
+        if(weekends === type) {
+            setWeekends('');
+            return 1;
+        } 
+        e.target.classList.add(styles.weekendsDaySelected);
+        setWeekends(type)
+    }
 
     const scheduleToggleClick = (idx) => {
         const data = schedule[idx]
@@ -143,6 +154,22 @@ function CreateCard({category, setCategory}) {
         setTarget(false)
         setIsMarkerCreate(false);
 
+        setSchedule([
+            {id: 0, isToggle: false, firstFieldValue: '', secondFieldValue: ''},
+            {id: 1, isToggle: false, firstFieldValue: '', secondFieldValue: ''},
+            {id: 2, isToggle: false, firstFieldValue: '', secondFieldValue: ''},
+            {id: 3, isToggle: false, firstFieldValue: '', secondFieldValue: ''},
+            {id: 4, isToggle: false, firstFieldValue: '', secondFieldValue: ''},
+            {id: 5, isToggle: false, firstFieldValue: '', secondFieldValue: ''},
+            {id: 6, isToggle: false, firstFieldValue: '', secondFieldValue: ''}
+        ])
+        setIsScheduleOpen(false)
+        setIsAllTime(false)
+        setWeekends('')
+        setTimeCoffeeFinish('')
+        setTimeCoffeeStart('')
+        setInvalidField('')
+
         setMarkers(prev => prev.filter(m => m.id !== 0))
         document.querySelectorAll('.category-item').forEach(item => item.classList.remove('selected'))
     }
@@ -153,9 +180,11 @@ function CreateCard({category, setCategory}) {
         const isScheduleClear = () => {
             let rez = true;
             for(let s of schedule) {
-                if(s.firstFieldValue || s.secondFieldValue) {
-                    rez = false;
-                    break;
+                if(s.isToggle) {
+                    if(s.firstFieldValue || s.secondFieldValue) {
+                        rez = false;
+                        break;
+                    }
                 }
             }
 
@@ -163,11 +192,13 @@ function CreateCard({category, setCategory}) {
         }
 
         const isScheduleFullFileld = () => {
-            let rez = true;
-            for(let s of schedule) {
+            const scheduleArr = [...schedule]
+            let rez = false;
+
+            for(let s of scheduleArr) {
                 if(s.isToggle) {
-                    if(s.firstFieldValue.length <= 0 || s.secondFieldValue.length <= 0) {
-                        rez = false;
+                    if(s.firstFieldValue.length > 0 || s.secondFieldValue.length > 0) {
+                        rez = true;
                         break;
                     }
                 }
@@ -205,6 +236,12 @@ function CreateCard({category, setCategory}) {
             }
         }
 
+        if(!weekends) {
+            if(!isAllTime && isScheduleClear()) {
+                return setInvalidField('Вы не выбрали выходные дни');
+            }
+        }
+
         if(
             timeCoffeeStart.search(timeRegex) === -1
             || timeCoffeeFinish.search(timeRegex) === -1
@@ -235,11 +272,11 @@ function CreateCard({category, setCategory}) {
         if(photoFile.length <= 0) {
             return setInvalidField('Вы не прикрепили фото компании');
         }
-        
+
         const getWorkTime = () => {
             if(isAllTime) {//without weekends
                 return '24/7'
-            } else if(isScheduleFullFileld) {//with weekends
+            } else if(isScheduleFullFileld()) {//with weekends
                 const work = [...schedule]
                 let time = '';
 
@@ -252,10 +289,30 @@ function CreateCard({category, setCategory}) {
                 }
                 
                 return time.slice(0, time.length - 1);
-            } else {//without weekends
+            } else {
                 let time = '';
 
                 for(let i = 1; i <= 7; i++) {
+                    if(weekends === 'sat') {
+                        if(i === 6) {
+                            time += 'none-none+'
+                            continue;
+                        }
+                    }
+
+                    if(weekends === 'sun') {
+                        if(i === 7) {
+                            time += 'none-none+'
+                            continue;
+                        }
+                    }
+
+                    if(weekends === 'sat-sun') {
+                        if(i >= 6) {
+                            time += 'none-none+'
+                            continue;
+                        }
+                    }
                     time += timeWorkStart + '-' + timeWorkFinish + '+'
                 }
 
@@ -289,8 +346,6 @@ function CreateCard({category, setCategory}) {
         //     })
 
         // onClose();
-        console.log('request');
-        console.log(data);
     }
 
     return (
@@ -337,6 +392,14 @@ function CreateCard({category, setCategory}) {
                                 <input className={styles.workTimeInput} type="text" value={timeCoffeeFinish} onChange={(e) => inputHandler(e, setTimeCoffeeFinish, timeRegex)} placeholder="22:00"/>
                             </div>
                         </div>
+                    </div>
+                </p>
+                <p>
+                    <span className={styles.workTimeTitle}>Выходные</span>
+                    <div className={styles.weekendsContainer}>
+                        <div className={styles.weekendsDay} onClick={(e) => weekendsClickHanlder(e, 'sat')}>Сб.</div>
+                        <div className={styles.weekendsDay} onClick={(e) => weekendsClickHanlder(e, 'sun')}>Вс.</div>
+                        <div className={styles.weekendsDay} onClick={(e) => weekendsClickHanlder(e, 'sat-sun')}>Сб. и Вс.</div>
                     </div>
                 </p>
                 <p>

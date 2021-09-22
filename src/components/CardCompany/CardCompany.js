@@ -4,7 +4,7 @@ import styles from './CardCompany.module.scss'
 import transcription from '../../utils/transcription';
 
 function CardCompany({company, userPos, onClose}) {
-    //???
+    //график работы перерыв контакты
     const categoriesToString = () => {
         let outStr = '';
         for(let category of company.categoriesId) {
@@ -108,6 +108,63 @@ function CardCompany({company, userPos, onClose}) {
             <div className={styles.generalInfo}>
                 <div className={styles.generalTitle}>Общая информация</div>
                 <p className={styles.generalDescription}>{company.description}</p>
+            </div>
+            <div className={styles.workTimeContainer}>
+                <p className={styles.workTimeToday}>Сегодня <span className={styles.small}>09:00-22:00</span></p>
+                <div className={styles.table}>
+                    <div className={styles.tableDay}>
+                        <span className={`${styles.tableDayTitle} ${styles.tableDayActive}`}>Пн</span>
+                        <p className={styles.tableDayTime}>
+                            <span className={styles.tableDayTimeStart}>09:00</span>
+                            <span className={styles.tableDayTimeFinish}>22:00</span>
+                        </p>
+                    </div>
+                    <div className={styles.tableDay}>
+                        <span className={styles.tableDayTitle}>Вт</span>
+                        <p className={styles.tableDayTime}>
+                            <span className={styles.tableDayTimeStart}>09:00</span>
+                            <span className={styles.tableDayTimeFinish}>22:00</span>
+                        </p>
+                    </div>
+                    <div className={styles.tableDay}>
+                        <span className={styles.tableDayTitle}>Ср</span>
+                        <p className={styles.tableDayTime}>
+                            <span className={styles.tableDayTimeStart}>09:00</span>
+                            <span className={styles.tableDayTimeFinish}>22:00</span>
+                        </p>
+                    </div>
+                    <div className={styles.tableDay}>
+                        <span className={styles.tableDayTitle}>Чт</span>
+                        <p className={styles.tableDayTime}>
+                            <span className={styles.tableDayTimeStart}>09:00</span>
+                            <span className={styles.tableDayTimeFinish}>22:00</span>
+                        </p>
+                    </div>
+                    <div className={styles.tableDay}>
+                        <span className={styles.tableDayTitle}>Пт</span>
+                        <p className={styles.tableDayTime}>
+                            <span className={styles.tableDayTimeStart}>09:00</span>
+                            <span className={styles.tableDayTimeFinish}>22:00</span>
+                        </p>
+                    </div>
+                    <div className={styles.tableDay}>
+                        <span className={styles.tableDayTitle}>Сб</span>
+                        <p className={styles.tableDayTime}>
+                            <span className={styles.tableDayTimeStart}>09:00</span>
+                            <span className={styles.tableDayTimeFinish}>22:00</span>
+                        </p>
+                    </div>
+                    <div className={styles.tableDay}>
+                        <span className={styles.tableDayTitle}>Вс</span>
+                        <p className={styles.tableDayTime}>
+                            <span className={styles.tableDayTimeStart}>09:00</span>
+                            <span className={styles.tableDayTimeFinish}>22:00</span>
+                        </p>
+                    </div>
+                </div>
+            </div>
+            <div className={styles.coffeeTime}>
+                Перерыв: <span className={styles.small}>без перерыва</span>
             </div>
         </div>
     )
