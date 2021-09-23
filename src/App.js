@@ -218,7 +218,7 @@ function App() {
 
   function getMarkers() {
     // axios.get(`${url}/api/Company/GetCompanies`)
-    axios.get(`https://api.npoint.io/66155237175de1dd9dc7`)
+    axios.get(`https://api.npoint.io/3d5795e1a47fe9cb1c83`)
       .then((response) => {
         setMarkers(response.data)
         setMarkersCopy(response.data)

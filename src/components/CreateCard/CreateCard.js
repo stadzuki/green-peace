@@ -6,7 +6,7 @@ import removeDublicates from '../../utils/removeDuplicates'
 import transcription from '../../utils/transcription';
 import styles from './CreateCard.module.scss';
 
-const url = 'https://648c-188-119-45-172.ngrok.io'
+const url = 'https://92a5-188-119-45-172.ngrok.io'
 
 const timeRegex = /^[0-9]{2}[0-9]?\:[0-9]{2}$/
 const phoneRegex = /^\+[0-9]+$/
@@ -89,7 +89,6 @@ function CreateCard({category, setCategory}) {
 
             return item
         }))
-        console.log(schedule);
     }
 
     const inputHandler = (evt, model, regex = '') => {
@@ -337,15 +336,16 @@ function CreateCard({category, setCategory}) {
             categoriesId: category
         }
         
-        // axios.post(`${url}/api/Company/AddCompany`, data)
-        //     .then((resp) => {
-        //         console.log('resp');
-        //     })
-        //     .catch((error) => {
-        //         console.log(error);
-        //     })
+        axios.post(`${url}/api/Company/AddCompany`, data)
+            .then((resp) => {
+                console.log('resp');
+            })
+            .catch((error) => {
+                console.log(error);
+            })
 
-        // onClose();
+        onClose();
+        console.log(data);
     }
 
     return (

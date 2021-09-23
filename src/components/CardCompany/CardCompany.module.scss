@@ -9,7 +9,7 @@
     overflow-y: scroll;
     background: rgb(255, 255, 255);
     border-radius: 10px;
-    max-width: 320px;
+    max-width: 400px;
     max-height: 580px;
     margin-right: 10px;
 
@@ -31,12 +31,12 @@
     }
 
     .companyImage {
-        width: 320px;
+        width: 100%;
         height: 214px;
         overflow: hidden;
         
         img {
-            max-width: 320px;
+            max-width: 100%;
             width: 100%;
         }
     }
@@ -99,6 +99,11 @@
             margin-top: 15px;
             margin-bottom: 10px;
 
+            a {
+                font-size: 10px;
+                color: black;
+            }
+
             li {
                 display: flex;
                 flex-direction: column;
@@ -122,7 +127,7 @@
     .companyLocate {
         padding: 25px 0;
         margin-left: 25px;
-        text-align: center;
+        padding-left: 30px;
         background: url("../../images/companyLocate.png") no-repeat left center;
         background-size: 23px 23px;
     }
@@ -205,6 +210,80 @@
         font-size: 16px;
         font-weight: 600;
         color: #444;
+    }
+
+    .contactContainer {
+        .contactTitle {
+            width: 100%;
+            background-color: #EEE;
+            padding: 10px 0;
+            padding-left: 20px;
+            font-weight: 600;
+            font-size: 16px;
+            color: #444;
+        }
+
+        .contact {
+            padding: 10px 0;
+            padding-left: 20px;
+            font-weight: 600;
+            color: #444;
+            white-space: normal;
+
+            span {
+                font-weight: normal;
+                padding-top: 5px;
+            }
+
+            a {
+                color:#2F75FB;
+            }
+        }
+    }
+
+    .commentContainer {
+        .commentTitle {
+            width: 100%;
+            background-color: #EEE;
+            padding: 10px 0;
+            padding-left: 20px;
+            font-weight: 600;
+            font-size: 16px;
+            color: #444;
+        }
+
+        .commentBlock {
+            margin: 10px 0;
+            padding-left: 20px;
+            padding-bottom: 15px;
+            border-bottom: 0.5px solid #C9C9C9;
+
+            .commentAuthor {
+                font-size: 14px;
+                color: #444;
+                font-weight: 600;
+            }
+
+            .commentDate {
+                font-size: 12px;
+                color: rgb(143, 143, 143);
+            }
+
+            .comment {
+                margin-top: 15px;
+            }
+        }
+
+        .commentBtn {
+            margin-top: 15px;
+            width: 100%;
+            background-color: #2F75FB;
+            border-radius: 5px;
+            padding: 10px 0;
+            color: #fff;
+            cursor: pointer;
+            text-align: center;
+        }
     }
 }
 
