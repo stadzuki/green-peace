@@ -30,6 +30,7 @@ function Pin({count, color}) {
 
         return (
           <circle 
+            key={idx}
             style={pinStyle} 
             r="15.9" 
             cx="50%" 

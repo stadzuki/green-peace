@@ -73,7 +73,7 @@ function CardCompany({company, userPos, onClose, isCommentVisible}) {
         
         for(let i = 0; i < days.length; i++) {
             if(weekday[`${i}`] === today) {
-                current.time = days[i];
+                days[i] === 'none-none' ? current.time = 'Выходной' : current.time = days[i];
                 current.day = i;
                 break;
             }
@@ -131,32 +131,38 @@ function CardCompany({company, userPos, onClose, isCommentVisible}) {
                 <div className={styles.generalTitle}>Общая информация</div>
                 <p className={styles.generalDescription}>{company.description}</p>
             </div>
-            <div className={styles.workTimeContainer}>
-                <p className={styles.workTimeToday}>Сегодня <span className={styles.small}>{getCurrentDay(company.workTime.split('+')).time}</span></p>
-                <div className={styles.table}>
-                    {company.workTime.split('+').map((time, idx) => {
-                        const timeArr = time.split('-');
-                        const startWork = timeArr[0];
-                        const finishWork = timeArr[1];
+            {company.isAllTime
+                ? <div className={styles.workTimeContainer}>
+                    <p className={styles.workTimeToday}>Круглосуточно</p>
+                </div> 
+                : <div className={styles.workTimeContainer}>
+                    <p className={styles.workTimeToday}>Сегодня: <span className={styles.small}>{getCurrentDay(company.workTime.split('+')).time}</span></p>
+                    <div className={styles.table}>
+                        {company.workTime.split('+').map((time, idx) => {
+                            const timeArr = time.split('-');
+                            const startWork = timeArr[0];
+                            const finishWork = timeArr[1];
 
-                        return (
-                            <div key={idx} className={styles.tableDay}>
-                                <span className={`${styles.tableDayTitle} ${idx === getCurrentDay(company.workTime.split('+')).day ? styles.tableDayActive : ''}`}>{weekDays[idx]}</span>
-                                <p className={styles.tableDayTime}>
-                                    {startWork == 'none'
-                                        ? <span className={styles.tableDayTimeStart}>-</span>
-                                        : <div>
-                                            <p className={styles.tableDayTimeStart}>{startWork}</p>
-                                            <p className={styles.tableDayTimeFinish}>{finishWork}</p>
-                                        </div>
-                                    }
-                                    
-                                </p>
-                            </div>
-                        )
-                    })}
+                            return (
+                                <div key={idx} className={styles.tableDay}>
+                                    <span className={`${styles.tableDayTitle} ${idx === getCurrentDay(company.workTime.split('+')).day ? styles.tableDayActive : ''}`}>{weekDays[idx]}</span>
+                                    <p className={styles.tableDayTime}>
+                                        {startWork == 'none'
+                                            ? <span className={styles.tableDayTimeStart}>-</span>
+                                            : <div>
+                                                <p className={styles.tableDayTimeStart}>{startWork}</p>
+                                                <p className={styles.tableDayTimeFinish}>{finishWork}</p>
+                                            </div>
+                                        }
+                                        
+                                    </p>
+                                </div>
+                            )
+                        })}
+                    </div>
                 </div>
-            </div>
+            }
+            
             <div className={styles.coffeeTime}>
                 Перерыв: <span className={styles.small}>{company.coffeTime ? company.coffeTime : 'без перерыва'}</span>
             </div>

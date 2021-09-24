@@ -1,0 +1,26 @@
+.scheduleItem {
+    display: flex;
+    justify-content: space-between;
+
+    .scheduleTitle {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        width: 50%;
+
+        p {
+            margin-right: 15px;
+        }
+    }
+
+    .scheduleFields {
+        
+        input {
+            max-width: 80px;
+            text-align: center;
+            padding: 20px;
+
+            
+        }
+    }
+}

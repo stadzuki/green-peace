@@ -5,6 +5,7 @@ import Toggle from '../Toggle/Toggle';
 import removeDublicates from '../../utils/removeDuplicates'
 import transcription from '../../utils/transcription';
 import styles from './CreateCard.module.scss';
+import Schedule from '../Schedule/Shedule';
 
 const url = 'https://92a5-188-119-45-172.ngrok.io'
 
@@ -73,7 +74,7 @@ function CreateCard({category, setCategory}) {
         setSchedule((prev) => removeDublicates([...prev, data]))
     }
 
-    const scheduleHandler = (evt, idx, field) => {
+    const scheduleChangeHandler = (evt, idx, field) => {
         const {target} = evt;
 
         if(target.value.search(timeRegex) === -1) {
@@ -120,6 +121,9 @@ function CreateCard({category, setCategory}) {
 
     function uploadPhotoHandler(e) {
         let file = e.target.files[0];
+        if(file.type !== "image/jpeg") {
+            return alert('Изображение должно быть .jpeg формата')
+        }
         let reader = new FileReader();
         reader.onloadend = function() {
             setPhotoFile(reader.result.slice(23));
@@ -336,13 +340,13 @@ function CreateCard({category, setCategory}) {
             categoriesId: category
         }
         
-        axios.post(`${url}/api/Company/AddCompany`, data)
-            .then((resp) => {
-                console.log('resp');
-            })
-            .catch((error) => {
-                console.log(error);
-            })
+        // axios.post(`${url}/api/Company/AddCompany`, data)
+        //     .then((resp) => {
+        //         console.log('resp');
+        //     })
+        //     .catch((error) => {
+        //         console.log(error);
+        //     })
 
         onClose();
         console.log(data);
@@ -403,48 +407,26 @@ function CreateCard({category, setCategory}) {
                     </div>
                 </p>
                 <p>
-                    <div className={styles.schedule}>
+                    <div className="schedule">
                         <div
-                            className={`${styles.scheduleBtn} ${isScheduleOpen ? styles.scheduleOpened : ''}`}
+                            className={`scheduleBtn ${isScheduleOpen ? 'scheduleOpened' : ''}`}
                             onClick={() => setIsScheduleOpen((prev) => !prev)}
                         >
                             {isScheduleOpen ? 'Скрыть варианты графика' : 'Больше вариантов графика'}
                         </div>
                         {isScheduleOpen 
-                            ? <div className={styles.scheduleContent}>
+                            ? <div className="scheduleContent">
                                 {scheduleItems.map((item, idx) => {
                                     return (
-                                        <div key={idx} className={styles.scheduleItem}>
-                                            <div className={styles.scheduleTitle}>
-                                                <p>{item.name}</p>
-                                                <Toggle
-                                                    lang={currentLang}
-                                                    id={idx}
-                                                    isToggle={schedule[idx].isToggle}
-                                                    toggleClick={() => scheduleToggleClick(idx)}
-                                                    isText={false}
-                                                />
-                                            </div>
-                                            <div className={styles.scheduleFields}>
-                                                <input 
-                                                    className={styles.workTimeInput}
-                                                    type="text" value={timeWorkStart}
-                                                    placeholder="08:00"
-                                                    disabled={!schedule[idx].isToggle}
-                                                    value={schedule[idx].firstFieldValue}
-                                                    onChange={(e) => scheduleHandler(e, idx, 'first')}
-                                                />
-                                                <span>-</span>
-                                                <input
-                                                    className={styles.workTimeInput}
-                                                    type="text" value={timeWorkFinish}
-                                                    placeholder="22:00"
-                                                    disabled={!schedule[idx].isToggle}
-                                                    value={schedule[idx].secondFieldValue}
-                                                    onChange={(e) => scheduleHandler(e, idx, 'second')}
-                                                />
-                                            </div>
-                                        </div>
+                                        <Schedule 
+                                            key={idx}
+                                            scheduleToggleClick={scheduleToggleClick}
+                                            schedule={schedule[idx]}
+                                            lang={currentLang}
+                                            weekday={item.name}
+                                            scheduleChangeHandler={scheduleChangeHandler}
+                                            idx={idx}
+                                        />
                                     )
                                 })}
                             </div>

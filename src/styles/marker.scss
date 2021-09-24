@@ -1,0 +1,65 @@
+.markerContainer {
+  position: absolute;
+  right: 3%;
+  bottom: 4%;
+
+  &:hover {
+    cursor: pointer;
+
+    .markerHover {
+      display: block;
+    }
+  }
+}
+
+.markerHover {
+  display: none;
+  position: absolute;
+  bottom: 130%;
+  left: -110%;
+  width: 160px;
+  background-color: #2ECC6E;
+  color: #fff;
+  border-radius: 5px;
+  padding: 5px 7px;
+  font-weight: 500;
+  font-size: 13px;
+  line-height: 15px;
+}
+
+.markerCreator {
+  background-color: #2ECC6E;
+  padding: 20px;
+  border-radius: 50%;
+  width: 75px;
+  height: 75px;
+}
+
+.markerMetaWrapper {
+  display: none;
+  position: absolute;
+  max-width: 400px;
+  max-height: 110px;
+  width: auto;
+  background-color: #fff;
+  top: -190%;
+  border-radius: 5px;
+  padding: 20px;
+
+  &::after {
+    content: '';
+    position: absolute;
+    left: 9%;
+    bottom: -25px;
+    border: 15px solid transparent;
+    border-top: 15px solid #fff;
+    border-radius: 5px;
+  }
+}
+
+.metaCategoriesWrapper {
+  display: flex;
+  max-width: 400px;
+  max-height: 110px;
+  overflow: hidden;
+}

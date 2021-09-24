@@ -1,228 +1,106 @@
-form {
-    margin-top: 25px;
+.allTime {
+    background-color: #E8E8E8;
+    padding: 15px 0 15px 0;
+    align-items: center;
+    display: flex;
+    margin-bottom: 15px;
+    border-radius: 5px;
 
-    p {
-        font-weight: 500;
-        color: #1C1D22;
-        line-height: 16px;
-        display: flex;
-        flex-direction: column;
-        font-weight: 600;
-        
-        span {
-            padding-left: 15px;
-        }
-
-        input {
-            margin-top: 6px;
-            padding: 18px 0px 18px 14px;
-            background: #E8E8E8;
-            border-radius: 4px;
-            margin-bottom: 15px;
-            border: none;
-
-            &:focus {
-                outline: none;
-                border: 0.5px solid #1877F2;
-                color: #5B5B5B;
-            }
-
-            &::placeholder {
-                font-size: 14px;
-                line-height: 16px;
-                color: #5B5B5B;
-            }
-        }
-
-        textarea {
-            margin-top: 5px;
-            padding: 18px 0px 18px 14px;
-            background: #E8E8E8;
-            border-radius: 4px;
-            height: 125px;
-            resize: none;
-            border: none;
-
-            &:focus {
-                outline: none;
-                border: 0.5px solid #1877F2;
-                color: #5B5B5B;
-            }
-
-            &::placeholder {
-                font-size: 14px;
-                font-family: 'Open Sans', sans-serif;
-                line-height: 16px;
-                color: #5B5B5B;
-            }
-        }
-
-        .allTime {
-            background-color: #E8E8E8;
-            padding: 15px 0 15px 0;
-            align-items: center;
-            display: flex;
-            margin-bottom: 15px;
-            border-radius: 5px;
-
-            span {
-                margin-right: 20px;
-            }
-
-            .toggleWrapper {
-                margin-top: 0;
-            }
-        }
-
-        .workTimeContainer {
-            display: flex;
-            justify-content: space-between;
-        }
-
-        .workTime {
-            font-weight: normal;
-            display: flex;
-            justify-content: flex-start;
-            align-items: center;
-
-            span {
-                padding: 0;
-                padding-right: 10px;
-                color: #555;
-                margin-bottom: 9px;
-                font-weight: 600;
-            }
-
-            .workTimeInput {
-                max-width: 100px;
-                margin-right: 10px;
-                text-align: center;
-                padding: 18px 0;
-
-                &:last-child {
-                    margin-right: 0px;
-                }
-            }
-        }
-        
-        .schedule {
-            margin: 0 0 10px 0;
-
-            .scheduleBtn {
-                text-align: center;
-                background-color: #2F75FB;
-                color: #fff;
-                padding: 15px 0;
-                border-radius: 5px;
-                cursor: pointer;
-            }
-
-            .scheduleOpened { 
-                background-color: #F1F5FD;
-                color: #686c73;
-            }
-
-            .scheduleContent {
-                margin-top: 10px;
-
-                .scheduleItem {
-                    display: flex;
-                    justify-content: space-between;
-
-                    .scheduleTitle {
-                        display: flex;
-                        align-items: center;
-                        justify-content: space-between;
-                        width: 50%;
-    
-                        p {
-                            margin-right: 15px;
-                        }
-                    }
-    
-                    .scheduleFields {
-                        
-                        input {
-                            max-width: 80px;
-                            text-align: center;
-                            padding: 20px;
-
-                            
-                        }
-                    }
-                }
-            }
-        }
-
-        .weekendsContainer {
-            display: flex;
-            margin: 5px 0 15px;
-
-            .weekendsDay {
-                user-select: none;
-                padding: 15px;
-                margin-right: 15px;
-                border-radius: 5px;
-                background-color: #e8e8e8;
-                cursor: pointer;
-
-                &:hover {
-                    color: #fff;
-                    background-color: #2F75FB;
-                }
-            }
-
-            .weekendsDaySelected {
-                background: #2F75FB;
-                color: #fff;
-            }
-        }
+    span {
+        margin-right: 20px;
     }
 
-    button {
-        width: 100%;
-        background: #2ECC6E;
-        border-radius: 5px;
-        border: none;
-        font-weight: 600;
-        color: #FFFFFF;
-        padding: 16px 0px;
-        margin-top: 10px;
-        text-transform: uppercase;
-        cursor: pointer;
-    }
-
-    .pointOnMap {
-        font-size: 12px;
-        font-weight: 600;
-        margin-bottom: 15px;
+    .toggleWrapper {
         margin-top: 0;
     }
+}
 
-    .fileUpload {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        background-color: #e8e8e8;
-        border-radius: 5px;
-        padding: 15px 20px;
+.workTimeContainer {
+    display: flex;
+    justify-content: space-between;
+}
 
-        .fileUploadTitle {
-            font-weight: normal;
-            color: #5c5c5c;
+.workTime {
+    font-weight: normal;
+    display: flex;
+    justify-content: flex-start;
+    align-items: center;
+
+    span {
+        padding: 0;
+        padding-right: 10px;
+        color: #555;
+        margin-bottom: 9px;
+        font-weight: 600;
+    }
+
+    .workTimeInput {
+        max-width: 100px;
+        margin-right: 10px;
+        text-align: center;
+        padding: 18px 0;
+
+        &:last-child {
+            margin-right: 0px;
         }
+    }
+}
 
-        .fileUploadCancel {
-            border-radius: 5px;
-            background-color: #d2d0d0;
-            padding: 10px;
-            color: #5c5c5c;
-            cursor: pointer;
+.weekendsContainer {
+    display: flex;
+    margin: 5px 0 15px;
 
-            &:hover {
-                background-color: #2F75FB;
-                color: #fff;
-            }
+    .weekendsDay {
+        user-select: none;
+        padding: 15px;
+        margin-right: 15px;
+        border-radius: 5px;
+        background-color: #e8e8e8;
+        cursor: pointer;
+
+        &:hover {
+            color: #fff;
+            background-color: #2F75FB;
+        }
+    }
+
+    .weekendsDaySelected {
+        background: #2F75FB;
+        color: #fff;
+    }
+}
+
+
+.pointOnMap {
+    font-size: 12px;
+    font-weight: 600;
+    margin-bottom: 15px;
+    margin-top: 0;
+}
+
+.fileUpload {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background-color: #e8e8e8;
+    border-radius: 5px;
+    padding: 15px 20px;
+
+    .fileUploadTitle {
+        font-weight: normal;
+        color: #5c5c5c;
+    }
+
+    .fileUploadCancel {
+        border-radius: 5px;
+        background-color: #d2d0d0;
+        padding: 10px;
+        color: #5c5c5c;
+        cursor: pointer;
+
+        &:hover {
+            background-color: #2F75FB;
+            color: #fff;
         }
     }
 }

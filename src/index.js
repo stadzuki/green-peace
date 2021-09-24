@@ -7,8 +7,8 @@ import Admin from './pages/Admin';
 import Catalog from './pages/Catalog';
 
 import 'mapbox-gl/dist/mapbox-gl.css';
-import './reset.css';
-import './index.scss';
+import './styles/reset.css';
+import './styles/index.scss';
 
 ReactDOM.render(
   <React.StrictMode>

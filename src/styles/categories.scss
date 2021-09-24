@@ -1,0 +1,89 @@
+.category-item {
+    max-width: 49px;
+    background: #9A9A9A;
+    padding: 12px;
+    margin-top: 15px;
+    margin-right: 15px;
+    border-radius: 90px;
+    transition: background 0.1s;
+
+    &:hover {
+        background: #2ECC6E;
+        transition: background 0.1s;
+    }
+
+}
+
+.place {
+    margin-top: 15px;
+    padding-bottom: 15px;
+
+    .placeTitle {
+        color: #000000;
+        font-weight: 600;
+        font-size: 14px;
+        line-height: 19px;
+    }
+
+    .placeDescription {
+        font-size: 12px;
+        line-height: 16px;
+        color: #737373;
+        margin-top: 10px;
+    }
+
+    border-bottom: 0.5px solid #C0C0C0;
+     
+    &:last-child {
+        border: none;
+        padding-bottom: 0;
+    }
+
+    &:first-child {
+        margin-top: 0;
+    }
+}
+
+.paper:hover {
+    background: #15a42b;
+}
+.glass:hover {
+    background: #189fe0;
+}
+.bottle:hover {
+    background: #ff9a50;
+}
+.tin:hover {
+    background: #f45397;
+}
+.clothes:hover {
+    background: #eb4444;
+}
+.gadget:hover {
+    background: #3cbe93;
+}
+.radioactive:hover {
+    background: #afff00;
+}
+.battery:hover {
+    background: #ffa81f;
+}
+.lamp:hover {
+    background: #ffea3b;
+}
+.technique:hover {
+    background: #70a8ff;
+}
+.package:hover {
+    background: #b3764a;
+}
+.beer:hover {
+    background: #f2390f;
+}
+.tires:hover {
+    background: #202020;
+}
+  
+.selected {
+background-color: #2ECC6E;
+}

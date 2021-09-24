@@ -1,0 +1,75 @@
+.adminPage {
+    background-color: #fff;
+    overflow: auto;
+    display: flex;
+    justify-content: space-between;
+    width: 100vw;
+    height: 100vh;
+    padding: 50px;
+
+    h3 {
+        font-weight: 600;
+        font-size: 24px;
+        margin-bottom: 25px;
+    }
+
+    .btnWrapper {
+        display: flex;
+        align-items: flex-start;
+        flex-direction: column;
+
+        .btnAdding {
+            display: flex;
+        }
+
+        .btnControls {
+            margin: 15px 0;
+            max-width: 400px;
+            display: flex;
+            flex-wrap: wrap;
+
+            .adminBtnControls {
+                color: #101010;
+
+                &:hover {
+                    color: #fff;
+                }
+            }
+        }
+
+        .adminBtn {
+            padding: 10px;
+            margin-right: 20px;
+            border-radius: 5px;
+            color: #fff;
+            font-weight: 600;
+            cursor: pointer;
+            background-color: #eaeaea;
+            margin-top: 10px;
+
+            &:first-child {
+                margin-left: 0;
+            }
+
+            &:hover {
+                background-color: #2F75FB;
+            }
+        }
+
+        .acceptCompany {
+            background-color: rgb(47, 190, 83);
+            width: 175px;
+            text-transform: uppercase;
+            padding: 15px;
+            text-align: center;
+        }
+
+        .dismissCompany {
+            background-color: rgb(228, 72, 72);
+            width: 175px;
+            text-transform: uppercase;
+            padding: 15px;
+            text-align: center;
+        }
+    }
+}

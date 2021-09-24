@@ -1,0 +1,66 @@
+@import "scroll.scss";
+@import "form.scss";
+@import "loader.scss";
+@import "header.scss";
+@import "categories.scss";
+@import "uploadFile.scss";
+@import "schedule.scss";
+@import "adminPage.scss";
+@import "marker.scss";
+@import "catalog.scss";
+
+* {
+    padding: 0;
+    margin: 0;
+    box-sizing: border-box;
+}
+
+a {
+    text-decoration: none;
+}
+
+body {
+    height: 100vh;
+    overflow: hidden;
+    background-color: #C4C4C4;
+    font-family: 'Open Sans', sans-serif;
+    font-style: normal;
+    font-weight: normal;
+    font-size: 14px;
+}
+
+.map-container {
+    height: 100vh;
+}
+
+.hide {
+  display: none;
+}
+
+.visible {
+  display: block;
+}
+
+.notif {
+    color: #fff;
+    background-color: rgb(49, 49, 49);
+    padding: 10px 15px;
+    top: -50px;
+    position: absolute;
+    border-radius: 3px;
+    text-align: center;
+    font-weight: 400;
+    font-size: 14px;
+    right: 0;
+    left: 0;
+}
+
+
+  
+
+.innerCard {
+  z-index: 1;
+  position: absolute;
+  margin: 2%;
+  max-width: 1000px;
+}

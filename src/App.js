@@ -145,6 +145,7 @@ function App() {
                   })
                   return (
                     <li 
+                      key={idx}
                       className={`category-item ${target.type}-meta category-item-meta`}
                       style={{
                         backgroundColor: getCategory(+item).color
