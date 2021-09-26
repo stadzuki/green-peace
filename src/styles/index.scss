@@ -55,12 +55,47 @@ body {
     left: 0;
 }
 
-
-  
-
 .innerCard {
   z-index: 1;
   position: absolute;
   margin: 2%;
   max-width: 1000px;
+}
+
+.reportModal {
+  position: absolute;
+  z-index: 5;
+  top: 0;
+  left: 100%;
+  width: 40%;
+  background-color: #fff;
+  border-radius: 5px;
+  padding: 20px;
+
+  .reportTitle {
+    display: flex;
+    justify-content: space-between;
+  }
+
+  .reasons {
+    display: flex;
+    flex-direction: column;
+    margin-top: 10px;
+
+    label {
+      padding-left: 5px;
+    }
+  }
+
+  .reasonText > textarea {
+    width: 100%;
+  }
+
+  .contacter {
+    margin-top: 10px;
+
+    input {
+      width: 100%;
+    }
+  }
 }

@@ -1,9 +1,18 @@
 import React from 'react';
+import axios from 'axios';
+
+import Report from '../Report/Report'
 
 import styles from './CardCompany.module.scss'
 import transcription from '../../utils/transcription';
 
-function CardCompany({company, userPos, onClose, isCommentVisible}) {
+const url = '';
+
+function CardCompany({company, setCompany, userPos, user, onClose, isCommentVisible}) {
+    console.log(1);
+    const [isCommentFieldVisible, setIsCommentFieldVisible] = React.useState(false);
+    const [commentValue, setCommentValue] = React.useState('');
+    const [isReportVisible, setIsReportVisible] = React.useState(false);
 
     const weekDays = ['Пн', 'Вт', 'Ср', 'Чт', 'Пт', 'Сб', 'Вс'];
 
@@ -61,6 +70,30 @@ function CardCompany({company, userPos, onClose, isCommentVisible}) {
         return outStr
     }
 
+    const onCommentClick = () => {
+        // if(Object.keys(user).length <= 0) {
+        //     return alert('Вы не авторизованы')
+        // }
+
+        // const userTemp = {id: 1, login: 'aaaaaaa'}
+        if(isCommentFieldVisible) {
+            const comments = company.reviews;
+            comments.push({id: company.reviews, text: commentValue, companyId: company.id, userProfileId: user.id, userName: user.login})
+            setCompany((prev) => ({
+                ...prev,
+                reviews: comments
+            }))
+            
+            setCommentValue('')
+            setIsCommentFieldVisible(false)
+
+            // axios.post(`${url}/`, company)
+            //     .catch(e => console.log(e))
+        } else {
+            setIsCommentFieldVisible(true)
+        }
+    }
+
     const createRoute = () => {
         console.log(userPos);
     }
@@ -85,11 +118,11 @@ function CardCompany({company, userPos, onClose, isCommentVisible}) {
     return (
         <div className={`${styles.companyCard}`}>
             <p className={styles.companyTitle}>{company.title}</p>
-            {onClose ? <img className={styles.companyClose} width="10" src="/img/cancel.png" alt="close" onClick={onClose}/> : ''}
+            <img className={styles.companyClose} width="10" src="/img/cancel.png" alt="close" onClick={onClose}/>
             <div className={styles.companyImage}>
                 <img src={"data:image/jpeg;base64," + company.imageUrl} alt="company photo"/>
             </div>
-            {onClose ? <div className={styles.companyMark}>
+            <div className={styles.companyMark}>
                 <div className={styles.markCount}>
                     <div className={styles.markNumber}>1</div>
                     <p className={styles.markText}>1 оценка</p>
@@ -102,10 +135,10 @@ function CardCompany({company, userPos, onClose, isCommentVisible}) {
                         <img src="/img/dislike.png" width="25" height="25" alt="dislike"/>
                     </div>
                 </div>
-            </div> : ''}
-            {onClose ? <div className={styles.communicate}>
+            </div>
+            <div className={styles.communicate}>
                 <ul className={styles.communicateList}>
-                    <li className={styles.communicateItem}>
+                    <li className={styles.communicateItem} onClick={() => setIsReportVisible(true)}>
                         <img src="/img/report.png" width="35" height="35" alt="report icon"/>
                         <p>Жалоба</p>
                     </li>
@@ -124,7 +157,7 @@ function CardCompany({company, userPos, onClose, isCommentVisible}) {
                         <p>Комментарии</p>
                     </li>
                 </ul>
-            </div> : ''}
+            </div>
             <div className={styles.companyLocate}>{company.city}, {company.address}</div>
             <div className={styles.specialize}><span>Принимают:</span>{categoriesToString()}</div>
             <div className={styles.generalInfo}>
@@ -174,15 +207,41 @@ function CardCompany({company, userPos, onClose, isCommentVisible}) {
             {isCommentVisible 
                 ? <div className={styles.commentContainer}>
                     <p className={styles.commentTitle}>Последние комментарии</p>
-                    <div className={styles.commentBlock}>
-                        <p className={styles.commentAuthor}>Имя</p>
-                        <p className={styles.commentDate}>21.12.2021</p>
-                        <p className={styles.comment}>Просто коммент</p>
-                    </div>
-                    <div className={styles.commentBtn}>Комментировать</div>
+                    {company.reviews 
+                        ? <div className={styles.commentBlock}>
+                            {company.reviews.map((comment, idx) => {
+                                return (
+                                    <div key={idx} className={styles.comment}>
+                                        <p className={styles.commentAuthor}>{comment.userName}</p>
+                                        {/* <p className={styles.commentDate}>21.12.2021</p> */}
+                                        <p className={styles.commentText}>{comment.text}</p>
+                                    </div>
+                                )
+                            })}
+                        </div>
+                        : <p style={{textAlign: 'center', padding: '20px 0 0 0'}}>Ваш комментарий будет первым</p>
+                    }
+                    {isCommentFieldVisible 
+                        ? <form>
+                            <p>
+                                <span>Ваш комментарий</span>
+                                <textarea style={{width: '90%', marginLeft: 15}} value={commentValue} placeholder="Введите Ваш комментарий" onChange={(e) => setCommentValue(e.target.value)}></textarea>
+                            </p>
+                            <button 
+                                style={{backgroundColor: '#302F31', width: '90%', marginLeft: 15, padding: '10px 0'}}
+                                onClick={() => {
+                                    setCommentValue('')
+                                    setIsCommentFieldVisible(false)
+                                }}
+                            >Отмена</button>
+                        </form> 
+                        : ''
+                    }
+                    <div className={styles.commentBtn} onClick={onCommentClick}>Комментировать</div>
                 </div>
                 : ''
             }
+            {isReportVisible ? <Report onClose={() => setIsReportVisible(false)}/> : ''}
         </div>
     )
 }

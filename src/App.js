@@ -77,6 +77,7 @@ function App() {
 
   const onMarkerClick = (id) => {
     if(isMarkerCreate) return;
+    // if(Object.keys(currentCompany).length >= 1) return;
     const targetCompany = markers.find(m => m.id === id);
     setCurrentCompany(targetCompany);
     setIsCompanySelected(true);
@@ -326,7 +327,7 @@ function App() {
 
         <div className="innerCard">
           <Card />
-          {isCompanySelected ? <CardCompany company={currentCompany} userPos={currentPos} onClose={() => setIsCompanySelected(false)}/> : ''}
+          {isCompanySelected ? <CardCompany company={currentCompany} setCompany={setCurrentCompany} user={user} userPos={currentPos} isCommentVisible={true} onClose={() => {setIsCompanySelected(false); setCurrentCompany({})}}/> : ''}
         </div>
         <MapGL
           {...mapCoord}
