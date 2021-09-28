@@ -6,7 +6,7 @@ import styles from './Select.module.scss'
 //Берем все города без повторений и пляшем от выбранного города
 // то есть берем все маркеры и делаем поиск по городам и сохраняем только те маркеры которые соответствую городу
 let copyMarkers = [];
-function Select({setMap, setMarkers, setCopy, readonlyMarkers, lang}) {
+function Select({setMap, setCity, setMarkers, setCopy, readonlyMarkers, lang}) {
     const [selectedCity, setSelectedCity] = useState('')
     const [isSelectOpen, setIsSelectOpen] = useState(false)
     const [cities, setCities] = useState([])
@@ -45,6 +45,7 @@ function Select({setMap, setMarkers, setCopy, readonlyMarkers, lang}) {
         setCopy(company)
 
         setSelectedCity(city)
+        setCity(city)
         setIsSelectOpen(false)
     }
 

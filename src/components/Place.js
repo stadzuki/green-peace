@@ -1,10 +1,10 @@
 import React from 'react';
 
-function Place() {
+function Place({name, adress}) {
     return (
         <li className="place">
-            <div className="placeTitle">СФЕРА ЭКОЛОГИИ</div>
-            <div className="placeDescription">г. Москва, Нижняя Сыромятническая улица 10стр2</div>
+            <div className="placeTitle">{name}</div>
+            <div className="placeDescription">{adress}</div>
         </li>
     )
 }

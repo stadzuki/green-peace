@@ -212,6 +212,9 @@ function App() {
         },
         () => {
           console.log("Unable to retrieve your location");
+        },
+        {
+          enableHighAccuracy: true
         }
       );
     }
@@ -302,6 +305,7 @@ function App() {
         user,
         setUser,
         isAuthorize,
+        currentPos,
         setIsAuthorize,
         target,
         setTarget,

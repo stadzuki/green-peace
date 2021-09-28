@@ -87,8 +87,14 @@ function CardCompany({company, setCompany, userPos, user, onClose, isCommentVisi
             setCommentValue('')
             setIsCommentFieldVisible(false)
 
-            // axios.post(`${url}/`, company)
-            //     .catch(e => console.log(e))
+            axios.post(`${url}/`, {
+                id: company.reviews,
+                text: commentValue,
+                companyId: company.id,
+                userProfileId: user.id,
+                userName: user.login
+            })
+                .catch(e => console.log(e))
         } else {
             setIsCommentFieldVisible(true)
         }
@@ -241,7 +247,7 @@ function CardCompany({company, setCompany, userPos, user, onClose, isCommentVisi
                 </div>
                 : ''
             }
-            {isReportVisible ? <Report onClose={() => setIsReportVisible(false)}/> : ''}
+            {isReportVisible ? <Report companyId={company.id} onClose={() => setIsReportVisible(false)}/> : ''}
         </div>
     )
 }

@@ -1,6 +1,9 @@
+import axios from 'axios';
 import React from 'react'
 
-function Report({onClose}) {
+const url = ''
+
+function Report({onClose, companyId}) {
     const [reason, setReason] = React.useState('');
     const [reportText, setReportText] = React.useState('');
     const [userPhone, setUserPhone] = React.useState('');
@@ -24,7 +27,14 @@ function Report({onClose}) {
         }
 
 
-        //sending data
+        axios.post(`${url}/`, {
+            id: 0,
+            text: reportText,
+            reason: reason,
+            phone: userPhone,
+            companyId: companyId
+        })
+
         onClose()
     }
 
@@ -43,17 +53,17 @@ function Report({onClose}) {
                         <li>
                             <input type="radio" id="contactChoice1"
                             name="contact" value="companyClose" onChange={() => setReason('companyClose')}/>
-                            <label for="contactChoice1">Пункт закрыт</label>
+                            <label htmlFor="contactChoice1">Пункт закрыт</label>
                         </li>
                         <li>
                             <input type="radio" id="contactChoice2"
                             name="contact" value="fakeDescription" onChange={() => setReason('fakeDescription')}/>
-                            <label for="contactChoice2">Неточность в описании</label>
+                            <label htmlFor="contactChoice2">Неточность в описании</label>
                         </li>
                         <li>
                             <input type="radio" id="contactChoice3"
                             name="contact" value="other" onChange={() => setReason('other')}/>
-                            <label for="contactChoice3">Другая</label>
+                            <label htmlFor="contactChoice3">Другая</label>
                         </li>
                     </ul>
                 </div>
