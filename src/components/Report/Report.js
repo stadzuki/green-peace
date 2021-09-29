@@ -1,7 +1,7 @@
 import axios from 'axios';
 import React from 'react'
 
-const url = ''
+const url = 'https://d2ee-78-163-110-172.ngrok.io'
 
 function Report({onClose, companyId}) {
     const [reason, setReason] = React.useState('');
@@ -27,13 +27,14 @@ function Report({onClose, companyId}) {
         }
 
 
-        axios.post(`${url}/`, {
+        axios.post(`${url}/api/Company/AddReport`, {
             id: 0,
             text: reportText,
             reason: reason,
             phone: userPhone,
             companyId: companyId
         })
+        .catch(e => console.log(e))
 
         onClose()
     }

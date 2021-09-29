@@ -20,7 +20,15 @@ import getCategory from "./utils/getCategory";
 
 const TOKEN = 'pk.eyJ1IjoibG9saWsyMCIsImEiOiJja3N6NDhlZ2oycGxnMndvZHVkbGV0MTZ1In0.JkdOOOgJTsu1Sl2qO-5VAA';
 
-const url = 'https://648c-188-119-45-172.ngrok.io'
+const url = 'https://d2ee-78-163-110-172.ngrok.io'
+
+//
+//
+//
+//           ПЕРЕПИСАТЬ TOKEN В USE EFFECT
+//
+//
+//
 
 function App() {
 
@@ -222,9 +230,10 @@ function App() {
   };
 
   function getMarkers() {
-    // axios.get(`${url}/api/Company/GetCompanies`)
-    axios.get(`https://api.npoint.io/3d5795e1a47fe9cb1c83`)
+    axios.get(`${url}/api/Company/GetCompanies`)
+    // axios.get(`https://api.npoint.io/3d5795e1a47fe9cb1c83`)
       .then((response) => {
+        console.log(response);
         setMarkers(response.data)
         setMarkersCopy(response.data)
         setReadonlyMarkers(response.data)
@@ -254,6 +263,12 @@ function App() {
             headers: { Authorization: `${tokenJWT}` },
           })
           .then((response) => {
+            console.log(response);//data: "", status: 204, statusText: "No Content",
+
+            if(response.status === 204) {
+              setIsAuthorize(true);
+              return;
+            }
 
             userDublicate = {
               id: response.data.id,
@@ -331,7 +346,7 @@ function App() {
 
         <div className="innerCard">
           <Card />
-          {isCompanySelected ? <CardCompany company={currentCompany} setCompany={setCurrentCompany} user={user} userPos={currentPos} isCommentVisible={true} onClose={() => {setIsCompanySelected(false); setCurrentCompany({})}}/> : ''}
+          {isCompanySelected && !target ? <CardCompany company={currentCompany} setCompany={setCurrentCompany} user={user} userPos={currentPos} isCommentVisible={true} onClose={() => {setIsCompanySelected(false); setCurrentCompany({})}}/> : ''}
         </div>
         <MapGL
           {...mapCoord}

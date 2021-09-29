@@ -6,10 +6,9 @@ import Report from '../Report/Report'
 import styles from './CardCompany.module.scss'
 import transcription from '../../utils/transcription';
 
-const url = '';
+const url = 'https://d2ee-78-163-110-172.ngrok.io';
 
 function CardCompany({company, setCompany, userPos, user, onClose, isCommentVisible}) {
-    console.log(1);
     const [isCommentFieldVisible, setIsCommentFieldVisible] = React.useState(false);
     const [commentValue, setCommentValue] = React.useState('');
     const [isReportVisible, setIsReportVisible] = React.useState(false);
@@ -70,10 +69,16 @@ function CardCompany({company, setCompany, userPos, user, onClose, isCommentVisi
         return outStr
     }
 
+    const getCity = (city) => {
+        let cityFirstLater = city[0].toUpperCase();
+
+        return cityFirstLater + city.slice(1, city.length)
+    }
+
     const onCommentClick = () => {
-        // if(Object.keys(user).length <= 0) {
-        //     return alert('Вы не авторизованы')
-        // }
+        if(Object.keys(user).length <= 0) {
+            return alert('Вы не авторизованы')
+        }
 
         // const userTemp = {id: 1, login: 'aaaaaaa'}
         if(isCommentFieldVisible) {
@@ -87,8 +92,8 @@ function CardCompany({company, setCompany, userPos, user, onClose, isCommentVisi
             setCommentValue('')
             setIsCommentFieldVisible(false)
 
-            axios.post(`${url}/`, {
-                id: company.reviews,
+            axios.post(`${url}/Users/AddReview`, {
+                id: 0,
                 text: commentValue,
                 companyId: company.id,
                 userProfileId: user.id,
@@ -164,7 +169,7 @@ function CardCompany({company, setCompany, userPos, user, onClose, isCommentVisi
                     </li>
                 </ul>
             </div>
-            <div className={styles.companyLocate}>{company.city}, {company.address}</div>
+            <div className={styles.companyLocate}>{getCity(company.city)}, {company.address}</div>
             <div className={styles.specialize}><span>Принимают:</span>{categoriesToString()}</div>
             <div className={styles.generalInfo}>
                 <div className={styles.generalTitle}>Общая информация</div>

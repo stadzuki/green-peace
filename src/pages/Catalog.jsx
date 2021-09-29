@@ -7,10 +7,13 @@ import Category from '../components/Category';
 import Toggle from '../components/Toggle/Toggle';
 import Select from '../components/Select/Select';
 import transcription from '../utils/transcription';
+import typeCategories from '../components/shared/typeCategories';
+import Pin from '../components/Pin';
+import getCategory from '../utils/getCategory';
 import removeDuplicates from '../utils/removeDuplicates';
 
 const TOKEN = 'pk.eyJ1IjoibG9saWsyMCIsImEiOiJja3N6NDhlZ2oycGxnMndvZHVkbGV0MTZ1In0.JkdOOOgJTsu1Sl2qO-5VAA';
-const url = 'https://api.npoint.io/66155237175de1dd9dc7';
+const url = 'https://d2ee-78-163-110-172.ngrok.io';
 
 let selectedCategory = [];
 let sorted = [];
@@ -47,6 +50,11 @@ function Catalog() {
         {type: 'tires', img: '/img/category/tires.png'},
     ]
 
+    const onMarkerClick = (id) => {
+        const targetCompany = markers.find(m => m.id === id);
+        // setCurrentCompany(targetCompany);
+        // setIsCompanySelected(true);
+    }
 
     const categoriesToString = (categories) => {
         let outStr = '';
@@ -102,10 +110,89 @@ function Catalog() {
     }
     
     const createMarker = (marker, id) => {
-        //{/* onClick={() => onMarkerClick(marker.id)}*/}
+        const colors = [];
+
+        for(let category of marker.categoriesId) {
+            colors.push(getCategory(+category).color)
+        }
+
         return (
-          <Marker key={id} longitude={+marker.longitude} latitude={+marker.latitude}>
-            <img src="/img/map-marker.png" alt="marker" width="50" height="50"/> 
+            <Marker 
+            key={marker.id} 
+            longitude={+marker.longitude} 
+            latitude={+marker.latitude} 
+            onClick={() => onMarkerClick(marker.id)}
+          >
+            <div className='markerContainer'
+                onMouseOver={(e) => {
+                  let parent;
+    
+                  if(e.target.tagName.toUpperCase() === 'CIRCLE') {
+                    parent = e.target.parentNode.parentNode
+                  } else if(e.target.tagName.toUpperCase() === 'SVG') {
+                    parent = e.target.parentNode
+                  } else if(e.target.tagName.toUpperCase() === 'ING') {
+                    parent = e.target.parentNode.parentNode
+                  } else {
+                    parent = document.body;
+                  }
+                  
+                  parent.querySelector('.markerMetaWrapper').classList.add('visible');
+                }}
+                onMouseOut={(e) => {
+                  let parent;
+    
+                  if(e.target.tagName.toUpperCase() === 'CIRCLE') {
+                    parent = e.target.parentNode.parentNode
+                  } else if(e.target.tagName.toUpperCase() === 'SVG') {
+                    parent = e.target.parentNode
+                  } else if(e.target.tagName.toUpperCase() === 'ING') {
+                    parent = e.target.parentNode.parentNode
+                  } else {
+                    parent = document.body;
+                  }
+                  
+                  parent.querySelector('.markerMetaWrapper').classList.remove('visible');
+                }}
+              >
+                <Pin count={[...marker.categoriesId]} color={[...colors]} />
+                <div className={`markerMetaWrapper`}>
+                  <p style={{whiteSpace: 'nowrap'}}>{marker.title}</p>
+                  <ul className="metaCategoriesWrapper">
+                    {marker.categoriesId.map((item, idx) => {
+                      const categoryMeta = typeCategories(item)
+                      let target;
+                      categories.forEach(item => {
+                        if(categoryMeta === item.type) {
+                          target = item;
+                        }
+                      })
+                      return (
+                        <li 
+                          key={idx}
+                          className={`category-item ${target.type}-meta category-item-meta`}
+                          style={{
+                            backgroundColor: getCategory(+item).color
+                          }}
+                        >
+                            <img src={target.img}
+                              width="15"
+                              height="15"
+                              alt={`${target.type} category`} 
+                            />
+                        </li>
+                      )
+                    })}
+                  </ul>
+                </div>
+                <img 
+                  src="/img/map-marker.png"
+                  alt="marker"
+                  style={{position: 'relative'}}
+                  width="65"
+                  height="65"
+                />
+              </div>
           </Marker>
         )
     }
@@ -141,8 +228,8 @@ function Catalog() {
     ), [markers]);
 
     function getMarkers() {
-        // axios.get(`${url}/api/Company/GetCompanies`)
-        axios.get(`https://api.npoint.io/66155237175de1dd9dc7`)
+        axios.get(`${url}/api/Company/GetCompanies`)
+        // axios.get(`https://api.npoint.io/66155237175de1dd9dc7`)
             .then((response) => {
                 setMarkers(response.data)
                 setMarkersCopy(response.data)

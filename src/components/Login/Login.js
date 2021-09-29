@@ -8,7 +8,7 @@ import styles from './Login.module.scss';
 import Loader from '../Loader';
 
 function Login({method, onClose}) {
-    const url = 'https://648c-188-119-45-172.ngrok.io';
+    const url = 'https://d2ee-78-163-110-172.ngrok.io';
 
     const {setLoginMethod, setUser, setIsAuthorize} = React.useContext(AppContext)
 

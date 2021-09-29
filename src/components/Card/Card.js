@@ -79,15 +79,12 @@ function Card() {
     }, [currentCity])
 
     const getNearCompanies = () => {
-        console.log(currentPos);
         const sort = [...markers.filter(marker => {
             return marker.longitude <= currentPos.longitude + NAER_RADIUS 
                 && marker.longitude >= currentPos.longitude - NAER_RADIUS 
                 && marker.latitude <= currentPos.latitude + NAER_RADIUS
                 && marker.latitude >= currentPos.latitude - NAER_RADIUS
         })]
-        console.log(sort);
-        console.log(markers);
         setMarkersFromCard(sort)
     }
 

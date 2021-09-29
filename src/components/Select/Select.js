@@ -45,7 +45,9 @@ function Select({setMap, setCity, setMarkers, setCopy, readonlyMarkers, lang}) {
         setCopy(company)
 
         setSelectedCity(city)
-        setCity(city)
+        if(setCity !== undefined) {
+            setCity(city)
+        }
         setIsSelectOpen(false)
     }
 

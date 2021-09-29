@@ -7,7 +7,7 @@ import transcription from '../../utils/transcription';
 import styles from './CreateCard.module.scss';
 import Schedule from '../Schedule/Shedule';
 
-const url = 'https://92a5-188-119-45-172.ngrok.io'
+const url = 'https://d2ee-78-163-110-172.ngrok.io'
 
 const timeRegex = /^[0-9]{2}[0-9]?\:[0-9]{2}$/
 const phoneRegex = /^\+[0-9]+$/
@@ -340,13 +340,13 @@ function CreateCard({category, setCategory}) {
             categoriesId: category
         }
         
-        // axios.post(`${url}/api/Company/AddCompany`, data)
-        //     .then((resp) => {
-        //         console.log('resp');
-        //     })
-        //     .catch((error) => {
-        //         console.log(error);
-        //     })
+        axios.post(`${url}/api/Company/AddCompany`, data)
+            .then((resp) => {
+                console.log('resp');
+            })
+            .catch((error) => {
+                console.log(error);
+            })
 
         onClose();
         console.log(data);
