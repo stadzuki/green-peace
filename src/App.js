@@ -20,7 +20,9 @@ import getCategory from "./utils/getCategory";
 
 const TOKEN = 'pk.eyJ1IjoibG9saWsyMCIsImEiOiJja3N6NDhlZ2oycGxnMndvZHVkbGV0MTZ1In0.JkdOOOgJTsu1Sl2qO-5VAA';
 
-const url = 'https://d2ee-78-163-110-172.ngrok.io'
+const MARKER_SIZE = 65;
+
+const url = 'https://9810-78-163-110-172.ngrok.io'
 
 //
 //
@@ -105,40 +107,43 @@ function App() {
         key={marker.id} 
         longitude={+marker.longitude} 
         latitude={+marker.latitude} 
+        offsetLeft={0}
+        offsetTop={0}
         onClick={() => onMarkerClick(marker.id)}
       >
         {isMarkerCreate !== 'INIT' 
           ? <div className='markerContainer'
-            onMouseOver={(e) => {
-              let parent;
+              style={{ transform: `translate(${-MARKER_SIZE / 2}px,${-MARKER_SIZE}px)` }}
+              onMouseOver={(e) => {
+                let parent;
 
-              if(e.target.tagName.toUpperCase() === 'CIRCLE') {
-                parent = e.target.parentNode.parentNode
-              } else if(e.target.tagName.toUpperCase() === 'SVG') {
-                parent = e.target.parentNode
-              } else if(e.target.tagName.toUpperCase() === 'ING') {
-                parent = e.target.parentNode.parentNode
-              } else {
-                parent = document.body;
-              }
-              
-              parent.querySelector('.markerMetaWrapper').classList.add('visible');
-            }}
-            onMouseOut={(e) => {
-              let parent;
+                if(e.target.tagName.toUpperCase() === 'CIRCLE') {
+                  parent = e.target.parentNode.parentNode
+                } else if(e.target.tagName.toUpperCase() === 'SVG') {
+                  parent = e.target.parentNode
+                } else if(e.target.tagName.toUpperCase() === 'IMG') {
+                  parent = e.target.parentNode.parentNode
+                } else {
+                  parent = document.body;
+                }
+                
+                parent.querySelector('.markerMetaWrapper').classList.add('visible');
+              }}
+              onMouseOut={(e) => {
+                let parent;
 
-              if(e.target.tagName.toUpperCase() === 'CIRCLE') {
-                parent = e.target.parentNode.parentNode
-              } else if(e.target.tagName.toUpperCase() === 'SVG') {
-                parent = e.target.parentNode
-              } else if(e.target.tagName.toUpperCase() === 'ING') {
-                parent = e.target.parentNode.parentNode
-              } else {
-                parent = document.body;
-              }
-              
-              parent.querySelector('.markerMetaWrapper').classList.remove('visible');
-            }}
+                if(e.target.tagName.toUpperCase() === 'CIRCLE') {
+                  parent = e.target.parentNode.parentNode
+                } else if(e.target.tagName.toUpperCase() === 'SVG') {
+                  parent = e.target.parentNode
+                } else if(e.target.tagName.toUpperCase() === 'IMG') {
+                  parent = e.target.parentNode.parentNode
+                } else {
+                  parent = document.body;
+                }
+                
+                parent.querySelector('.markerMetaWrapper').classList.remove('visible');
+              }}
           >
             <Pin count={[...marker.categoriesId]} color={[...colors]} />
             <div className={`markerMetaWrapper`}>
@@ -171,7 +176,7 @@ function App() {
               </ul>
             </div>
             <img 
-              src="/img/map-marker.png"
+              src="/img/map-marker.webp"
               alt="marker"
               style={{position: 'relative'}}
               width="65"
@@ -179,11 +184,11 @@ function App() {
             />
           </div>
           : <img 
-            src="/img/map-marker.png"
+            src="/img/map-marker.webp"
             alt="marker"
             style={{position: 'relative'}}
-            width="45"
-            height="45"
+            width="65"
+            height="65"
           />
         }
         
@@ -230,10 +235,10 @@ function App() {
   };
 
   function getMarkers() {
-    axios.get(`${url}/api/Company/GetCompanies`)
+    axios.get(`${url}/api/Company/GetCompanies`, {headers: {'Content-Length': 6000}})
     // axios.get(`https://api.npoint.io/3d5795e1a47fe9cb1c83`)
       .then((response) => {
-        console.log(response);
+        console.log(response.data);
         setMarkers(response.data)
         setMarkersCopy(response.data)
         setReadonlyMarkers(response.data)

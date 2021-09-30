@@ -6,7 +6,7 @@ import Report from '../Report/Report'
 import styles from './CardCompany.module.scss'
 import transcription from '../../utils/transcription';
 
-const url = 'https://d2ee-78-163-110-172.ngrok.io';
+const url = 'https://9810-78-163-110-172.ngrok.io';
 
 function CardCompany({company, setCompany, userPos, user, onClose, isCommentVisible}) {
     const [isCommentFieldVisible, setIsCommentFieldVisible] = React.useState(false);

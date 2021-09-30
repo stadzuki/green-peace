@@ -13,7 +13,7 @@ import getCategory from '../utils/getCategory';
 import removeDuplicates from '../utils/removeDuplicates';
 
 const TOKEN = 'pk.eyJ1IjoibG9saWsyMCIsImEiOiJja3N6NDhlZ2oycGxnMndvZHVkbGV0MTZ1In0.JkdOOOgJTsu1Sl2qO-5VAA';
-const url = 'https://d2ee-78-163-110-172.ngrok.io';
+const url = 'https://9810-78-163-110-172.ngrok.io';
 
 let selectedCategory = [];
 let sorted = [];

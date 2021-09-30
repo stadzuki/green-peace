@@ -7,7 +7,7 @@ import transcription from '../../utils/transcription';
 import styles from './CreateCard.module.scss';
 import Schedule from '../Schedule/Shedule';
 
-const url = 'https://d2ee-78-163-110-172.ngrok.io'
+const url = 'https://9810-78-163-110-172.ngrok.io'
 
 const timeRegex = /^[0-9]{2}[0-9]?\:[0-9]{2}$/
 const phoneRegex = /^\+[0-9]+$/
