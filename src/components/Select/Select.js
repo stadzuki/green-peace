@@ -39,7 +39,7 @@ function Select({setMap, setCity, setMarkers, setCopy, readonlyMarkers, lang}) {
         const company = [...copyMarkers.filter(c => c.city === city)]
         
         setMap((prev) => {
-            return {...prev, latitude: +company[0].latitude,  longitude: +company[0].longitude}
+            return {...prev, latitude: +company[0].latitude,  longitude: +company[0].longitude, zoom: 11}
         })
         setMarkers(company)
         setCopy(company)

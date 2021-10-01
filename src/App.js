@@ -55,11 +55,11 @@ function App() {
   const [mapCoord, setMapCoord] = useState({
     latitude: 53.893009,
     longitude: 	27.567444,
-    zoom: 12,
+    zoom: 11,
     bearing: 0,
     pitch: 0,
   });
-  const [isGettedLocate, setIsGettedLocate] = useState(false);
+  // const [isGettedLocate, setIsGettedLocate] = useState(false);
 
   //Auth
   const [token, setToken] = useState("");
@@ -68,7 +68,7 @@ function App() {
   //User
   const [user, setUser] = useState({});
   const [isAuthorize, setIsAuthorize] = useState(false);
-  const [currentPos, setCurrentPos] = useState({})
+  // const [currentPos, setCurrentPos] = useState({})
 
   //Marker
   const [readonlyMarkers, setReadonlyMarkers] = useState([])
@@ -78,6 +78,10 @@ function App() {
   const [markers, setMarkers] = useState([]);
   const [newMarker, setNewMarker] = useState(false)
   const [markersCopy, setMarkersCopy] = useState([]);
+
+  //Cities
+  const [citiesMarker, setCitiesMarker] = useState([])
+  const [isCitiesLoaded, setIsCitiesLoaded] = useState(false)
 
   //Company
   const [isCompanySelected, setIsCompanySelected] = useState(false)
@@ -202,6 +206,35 @@ function App() {
     )
   ), [markers]);
 
+  const getCityCompanies = (city) => {
+    // axios.get(`${url}/GetCity/${city}`)
+    axios.get(`https://api.npoint.io/3d5795e1a47fe9cb1c83`)
+    .then(response => {
+      setMarkers(response.data)
+      setMapCoord((prev) => ({...prev, latitude: +response.data[0].latitude, longitude: +response.data[0].longitude, zoom: 12}))
+    })
+    .catch(e => console.log(e))
+  }
+
+  const createCityMarker = (cityMarker) => {
+    return (
+      <Marker 
+        key={cityMarker.id} 
+        longitude={+cityMarker.longitude} 
+        latitude={+cityMarker.latitude} 
+        onClick={() => getCityCompanies(citiesMarker.cityName)}
+      >
+        <img style={{ transform: `translate(${-65 / 2}px,${-65}px)`, cursor: 'pointer', userSelect: 'none' }} src="img/build.svg" alt="citi marker" width="65" height="65"/>
+      </Marker>
+    )
+  }
+
+  const mapCities = React.useMemo(() => citiesMarker.map(
+    cityMarker => (
+        createCityMarker(cityMarker)
+    )
+  ), [citiesMarker]);
+
   const createMarkerHanlder = () => {
     // if(isAuthorize) {
       setTarget(true);
@@ -212,31 +245,31 @@ function App() {
     // }
   };
 
-  function getLocation() {
-    if (!navigator.geolocation) {
-      console.log("Geolocation is not supported by your browser");
-    } else {
-      navigator.geolocation.getCurrentPosition(
-        (position) => {
-          setMapCoord((prev) => {
-            return {...prev, latitude: position.coords.latitude, longitude: position.coords.longitude}
-          })
-          setCurrentPos({latitude: position.coords.latitude, longitude: position.coords.longitude})
-        },
-        () => {
-          console.log("Unable to retrieve your location");
-        },
-        {
-          enableHighAccuracy: true
-        }
-      );
-    }
-    setIsGettedLocate(true);
-  };
+  // function getLocation() {
+  //   if (!navigator.geolocation) {
+  //     console.log("Geolocation is not supported by your browser");
+  //   } else {
+  //     navigator.geolocation.getCurrentPosition(
+  //       (position) => {
+  //         setMapCoord((prev) => {
+  //           return {...prev, latitude: position.coords.latitude, longitude: position.coords.longitude}
+  //         })
+  //         setCurrentPos({latitude: position.coords.latitude, longitude: position.coords.longitude})
+  //       },
+  //       () => {
+  //         console.log("Unable to retrieve your location");
+  //       },
+  //       {
+  //         enableHighAccuracy: true
+  //       }
+  //     );
+  //   }
+  //   setIsGettedLocate(true);
+  // };
 
   function getMarkers() {
-    axios.get(`${url}/api/Company/GetCompanies`, {headers: {'Content-Length': 6000}})
-    // axios.get(`https://api.npoint.io/3d5795e1a47fe9cb1c83`)
+    // axios.get(`${url}/api/Company/GetCompanies`, {headers: {'Content-Length': 6000}})
+    axios.get(`https://api.npoint.io/3d5795e1a47fe9cb1c83`)
       .then((response) => {
         console.log(response.data);
         setMarkers(response.data)
@@ -247,6 +280,20 @@ function App() {
         console.log(error);
       })
       setIsMarkersLoaded(true)
+      setIsLoader(false)
+  }
+
+  function getCities() {
+    // axios.get(`${url}/api/Company/GetCompanies`, {headers: {'Content-Length': 6000}})
+    axios.get(`https://api.npoint.io/dbbe065fcd8b2f1f3288`)
+      .then((response) => {
+        console.log(response.data);
+        setCitiesMarker(response.data)
+      })
+      .catch((error) => {
+        console.log(error);
+      })
+      setIsCitiesLoaded(true)
       setIsLoader(false)
   }
 
@@ -300,14 +347,19 @@ function App() {
       // setIsLoader(false);
     }
 
-    if (!isGettedLocate) {
-      getLocation();
-    }
+    // if (!isGettedLocate) {
+    //   getLocation();
+    // }
   });
 
+  // useEffect(() => {
+  //   if(isMarkersLoaded) return 1;
+  //   getMarkers()
+  // })
+
   useEffect(() => {
-    if(isMarkersLoaded) return 1;
-    getMarkers()
+    if(isCitiesLoaded) return 1;
+    getCities()
   })
 
   const mapClickHandler = (e) => {
@@ -318,6 +370,12 @@ function App() {
     }
   }
 
+  const mapStateChange = (evt) => {
+    if(evt.viewState.zoom <= 9) {
+      setMarkers([])
+    }
+  } 
+
   return (
     <AppContext.Provider
       value={{
@@ -325,7 +383,7 @@ function App() {
         user,
         setUser,
         isAuthorize,
-        currentPos,
+        // currentPos,
         setIsAuthorize,
         target,
         setTarget,
@@ -351,7 +409,7 @@ function App() {
 
         <div className="innerCard">
           <Card />
-          {isCompanySelected && !target ? <CardCompany company={currentCompany} setCompany={setCurrentCompany} user={user} userPos={currentPos} isCommentVisible={true} onClose={() => {setIsCompanySelected(false); setCurrentCompany({})}}/> : ''}
+          {isCompanySelected && !target ? <CardCompany company={currentCompany} setCompany={setCurrentCompany} user={user} isCommentVisible={true} onClose={() => {setIsCompanySelected(false); setCurrentCompany({})}}/> : ''}
         </div>
         <MapGL
           {...mapCoord}
@@ -361,9 +419,10 @@ function App() {
           onViewportChange={setMapCoord}
           mapboxApiAccessToken={TOKEN}
           onClick={mapClickHandler}
-          // onViewStateChange={(e) => console.log(e)}
+          onViewStateChange={mapStateChange}
         >
-          {mapMarkers}
+          {/* {mapCoord.zoom <= 10 ? mapCities : mapMarkers} */}
+          {markers.length ? mapMarkers : mapCities}
         </MapGL>
         <MarkerCreator changeTarget={createMarkerHanlder} currentLang={currentLang}/>
       </div>

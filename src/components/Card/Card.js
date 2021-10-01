@@ -44,7 +44,7 @@ function Card() {
         setMapCoord,
         markersCopy,
         setMarkersCopy,
-        currentPos,
+        // currentPos,
         readonlyMarkers,
     } = React.useContext(AppContext)
 
@@ -52,7 +52,7 @@ function Card() {
         if(isMarkersLoaded) return 1;
         if(markers.length > 0) {
             setIsMarkersLoaded(true)
-            getNearCompanies()
+            // getNearCompanies()
         }
     }, [markers])
 
@@ -64,29 +64,29 @@ function Card() {
         }
     }, [target])
 
-    useEffect(() => {
-        getNearCompanies()
-    }, [currentPos])
+    // useEffect(() => {
+    //     getNearCompanies()
+    // }, [currentPos])
 
-    useEffect(() => {
-        if(!isMarkersLoaded) return 1;
-        if(markersCardState === 'near') {
-            getNearCompanies()
-        } else {
-            if(currentCity === '') return;
-            getAllCitiesCompanies()
-        }
-    }, [currentCity])
+    // useEffect(() => {
+    //     if(!isMarkersLoaded) return 1;
+    //     if(markersCardState === 'near') {
+    //         getNearCompanies()
+    //     } else {
+    //         if(currentCity === '') return;
+    //         getAllCitiesCompanies()
+    //     }
+    // }, [currentCity])
 
-    const getNearCompanies = () => {
-        const sort = [...markers.filter(marker => {
-            return marker.longitude <= currentPos.longitude + NAER_RADIUS 
-                && marker.longitude >= currentPos.longitude - NAER_RADIUS 
-                && marker.latitude <= currentPos.latitude + NAER_RADIUS
-                && marker.latitude >= currentPos.latitude - NAER_RADIUS
-        })]
-        setMarkersFromCard(sort)
-    }
+    // const getNearCompanies = () => {
+    //     const sort = [...markers.filter(marker => {
+    //         return marker.longitude <= currentPos.longitude + NAER_RADIUS 
+    //             && marker.longitude >= currentPos.longitude - NAER_RADIUS 
+    //             && marker.latitude <= currentPos.latitude + NAER_RADIUS
+    //             && marker.latitude >= currentPos.latitude - NAER_RADIUS
+    //     })]
+    //     setMarkersFromCard(sort)
+    // }
 
     const getAllCitiesCompanies = () => {
         if(currentCity === '') {
@@ -102,7 +102,7 @@ function Card() {
         if(type === 'near') {
             if(markersCardState === 'near') return; 
 
-            getNearCompanies()
+            // getNearCompanies()
             setMarkersCardState('near')
 
             evt.target.classList.add(styles.activeLocate)

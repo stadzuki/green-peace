@@ -8,7 +8,7 @@ import transcription from '../../utils/transcription';
 
 const url = 'https://9810-78-163-110-172.ngrok.io';
 
-function CardCompany({company, setCompany, userPos, user, onClose, isCommentVisible}) {
+function CardCompany({company, setCompany, user, onClose, isCommentVisible}) {
     const [isCommentFieldVisible, setIsCommentFieldVisible] = React.useState(false);
     const [commentValue, setCommentValue] = React.useState('');
     const [isReportVisible, setIsReportVisible] = React.useState(false);
@@ -105,10 +105,6 @@ function CardCompany({company, setCompany, userPos, user, onClose, isCommentVisi
         }
     }
 
-    const createRoute = () => {
-        console.log(userPos);
-    }
-
     const getCurrentDay = (days) => {
         const weekday = {0: 1, 1: 2, 2: 3, 3: 4, 4: 5, 5: 6,  6: 0}
         const today = new Date().getDay();
@@ -159,7 +155,7 @@ function CardCompany({company, setCompany, userPos, user, onClose, isCommentVisi
                             <p>Позвонить</p>
                         </li>
                     </a>
-                    <li className={styles.communicateItem} onClick={createRoute}>
+                    <li className={styles.communicateItem} onClick={() => {}}>
                         <img src="/img/route.png" width="35" height="35" alt="route icon"/>
                         <p>Маршрут</p>
                     </li>
