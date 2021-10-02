@@ -1,53 +1,29 @@
 import React, { useEffect, useState } from 'react';
+import axios from 'axios';
 
 import transcription from '../../utils/transcription'
 import styles from './Select.module.scss'
 
-//Берем все города без повторений и пляшем от выбранного города
-// то есть берем все маркеры и делаем поиск по городам и сохраняем только те маркеры которые соответствую городу
-let copyMarkers = [];
-function Select({setMap, setCity, setMarkers, setCopy, readonlyMarkers, lang}) {
+function Select({setMap, lang, cities, setMarkers, setCopy}) {
     const [selectedCity, setSelectedCity] = useState('')
     const [isSelectOpen, setIsSelectOpen] = useState(false)
-    const [cities, setCities] = useState([])
-    const [isCompanyLoaded, setIsCompanyLoaded] = useState(false)
-    
-    useEffect(() => {
-        if(isCompanyLoaded) return 1;
-        if(readonlyMarkers.length > 0) {
-            sortCity();
-        }
-    })
 
-    function sortCity() {
-        const citiesArr = [...readonlyMarkers]
-        copyMarkers = [...readonlyMarkers]
-        const catchCities = []
-        
-        citiesArr.forEach(item => {
-            if(catchCities.find(e => e.toLowerCase() === item.city.toLowerCase())) {
-                return 1;
-            }
-            catchCities.push(item.city);
+    const CityClickHandler = (city) => {
+        // axios.get(`${url}/GetCity/${city.cityName}`)
+        axios.get(`https://api.npoint.io/3d5795e1a47fe9cb1c83`)
+        .then(response => {
+            setMarkers(response.data)
+            setCopy(response.data)
         })
-        
-        setCities(catchCities);
-        setIsCompanyLoaded(true)
-    }
+        .catch(e => console.log(e))
 
-    const clickHandler = (city) => {
-        const company = [...copyMarkers.filter(c => c.city === city)]
-        
+        console.log(city);
+
         setMap((prev) => {
-            return {...prev, latitude: +company[0].latitude,  longitude: +company[0].longitude, zoom: 11}
+            return {...prev, latitude: +city.latitude,  longitude: +city.longitude, zoom: 11}
         })
-        setMarkers(company)
-        setCopy(company)
 
-        setSelectedCity(city)
-        if(setCity !== undefined) {
-            setCity(city)
-        }
+        setSelectedCity(city.cityName)
         setIsSelectOpen(false)
     }
 
@@ -71,9 +47,15 @@ function Select({setMap, setCity, setMarkers, setCopy, readonlyMarkers, lang}) {
                 </svg>
             </div>
             <div className={`${isSelectOpen ? styles.visible : ''} ${styles.selectList}`}>
-                {cities.length > 0  ? <ul className={styles.citiesList}>
+                {cities.length  ? <ul className={styles.citiesList}>
                     {cities.map((city, idx) => {
-                        return <li key={idx} className={styles.city} onClick={() => clickHandler(city)}>{city}</li>
+                        return (
+                            <li 
+                                key={idx} 
+                                className={styles.city} 
+                                onClick={() => CityClickHandler(city)}
+                            >{city.cityName}</li>
+                        )
                     })}
                 </ul>
                 : <p className={styles.cityEmpty}>{transcription[lang].selectCitiesEmpty}</p>}

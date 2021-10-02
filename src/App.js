@@ -59,6 +59,7 @@ function App() {
     bearing: 0,
     pitch: 0,
   });
+  const [mapView, setMapView] = useState('city')
   // const [isGettedLocate, setIsGettedLocate] = useState(false);
 
   //Auth
@@ -89,14 +90,76 @@ function App() {
 
   let userDublicate = {}
 
-  const onMarkerClick = (id) => {
-    if(isMarkerCreate) return;
-    // if(Object.keys(currentCompany).length >= 1) return;
-    const targetCompany = markers.find(m => m.id === id);
-    setCurrentCompany(targetCompany);
-    setIsCompanySelected(true);
-  }
 
+
+  //Токен
+  useEffect( async () => {
+
+    if (token === "") {
+      // setIsLoader(true)
+      const tokenJWT = JSON.parse(localStorage.getItem("token"));
+
+      if (
+        tokenJWT !== null &&
+        isAuthorize === false &&
+        tokenJWT !== undefined
+      ) {
+        const payloads = jwtDecode(tokenJWT);
+
+        axios
+          .get(`${url}/Users/${payloads.id}`, {
+            headers: { Authorization: `${tokenJWT}` },
+          })
+          .then((response) => {
+            console.log(response);//data: "", status: 204, statusText: "No Content",
+
+            if(response.status === 204) {
+              setIsAuthorize(true);
+              return;
+            }
+
+            userDublicate = {
+              id: response.data.id,
+              email: response.data.email,
+              login: response.data.name,
+              icon: response.data.avatarUrl,
+            }
+
+            setUser({
+              id: response.data.id,
+              email: response.data.email,
+              login: response.data.name,
+              icon: response.data.avatarUrl,
+            });
+          })
+          .catch((error) => {
+            console.log(error);
+        });
+
+        setToken(tokenJWT);
+        setIsAuthorize(true);
+      }
+
+      // setIsLoader(false);
+    }
+
+    // if (!isGettedLocate) {
+    //   getLocation();
+    // }
+  });
+
+  //Загрузка городов
+  useEffect(() => {
+    if(isCitiesLoaded) return 1;
+    getCities()
+  })
+
+
+
+
+
+
+  // Получение и отрисовка маркеров
   const createMarker = (marker) => {
     const colors = [];
 
@@ -211,11 +274,20 @@ function App() {
     axios.get(`https://api.npoint.io/3d5795e1a47fe9cb1c83`)
     .then(response => {
       setMarkers(response.data)
+      setMarkersCopy(response.data)
       setMapCoord((prev) => ({...prev, latitude: +response.data[0].latitude, longitude: +response.data[0].longitude, zoom: 12}))
+      setMapView('company')
     })
     .catch(e => console.log(e))
   }
 
+
+
+
+
+
+
+  // Получение и отрисовка городов
   const createCityMarker = (cityMarker) => {
     return (
       <Marker 
@@ -235,54 +307,6 @@ function App() {
     )
   ), [citiesMarker]);
 
-  const createMarkerHanlder = () => {
-    // if(isAuthorize) {
-      setTarget(true);
-      document.querySelectorAll('.category-item').forEach(item => item.classList.remove('selected'));
-      setMarkers(markersCopy)
-    // } else {
-    //   alert('Вы не авторизованы!')
-    // }
-  };
-
-  // function getLocation() {
-  //   if (!navigator.geolocation) {
-  //     console.log("Geolocation is not supported by your browser");
-  //   } else {
-  //     navigator.geolocation.getCurrentPosition(
-  //       (position) => {
-  //         setMapCoord((prev) => {
-  //           return {...prev, latitude: position.coords.latitude, longitude: position.coords.longitude}
-  //         })
-  //         setCurrentPos({latitude: position.coords.latitude, longitude: position.coords.longitude})
-  //       },
-  //       () => {
-  //         console.log("Unable to retrieve your location");
-  //       },
-  //       {
-  //         enableHighAccuracy: true
-  //       }
-  //     );
-  //   }
-  //   setIsGettedLocate(true);
-  // };
-
-  function getMarkers() {
-    // axios.get(`${url}/api/Company/GetCompanies`, {headers: {'Content-Length': 6000}})
-    axios.get(`https://api.npoint.io/3d5795e1a47fe9cb1c83`)
-      .then((response) => {
-        console.log(response.data);
-        setMarkers(response.data)
-        setMarkersCopy(response.data)
-        setReadonlyMarkers(response.data)
-      })
-      .catch((error) => {
-        console.log(error);
-      })
-      setIsMarkersLoaded(true)
-      setIsLoader(false)
-  }
-
   function getCities() {
     // axios.get(`${url}/api/Company/GetCompanies`, {headers: {'Content-Length': 6000}})
     axios.get(`https://api.npoint.io/dbbe065fcd8b2f1f3288`)
@@ -297,70 +321,31 @@ function App() {
       setIsLoader(false)
   }
 
-  useEffect( async () => {
 
-    if (token === "") {
-      // setIsLoader(true)
-      const tokenJWT = JSON.parse(localStorage.getItem("token"));
 
-      if (
-        tokenJWT !== null &&
-        isAuthorize === false &&
-        tokenJWT !== undefined
-      ) {
-        const payloads = jwtDecode(tokenJWT);
 
-        axios
-          .get(`${url}/Users/${payloads.id}`, {
-            headers: { Authorization: `${tokenJWT}` },
-          })
-          .then((response) => {
-            console.log(response);//data: "", status: 204, statusText: "No Content",
 
-            if(response.status === 204) {
-              setIsAuthorize(true);
-              return;
-            }
 
-            userDublicate = {
-              id: response.data.id,
-              email: response.data.email,
-              login: response.data.name,
-              icon: response.data.avatarUrl,
-            }
 
-            setUser({
-              id: response.data.id,
-              email: response.data.email,
-              login: response.data.name,
-              icon: response.data.avatarUrl,
-            });
-          })
-          .catch((error) => {
-            console.log(error);
-        });
 
-        setToken(tokenJWT);
-        setIsAuthorize(true);
-      }
-
-      // setIsLoader(false);
-    }
-
-    // if (!isGettedLocate) {
-    //   getLocation();
+  // Хэндлеры и обработчики
+  const createMarkerHanlder = () => {
+    // if(isAuthorize) {
+      setTarget(true);
+      document.querySelectorAll('.category-item').forEach(item => item.classList.remove('selected'));
+      setMarkers(markersCopy)
+    // } else {
+    //   alert('Вы не авторизованы!')
     // }
-  });
+  };
 
-  // useEffect(() => {
-  //   if(isMarkersLoaded) return 1;
-  //   getMarkers()
-  // })
-
-  useEffect(() => {
-    if(isCitiesLoaded) return 1;
-    getCities()
-  })
+  const onMarkerClick = (id) => {
+    if(isMarkerCreate) return;
+    // if(Object.keys(currentCompany).length >= 1) return;
+    const targetCompany = markers.find(m => m.id === id);
+    setCurrentCompany(targetCompany);
+    setIsCompanySelected(true);
+  }
 
   const mapClickHandler = (e) => {
     if(isMarkerCreate === true) {
@@ -373,8 +358,14 @@ function App() {
   const mapStateChange = (evt) => {
     if(evt.viewState.zoom <= 9) {
       setMarkers([])
+      setMapView('city')
     }
   } 
+
+
+
+
+  
 
   return (
     <AppContext.Provider
@@ -398,6 +389,7 @@ function App() {
         setMapCoord,
         markersCopy,
         setMarkersCopy,
+        citiesMarker,
         readonlyMarkers
       }}
     >
@@ -422,7 +414,7 @@ function App() {
           onViewStateChange={mapStateChange}
         >
           {/* {mapCoord.zoom <= 10 ? mapCities : mapMarkers} */}
-          {markers.length ? mapMarkers : mapCities}
+          {markers.length || mapView === 'company' ? mapMarkers : mapCities}
         </MapGL>
         <MarkerCreator changeTarget={createMarkerHanlder} currentLang={currentLang}/>
       </div>
