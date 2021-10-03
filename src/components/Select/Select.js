@@ -4,26 +4,26 @@ import axios from 'axios';
 import transcription from '../../utils/transcription'
 import styles from './Select.module.scss'
 
+const url = 'https://3783-88-232-173-217.ngrok.io'
+
 function Select({setMap, lang, cities, setMarkers, setCopy}) {
     const [selectedCity, setSelectedCity] = useState('')
     const [isSelectOpen, setIsSelectOpen] = useState(false)
 
     const CityClickHandler = (city) => {
-        // axios.get(`${url}/GetCity/${city.cityName}`)
-        axios.get(`https://api.npoint.io/3d5795e1a47fe9cb1c83`)
+        // axios.get(`https://api.npoint.io/3d5795e1a47fe9cb1c83`)
+        axios.get(`${url}/api/Company/GetCompanies?city=${city.title}`)
         .then(response => {
             setMarkers(response.data)
             setCopy(response.data)
         })
         .catch(e => console.log(e))
 
-        console.log(city);
-
         setMap((prev) => {
             return {...prev, latitude: +city.latitude,  longitude: +city.longitude, zoom: 11}
         })
 
-        setSelectedCity(city.cityName)
+        setSelectedCity(city.title)
         setIsSelectOpen(false)
     }
 
@@ -54,7 +54,7 @@ function Select({setMap, lang, cities, setMarkers, setCopy}) {
                                 key={idx} 
                                 className={styles.city} 
                                 onClick={() => CityClickHandler(city)}
-                            >{city.cityName}</li>
+                            >{city.title}</li>
                         )
                     })}
                 </ul>

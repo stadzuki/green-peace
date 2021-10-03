@@ -26,7 +26,8 @@ let sorted = [];
     //     {name: 'descriptionPlace', title: transcription[currentLang].inputsTitles.description, value: descriptionPlace, setter: setDescriptionPlace, placeholder: transcription[currentLang].inputsPlaceholders.description},
     // ]
 
-const NAER_RADIUS = 0.4085 //+- 30 km
+// const NAER_RADIUS = 0.04 //+- 6 km
+const NAER_RADIUS = 0.5
 
 function Card() {
     const [category, setCategory] = useState([])
@@ -45,15 +46,12 @@ function Card() {
         markersCopy,
         citiesMarker,
         setMarkersCopy,
-        // currentPos,
-        readonlyMarkers,
     } = React.useContext(AppContext)
 
     useEffect(() => {
-        if(isMarkersLoaded) return 1;
         if(markers.length > 0) {
             setIsMarkersLoaded(true)
-            // getNearCompanies()
+            getNearCompanies()
         }
     }, [markers])
 
@@ -79,42 +77,42 @@ function Card() {
     //     }
     // }, [currentCity])
 
-    // const getNearCompanies = () => {
-    //     const sort = [...markers.filter(marker => {
-    //         return marker.longitude <= currentPos.longitude + NAER_RADIUS 
-    //             && marker.longitude >= currentPos.longitude - NAER_RADIUS 
-    //             && marker.latitude <= currentPos.latitude + NAER_RADIUS
-    //             && marker.latitude >= currentPos.latitude - NAER_RADIUS
-    //     })]
-    //     setMarkersFromCard(sort)
-    // }
+    const getNearCompanies = () => {
+        const sort = [...markers.filter(marker => {
+            return marker.longitude <= +markers[0].longitude + NAER_RADIUS 
+                && marker.longitude >= +markers[0].longitude - NAER_RADIUS 
+                && marker.latitude <= +markers[0].latitude + NAER_RADIUS
+                && marker.latitude >= +markers[0].latitude - NAER_RADIUS
+        })]
+        setMarkersFromCard(sort)
+    }
 
-    // const getAllCitiesCompanies = () => {
-    //     if(currentCity === '') {
-    //         setMarkersCardState('all')
-    //         return setMarkersFromCard([])
-    //     }
-    //     const sort = [...markers.filter(marker => marker.city.toLowerCase() === currentCity.toLowerCase())]
-    //     setMarkersFromCard(sort)
-    //     setMarkersCardState('all')
-    // } 
+    const getAllCitiesCompanies = () => {
+        // if(currentCity === '') {
+        //     setMarkersCardState('all')
+        //     return setMarkersFromCard([])
+        // }
+        // const sort = [...markers.filter(marker => marker.city.toLowerCase() === currentCity.toLowerCase())]
+        setMarkersFromCard(markers)
+        setMarkersCardState('all')
+    } 
 
-    // const changeCardOutput = (evt, type) => {
-    //     if(type === 'near') {
-    //         if(markersCardState === 'near') return; 
+    const changeCardOutput = (evt, type) => {
+        if(type === 'near') {
+            if(markersCardState === 'near') return; 
 
-    //         // getNearCompanies()
-    //         setMarkersCardState('near')
+            getNearCompanies()
+            setMarkersCardState('near')
 
-    //         evt.target.classList.add(styles.activeLocate)
-    //         evt.target.parentNode.children[1].classList.remove(styles.activeLocate)
-    //     } else if(type === 'all') {
-    //         getAllCitiesCompanies()
+            evt.target.classList.add(styles.activeLocate)
+            evt.target.parentNode.children[1].classList.remove(styles.activeLocate)
+        } else if(type === 'all') {
+            getAllCitiesCompanies()
 
-    //         evt.target.classList.add(styles.activeLocate)
-    //         evt.target.parentNode.children[0].classList.remove(styles.activeLocate)
-    //     }
-    // }
+            evt.target.classList.add(styles.activeLocate)
+            evt.target.parentNode.children[0].classList.remove(styles.activeLocate)
+        }
+    }
 
     const categoryAddStyle = (evt) => {
         if(evt.target.tagName === 'IMG') {
@@ -270,12 +268,12 @@ function Card() {
                 {!target ? <Toggle lang={currentLang} isToggle={isToggle} toggleClick={clearCategoriesFilter}/> : ''}
             </div>
             {/* { isSelectedCategory && !target */}
-            {/* {!target
+            {!target && markersFromCard !== 'init' && markers.length
                 ? <div className={styles.aboutPlace}>
                     <div className={styles.locate}>
                         <div className={`${styles.locateBtn} ${styles.activeLocate}`} onClick={(e) => changeCardOutput(e, 'near')}>{transcription[currentLang].cardCategoryClose}</div>
                         <div className={styles.locateBtn} 
-                        // onClick={(e) => changeCardOutput(e, 'all')}
+                        onClick={(e) => changeCardOutput(e, 'all')}
                         >{transcription[currentLang].cardCategoryAll}</div>
                     </div>
                     <ul className={styles.places}>
@@ -290,7 +288,7 @@ function Card() {
                     </ul>
                 </div>
                 : ''
-            } */}
+            }
             { target ? <CreateCard category={category} setCategory={setCategory}/> : '' }
         </div>
     )

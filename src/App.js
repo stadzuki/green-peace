@@ -22,7 +22,7 @@ const TOKEN = 'pk.eyJ1IjoibG9saWsyMCIsImEiOiJja3N6NDhlZ2oycGxnMndvZHVkbGV0MTZ1In
 
 const MARKER_SIZE = 65;
 
-const url = 'https://9810-78-163-110-172.ngrok.io'
+const url = 'https://3783-88-232-173-217.ngrok.io'
 
 //
 //
@@ -111,8 +111,6 @@ function App() {
             headers: { Authorization: `${tokenJWT}` },
           })
           .then((response) => {
-            console.log(response);//data: "", status: 204, statusText: "No Content",
-
             if(response.status === 204) {
               setIsAuthorize(true);
               return;
@@ -179,7 +177,7 @@ function App() {
         onClick={() => onMarkerClick(marker.id)}
       >
         {isMarkerCreate !== 'INIT' 
-          ? <div className='markerContainer'
+          ? <div className='markersContainer'
               style={{ transform: `translate(${-MARKER_SIZE / 2}px,${-MARKER_SIZE}px)` }}
               onMouseOver={(e) => {
                 let parent;
@@ -270,8 +268,8 @@ function App() {
   ), [markers]);
 
   const getCityCompanies = (city) => {
-    // axios.get(`${url}/GetCity/${city}`)
-    axios.get(`https://api.npoint.io/3d5795e1a47fe9cb1c83`)
+    // axios.get(`https://api.npoint.io/3d5795e1a47fe9cb1c83`)
+    axios.get(`${url}/api/Company/GetCompanies?city=${city}`)
     .then(response => {
       setMarkers(response.data)
       setMarkersCopy(response.data)
@@ -291,10 +289,10 @@ function App() {
   const createCityMarker = (cityMarker) => {
     return (
       <Marker 
-        key={cityMarker.id} 
+        key={cityMarker.title.length} 
         longitude={+cityMarker.longitude} 
         latitude={+cityMarker.latitude} 
-        onClick={() => getCityCompanies(citiesMarker.cityName)}
+        onClick={() => getCityCompanies(cityMarker.title)}
       >
         <img style={{ transform: `translate(${-65 / 2}px,${-65}px)`, cursor: 'pointer', userSelect: 'none' }} src="img/build.svg" alt="citi marker" width="65" height="65"/>
       </Marker>
@@ -309,9 +307,9 @@ function App() {
 
   function getCities() {
     // axios.get(`${url}/api/Company/GetCompanies`, {headers: {'Content-Length': 6000}})
-    axios.get(`https://api.npoint.io/dbbe065fcd8b2f1f3288`)
+    // axios.get(`https://api.npoint.io/dbbe065fcd8b2f1f3288`)
+    axios.get(`${url}/api/Company/GetCities`)
       .then((response) => {
-        console.log(response.data);
         setCitiesMarker(response.data)
       })
       .catch((error) => {

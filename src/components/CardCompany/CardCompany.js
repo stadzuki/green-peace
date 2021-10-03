@@ -6,7 +6,7 @@ import Report from '../Report/Report'
 import styles from './CardCompany.module.scss'
 import transcription from '../../utils/transcription';
 
-const url = 'https://9810-78-163-110-172.ngrok.io';
+const url = 'https://3783-88-232-173-217.ngrok.io';
 
 function CardCompany({company, setCompany, user, onClose, isCommentVisible}) {
     const [isCommentFieldVisible, setIsCommentFieldVisible] = React.useState(false);
@@ -185,7 +185,17 @@ function CardCompany({company, setCompany, user, onClose, isCommentVisible}) {
 
                             return (
                                 <div key={idx} className={styles.tableDay}>
-                                    <span className={`${styles.tableDayTitle} ${idx === getCurrentDay(company.workTime.split('+')).day ? styles.tableDayActive : ''}`}>{weekDays[idx]}</span>
+                                    <span 
+                                        className={`
+                                            ${styles.tableDayTitle}
+                                            ${idx === getCurrentDay(company.workTime.split('+')).day 
+                                                ? getCurrentDay(company.workTime.split('+')).time === 'Выходной' 
+                                                    ? styles.tableDayWeekend 
+                                                    : styles.tableDayActive 
+                                                : ''
+                                            }
+                                        `}
+                                        >{weekDays[idx]}</span>
                                     <p className={styles.tableDayTime}>
                                         {startWork == 'none'
                                             ? <span className={styles.tableDayTimeStart}>-</span>

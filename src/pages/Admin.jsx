@@ -6,7 +6,7 @@ import CardCompany from "../components/CardCompany/CardCompany";
 
 import removeDuplicates from "../utils/removeDuplicates";
 
-const url = 'https://9810-78-163-110-172.ngrok.io';
+const url = 'https://3783-88-232-173-217.ngrok.io';
 const timeRegex = /^[0-9]{2}[0-9]?\:[0-9]{2}$/;
 
 let validCompany = {};
@@ -199,7 +199,6 @@ function Admin() {
         // axios.get(`https://api.npoint.io/3d5795e1a47fe9cb1c83`)
         axios.get(`${url}/api/Company/GetCompaniesInAdminPanel`)
             .then((response) => {
-                console.log(response.data[0]);
                 setCurrentCompany(response.data[0]);
                 setCompanies(response.data);
                 schedulePrepare(response.data[0].workTime, setSchedule)
