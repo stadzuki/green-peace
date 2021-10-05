@@ -6,7 +6,7 @@ import CardCompany from "../components/CardCompany/CardCompany";
 
 import removeDuplicates from "../utils/removeDuplicates";
 
-const url = 'https://3783-88-232-173-217.ngrok.io';
+const url = 'https://e4ee-88-232-171-215.ngrok.io';
 const timeRegex = /^[0-9]{2}[0-9]?\:[0-9]{2}$/;
 
 let validCompany = {};

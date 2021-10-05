@@ -7,7 +7,7 @@ import transcription from '../../utils/transcription';
 import styles from './CreateCard.module.scss';
 import Schedule from '../Schedule/Shedule';
 
-const url = 'https://3783-88-232-173-217.ngrok.io'
+const url = 'https://e4ee-88-232-171-215.ngrok.io'
 
 const timeRegex = /^[0-9]{2}[0-9]?\:[0-9]{2}$/
 const phoneRegex = /^\+[0-9]+$/
@@ -45,6 +45,7 @@ function CreateCard({category, setCategory}) {
         setMarkers,
         setNewMarker,
         newMarker,
+        markersCopy,
         currentLang
     } = React.useContext(AppContext)
 
@@ -138,9 +139,10 @@ function CreateCard({category, setCategory}) {
     const removeMarker = () => {
         setNewMarker(false)
         setIsMarkerCreate(false);
-        setMarkers((prev) => {
-            return prev.filter(obj => obj.id !== 0)
-        })
+        setMarkers(markersCopy)
+        // setMarkers((prev) => {
+        //     return prev.filter(obj => obj.id !== 0)
+        // })
     }
 
     const onClose = () => {
@@ -173,7 +175,8 @@ function CreateCard({category, setCategory}) {
         setTimeCoffeeStart('')
         setInvalidField('')
 
-        setMarkers(prev => prev.filter(m => m.id !== 0))
+        // setMarkers(prev => prev.filter(m => m.id !== 0))
+        setMarkers(markersCopy)
         document.querySelectorAll('.category-item').forEach(item => item.classList.remove('selected'))
     }
 

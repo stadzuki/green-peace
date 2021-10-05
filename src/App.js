@@ -22,7 +22,7 @@ const TOKEN = 'pk.eyJ1IjoibG9saWsyMCIsImEiOiJja3N6NDhlZ2oycGxnMndvZHVkbGV0MTZ1In
 
 const MARKER_SIZE = 65;
 
-const url = 'https://3783-88-232-173-217.ngrok.io'
+const url = 'https://e4ee-88-232-171-215.ngrok.io'
 
 //
 //
@@ -175,6 +175,8 @@ function App() {
         offsetLeft={0}
         offsetTop={0}
         onClick={() => onMarkerClick(marker.id)}
+        draggable={isMarkerCreate}
+        onDrag={(e) => setMarkers([{id: 0, latitude: e.lngLat[1], longitude: e.lngLat[0]}])}
       >
         {isMarkerCreate !== 'INIT' 
           ? <div className='markersContainer'
@@ -249,11 +251,12 @@ function App() {
             />
           </div>
           : <img 
-            src="/img/map-marker.webp"
-            alt="marker"
-            style={{position: 'relative'}}
-            width="65"
-            height="65"
+              style={{ pointerEvents: 'none' }}
+              // style={{ transform: `translate(${-MARKER_SIZE / 2}px,${-MARKER_SIZE}px)`, pointerEvents: 'none' }}
+              src="/img/map-marker.webp"
+              alt="marker"
+              width="65"
+              height="65"
           />
         }
         
@@ -269,12 +272,18 @@ function App() {
 
   const getCityCompanies = (city) => {
     // axios.get(`https://api.npoint.io/3d5795e1a47fe9cb1c83`)
-    axios.get(`${url}/api/Company/GetCompanies?city=${city}`)
+    axios.get(`${url}/api/Company/GetCompanies?city=${city.title}`)
     .then(response => {
+      console.log(response.data);
+      console.log(city);
       setMarkers(response.data)
       setMarkersCopy(response.data)
-      setMapCoord((prev) => ({...prev, latitude: +response.data[0].latitude, longitude: +response.data[0].longitude, zoom: 12}))
       setMapView('company')
+      if(response.data.length) {
+        setMapCoord((prev) => ({...prev, latitude: +response.data[0].latitude, longitude: +response.data[0].longitude, zoom: 12}))
+      } else {
+        setMapCoord((prev) => ({...prev, latitude: +city.latitude, longitude: +city.longitude, zoom: 12}))
+      }
     })
     .catch(e => console.log(e))
   }
@@ -292,7 +301,7 @@ function App() {
         key={cityMarker.title.length} 
         longitude={+cityMarker.longitude} 
         latitude={+cityMarker.latitude} 
-        onClick={() => getCityCompanies(cityMarker.title)}
+        onClick={() => getCityCompanies(cityMarker)}
       >
         <img style={{ transform: `translate(${-65 / 2}px,${-65}px)`, cursor: 'pointer', userSelect: 'none' }} src="img/build.svg" alt="citi marker" width="65" height="65"/>
       </Marker>
@@ -310,6 +319,9 @@ function App() {
     // axios.get(`https://api.npoint.io/dbbe065fcd8b2f1f3288`)
     axios.get(`${url}/api/Company/GetCities`)
       .then((response) => {
+        setMapView('company')
+        getCityCompanies(response.data[0])
+        setMapCoord((prev) => ({...prev, latitude: +response.data[0].latitude, longitude: +response.data[0].longitude, zoom: 12}))
         setCitiesMarker(response.data)
       })
       .catch((error) => {
@@ -349,12 +361,13 @@ function App() {
     if(isMarkerCreate === true) {
       setIsMarkerCreate('INIT')
       setNewMarker({id: 0, latitude: e.lngLat[1], longitude: e.lngLat[0]})
-      setMarkers((prev) => [...prev, {id: 0, latitude: e.lngLat[1], longitude: e.lngLat[0]}])
+      // setMarkers((prev) => [...prev, {id: 0, latitude: e.lngLat[1], longitude: e.lngLat[0]}])
+      setMarkers([{id: 0, latitude: e.lngLat[1], longitude: e.lngLat[0]}])
     }
   }
 
   const mapStateChange = (evt) => {
-    if(evt.viewState.zoom <= 9) {
+    if(evt.viewState.zoom <= 9 && !isMarkerCreate) {
       setMarkers([])
       setMapView('city')
     }
@@ -412,7 +425,11 @@ function App() {
           onViewStateChange={mapStateChange}
         >
           {/* {mapCoord.zoom <= 10 ? mapCities : mapMarkers} */}
-          {markers.length || mapView === 'company' ? mapMarkers : mapCities}
+          {!isMarkerCreate && !target
+            ? markers.length || mapView === 'company' ? mapMarkers : mapCities
+            : mapMarkers
+          }
+          {/* {markers.length || mapView === 'company' ? mapMarkers : mapCities} */}
         </MapGL>
         <MarkerCreator changeTarget={createMarkerHanlder} currentLang={currentLang}/>
       </div>

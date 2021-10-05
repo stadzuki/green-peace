@@ -13,7 +13,7 @@ import getCategory from '../utils/getCategory';
 import removeDuplicates from '../utils/removeDuplicates';
 
 const TOKEN = 'pk.eyJ1IjoibG9saWsyMCIsImEiOiJja3N6NDhlZ2oycGxnMndvZHVkbGV0MTZ1In0.JkdOOOgJTsu1Sl2qO-5VAA';
-const url = 'https://905c-176-219-216-48.ngrok.io';
+const url = 'https://e4ee-88-232-171-215.ngrok.io';
 
 let selectedCategory = [];
 let sorted = [];
@@ -22,7 +22,8 @@ const currentLang = 'ru'
 
 function Catalog() {
     const [isMarkersLoaded, setIsMarkersLoaded] = useState(false)
-    const [readonlyMarkers, setReadonlyMarkers] = useState([]);
+    const [isCitiesLoaded, setIsCitiesLoaded] = useState(false)
+    const [citiesMarker, setCitiesMarker] = useState([])
     const [markers, setMarkers] = useState([]);
     const [isToggle, setIsToggle] = useState(true)
     const [markersCopy, setMarkersCopy] = useState([]);
@@ -33,6 +34,11 @@ function Catalog() {
         bearing: 0,
         pitch: 0,
     });
+
+    useEffect(() => {
+        if(isCitiesLoaded) return 1;
+        getCities()
+    })
 
     const categories = [
         {type: 'paper', img: '/img/category/paper.png'},
@@ -109,6 +115,39 @@ function Catalog() {
         return outStr;
     }
     
+    // Получение и отрисовка городов
+    const createCityMarker = (cityMarker) => {
+        return (
+        <Marker 
+            key={cityMarker.title.length} 
+            longitude={+cityMarker.longitude} 
+            latitude={+cityMarker.latitude} 
+            // onClick={() => getCityCompanies(cityMarker.title)}
+        >
+            <img style={{ transform: `translate(${-65 / 2}px,${-65}px)`, cursor: 'pointer', userSelect: 'none' }} src="img/build.svg" alt="citi marker" width="65" height="65"/>
+        </Marker>
+        )
+    }
+
+    const mapCities = React.useMemo(() => citiesMarker.map(
+        cityMarker => (
+            createCityMarker(cityMarker)
+        )
+    ), [citiesMarker]);
+
+    function getCities() {
+        // axios.get(`${url}/api/Company/GetCompanies`, {headers: {'Content-Length': 6000}})
+        // axios.get(`https://api.npoint.io/dbbe065fcd8b2f1f3288`)
+        axios.get(`${url}/api/Company/GetCities`)
+        .then((response) => {
+            setCitiesMarker(response.data)
+        })
+        .catch((error) => {
+            console.log(error);
+        })
+        setIsCitiesLoaded(true)
+    }
+
     const createMarker = (marker, id) => {
         const colors = [];
 
@@ -233,7 +272,6 @@ function Catalog() {
             .then((response) => {
                 setMarkers(response.data)
                 setMarkersCopy(response.data)
-                setReadonlyMarkers(response.data)
                 setIsMarkersLoaded(true)
             })
             .catch((error) => {
@@ -369,7 +407,8 @@ function Catalog() {
                 <p className="filtersTitle">Фильтр поиска</p>
                 <div className="filter filter-city">
                     <p className="filterCityText">Город</p>
-                    {isMarkersLoaded ? <Select lang={currentLang} readonlyMarkers={readonlyMarkers} setMap={setMapCoord} setMarkers={setMarkers} setCopy={setMarkersCopy}/> : ''}
+                    {/* <Select lang={currentLang} setMap={setMapCoord} cities={citiesMarker} setCopy={setMarkersCopy} setMarkers={setMarkers}/> */}
+                    {isMarkersLoaded && citiesMarker.length? <Select lang={currentLang} cities={citiesMarker} setMap={setMapCoord} setMarkers={setMarkers} setCopy={setMarkersCopy}/> : ''}
                 </div>
                 <div className="filter filter-type">
                     <p>Категории</p>

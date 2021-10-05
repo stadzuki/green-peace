@@ -51,6 +51,7 @@
                 border-bottom: 0.5px solid rgb(206, 206, 206);
                 transition: all 0.2s;
                 cursor: pointer;
+                text-transform: capitalize;
 
                 &:last-child {
                     border-bottom: none;

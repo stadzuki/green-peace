@@ -4,7 +4,7 @@ import axios from 'axios';
 import transcription from '../../utils/transcription'
 import styles from './Select.module.scss'
 
-const url = 'https://3783-88-232-173-217.ngrok.io'
+const url = 'https://e4ee-88-232-171-215.ngrok.io'
 
 function Select({setMap, lang, cities, setMarkers, setCopy}) {
     const [selectedCity, setSelectedCity] = useState('')
