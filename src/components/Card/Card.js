@@ -32,7 +32,7 @@ const NAER_RADIUS = 0.5
 function Card() {
     const [category, setCategory] = useState([])
     // const [isSelectedCategory, setIsSelectedCategory] = useState(false)
-    const [currentCity, setCurrentCity] = useState('')
+    // const [currentCity, setCurrentCity] = useState('')
     const [markersCardState, setMarkersCardState] = useState('near')
     const [isMarkersLoaded, setIsMarkersLoaded] = useState(false)
     const [markersFromCard, setMarkersFromCard] = useState('init')

@@ -343,7 +343,9 @@ function App() {
     // if(isAuthorize) {
       setTarget(true);
       document.querySelectorAll('.category-item').forEach(item => item.classList.remove('selected'));
-      setMarkers(markersCopy)
+      setIsMarkerCreate('INIT')
+      setMarkers([{id: 0, latitude: mapCoord.latitude, longitude: mapCoord.longitude}])
+      // setMarkers(markersCopy) // -
     // } else {
     //   alert('Вы не авторизованы!')
     // }
@@ -367,6 +369,7 @@ function App() {
   }
 
   const mapStateChange = (evt) => {
+    console.log(evt);
     if(evt.viewState.zoom <= 9 && !isMarkerCreate) {
       setMarkers([])
       setMapView('city')

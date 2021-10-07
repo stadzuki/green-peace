@@ -12,6 +12,7 @@ function Select({setMap, lang, cities, setMarkers, setCopy}) {
 
     const CityClickHandler = (city) => {
         // axios.get(`https://api.npoint.io/3d5795e1a47fe9cb1c83`)
+        if(selectedCity === city.title) return;
         axios.get(`${url}/api/Company/GetCompanies?city=${city.title}`)
         .then(response => {
             setMarkers(response.data)
@@ -52,7 +53,7 @@ function Select({setMap, lang, cities, setMarkers, setCopy}) {
                         return (
                             <li 
                                 key={idx} 
-                                className={styles.city} 
+                                className={`${styles.city} ${selectedCity === city.title ? styles.selectedCity : ''}`} 
                                 onClick={() => CityClickHandler(city)}
                             >{city.title}</li>
                         )

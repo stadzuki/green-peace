@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import InputMask from 'react-input-mask';
 import AppContext from '../../context';
 import axios from 'axios';
 import Toggle from '../Toggle/Toggle';
@@ -10,7 +11,7 @@ import Schedule from '../Schedule/Shedule';
 const url = 'https://e4ee-88-232-171-215.ngrok.io'
 
 const timeRegex = /^[0-9]{2}[0-9]?\:[0-9]{2}$/
-const phoneRegex = /^\+[0-9]+$/
+const phoneRegex = /^\+([0-9]+[\s]?\-?)+$/
 
 function CreateCard({category, setCategory}) {
     const [city, setCity] = useState('')
@@ -43,9 +44,10 @@ function CreateCard({category, setCategory}) {
         isMarkerCreate,
         setIsMarkerCreate,
         setMarkers,
-        setNewMarker,
-        newMarker,
-        markersCopy,
+        markers,
+        setNewMarker,//-
+        newMarker,//-
+        markersCopy,//-
         currentLang
     } = React.useContext(AppContext)
 
@@ -95,7 +97,7 @@ function CreateCard({category, setCategory}) {
 
     const inputHandler = (evt, model, regex = '') => {
         const {target} = evt;
-
+        console.log(target.value);
         if(regex) {
             if(target.value.search(regex) === -1) {
                 target.style.border = '0.5px solid #b8233c';
@@ -330,8 +332,8 @@ function CreateCard({category, setCategory}) {
             id: 0,
             title: namePlace,
             description: descriptionPlace,
-            latitude: newMarker.latitude,
-            longitude: newMarker.longitude,
+            latitude: markers[0].latitude,
+            longitude: markers[0].longitude,
             address: adress,
             workTime: getWorkTime(),
             coffeTime: timeCoffeeStart + '-' + timeCoffeeFinish,
@@ -363,7 +365,7 @@ function CreateCard({category, setCategory}) {
                 <p>
                     <span>{transcription[currentLang].inputsTitles.adress}</span>
                     <input type="text" value={adress} onChange={(e) => inputHandler(e, setAdress)} placeholder={transcription[currentLang].inputsPlaceholders.adress}/>
-                    {isMarkerCreate
+                    {/* {isMarkerCreate
                         ? isMarkerCreate === 'INIT' 
                             ? <div className={styles.fileUpload} style={{marginBottom: 10}}>
                                 <p className={styles.fileUploadTitle}>{transcription[currentLang].pointTag}</p>
@@ -374,7 +376,7 @@ function CreateCard({category, setCategory}) {
                             </div>
                         
                         : <button className={styles.pointOnMap} onClick={createMarkerHandler}>{transcription[currentLang].pointOnMap}</button>
-                    }
+                    } */}
                 </p>
                 <p>
                     <div className={styles.workTimeContainer}>
@@ -382,18 +384,23 @@ function CreateCard({category, setCategory}) {
                             <span className={styles.workTimeTitle}>{transcription[currentLang].inputsTitles.timeWork}</span>
                             <div className={styles.workTime}>
                                 {/* <span>{transcription[currentLang].inputsTitles.workFrom}</span> */}
-                                <input className={styles.workTimeInput} type="text" value={timeWorkStart} onChange={(e) => inputHandler(e, setTimeWorkStart, timeRegex)} placeholder="08:00"/>
+                                {/* <input className={styles.workTimeInput} type="text" value={timeWorkStart} onChange={(e) => inputHandler(e, setTimeWorkStart, timeRegex)} placeholder="08:00"/> */}
+                                {/* <InputMask mask="+9 999 999-99-99" placeholder="Номер телефона"/> */}
+                                <InputMask className={styles.workTimeInput} value={timeWorkStart} onChange={(e) => inputHandler(e, setTimeWorkStart, timeRegex)} mask="99:99" placeholder="08:00"/>
                                 <span>-</span>
-                                <input className={styles.workTimeInput} style={{marginRight: 20}} type="text" value={timeWorkFinish} onChange={(e) => inputHandler(e, setTimeWorkFinish, timeRegex)} placeholder="22:00"/>
+                                {/* <input className={styles.workTimeInput} style={{marginRight: 20}} type="text" value={timeWorkFinish} onChange={(e) => inputHandler(e, setTimeWorkFinish, timeRegex)} placeholder="22:00"/> */}
+                                <InputMask className={styles.workTimeInput} style={{marginRight: 20}} value={timeWorkFinish} onChange={(e) => inputHandler(e, setTimeWorkFinish, timeRegex)} mask="99:99" placeholder="22:00"/>
                             </div>
                         </div>
                         <div className={styles.workTimeWrapper}>
                             <span className={styles.workTimeTitle}>{transcription[currentLang].inputsTitles.timeCoffee}</span>
                             <div className={styles.workTime}>
                                 {/* <span>{transcription[currentLang].inputsTitles.workFrom}</span> */}
-                                <input className={styles.workTimeInput} type="text" value={timeCoffeeStart} onChange={(e) => inputHandler(e, setTimeCoffeeStart, timeRegex)} placeholder="08:00"/>
+                                {/* <input className={styles.workTimeInput} type="text" value={timeCoffeeStart} onChange={(e) => inputHandler(e, setTimeCoffeeStart, timeRegex)} placeholder="08:00"/> */}
+                                <InputMask className={styles.workTimeInput} value={timeCoffeeStart} onChange={(e) => inputHandler(e, setTimeCoffeeStart, timeRegex)} mask="99:99" placeholder="08:00"/>
                                 <span>-</span>
-                                <input className={styles.workTimeInput} type="text" value={timeCoffeeFinish} onChange={(e) => inputHandler(e, setTimeCoffeeFinish, timeRegex)} placeholder="22:00"/>
+                                {/* <input className={styles.workTimeInput} type="text" value={timeCoffeeFinish} onChange={(e) => inputHandler(e, setTimeCoffeeFinish, timeRegex)} placeholder="22:00"/> */}
+                                <InputMask className={styles.workTimeInput} value={timeCoffeeFinish} onChange={(e) => inputHandler(e, setTimeCoffeeFinish, timeRegex)} mask="99:99" placeholder="22:00"/>
                             </div>
                         </div>
                     </div>
@@ -446,7 +453,8 @@ function CreateCard({category, setCategory}) {
                 </p>   
                 <p>
                     <span>{transcription[currentLang].inputsTitles.phone}</span>
-                    <input type="text" value={phoneNumber} onChange={(e) => inputHandler(e, setPhoneNumber, phoneRegex)} placeholder={transcription[currentLang].inputsPlaceholders.phone}/>
+                    <InputMask mask="+9 999 999-99-99" placeholder={transcription[currentLang].inputsPlaceholders.phone} value={phoneNumber} onChange={(e) => inputHandler(e, setPhoneNumber, phoneRegex)}/>
+                    {/* <input type="text" value={phoneNumber} onChange={(e) => inputHandler(e, setPhoneNumber, phoneRegex)} placeholder={transcription[currentLang].inputsPlaceholders.phone}/> */}
                 </p>
                 <p>
                     <span>{transcription[currentLang].inputsTitles.webSite}</span>

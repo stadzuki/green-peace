@@ -35,11 +35,6 @@ function Catalog() {
         pitch: 0,
     });
 
-    useEffect(() => {
-        if(isCitiesLoaded) return 1;
-        getCities()
-    })
-
     const categories = [
         {type: 'paper', img: '/img/category/paper.png'},
         {type: 'glass', img: '/img/category/glass.png'},
@@ -113,39 +108,6 @@ function Catalog() {
         }
 
         return outStr;
-    }
-    
-    // Получение и отрисовка городов
-    const createCityMarker = (cityMarker) => {
-        return (
-        <Marker 
-            key={cityMarker.title.length} 
-            longitude={+cityMarker.longitude} 
-            latitude={+cityMarker.latitude} 
-            // onClick={() => getCityCompanies(cityMarker.title)}
-        >
-            <img style={{ transform: `translate(${-65 / 2}px,${-65}px)`, cursor: 'pointer', userSelect: 'none' }} src="img/build.svg" alt="citi marker" width="65" height="65"/>
-        </Marker>
-        )
-    }
-
-    const mapCities = React.useMemo(() => citiesMarker.map(
-        cityMarker => (
-            createCityMarker(cityMarker)
-        )
-    ), [citiesMarker]);
-
-    function getCities() {
-        // axios.get(`${url}/api/Company/GetCompanies`, {headers: {'Content-Length': 6000}})
-        // axios.get(`https://api.npoint.io/dbbe065fcd8b2f1f3288`)
-        axios.get(`${url}/api/Company/GetCities`)
-        .then((response) => {
-            setCitiesMarker(response.data)
-        })
-        .catch((error) => {
-            console.log(error);
-        })
-        setIsCitiesLoaded(true)
     }
 
     const createMarker = (marker, id) => {
