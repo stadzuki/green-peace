@@ -4,11 +4,19 @@ import axios from 'axios';
 import transcription from '../../utils/transcription'
 import styles from './Select.module.scss'
 
-const url = 'https://e4ee-88-232-171-215.ngrok.io'
+const url = 'https://85be-88-232-171-215.ngrok.io'
 
-function Select({setMap, lang, cities, setMarkers, setCopy}) {
+function Select({setMap, lang, cities, setMarkers, setCopy, initCity}) {
     const [selectedCity, setSelectedCity] = useState('')
     const [isSelectOpen, setIsSelectOpen] = useState(false)
+
+    useEffect(() => {
+        if(initCity) {
+            setSelectedCity(initCity)
+        }
+    }, [initCity])
+
+    
 
     const CityClickHandler = (city) => {
         // axios.get(`https://api.npoint.io/3d5795e1a47fe9cb1c83`)

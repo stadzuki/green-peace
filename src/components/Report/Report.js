@@ -1,7 +1,7 @@
 import axios from 'axios';
 import React from 'react'
 
-const url = 'https://e4ee-88-232-171-215.ngrok.io'
+const url = 'https://85be-88-232-171-215.ngrok.io'
 
 function Report({onClose, companyId}) {
     const [reason, setReason] = React.useState('');

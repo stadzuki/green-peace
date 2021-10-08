@@ -32,7 +32,6 @@ const NAER_RADIUS = 0.5
 function Card() {
     const [category, setCategory] = useState([])
     // const [isSelectedCategory, setIsSelectedCategory] = useState(false)
-    // const [currentCity, setCurrentCity] = useState('')
     const [markersCardState, setMarkersCardState] = useState('near')
     const [isMarkersLoaded, setIsMarkersLoaded] = useState(false)
     const [markersFromCard, setMarkersFromCard] = useState('init')
@@ -46,6 +45,7 @@ function Card() {
         markersCopy,
         citiesMarker,
         setMarkersCopy,
+        initCity
     } = React.useContext(AppContext)
 
     useEffect(() => {
@@ -251,7 +251,7 @@ function Card() {
     return (
         <div className={`${styles.cardContainer} ${styles.categoryCard} ${target ? styles.editContainer : ''}`}>
             <div className={styles.cardCategories}>
-                {!target && citiesMarker.length ? <Select lang={currentLang} setMap={setMapCoord} cities={citiesMarker} setCopy={setMarkersCopy} setMarkers={setMarkers}/> : ''}
+                {!target && citiesMarker.length ? <Select lang={currentLang} setMap={setMapCoord} cities={citiesMarker} setCopy={setMarkersCopy} setMarkers={setMarkers} initCity={initCity}/> : ''}
                 <p className={styles.categoriesTitle}>
                     {!target ? transcription[currentLang].cardCategoryTitle : transcription[currentLang].createCompanyTitle}
                 </p>

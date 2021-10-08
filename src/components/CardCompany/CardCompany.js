@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useState} from 'react';
 import axios from 'axios';
 
 import Report from '../Report/Report'
@@ -6,12 +6,12 @@ import Report from '../Report/Report'
 import styles from './CardCompany.module.scss'
 import transcription from '../../utils/transcription';
 
-const url = 'https://e4ee-88-232-171-215.ngrok.io';
+const url = 'https://85be-88-232-171-215.ngrok.io';
 
 function CardCompany({company, setCompany, user, onClose, isCommentVisible}) {
-    const [isCommentFieldVisible, setIsCommentFieldVisible] = React.useState(false);
-    const [commentValue, setCommentValue] = React.useState('');
-    const [isReportVisible, setIsReportVisible] = React.useState(false);
+    const [isCommentFieldVisible, setIsCommentFieldVisible] = useState(false);
+    const [commentValue, setCommentValue] = useState('');
+    const [isReportVisible, setIsReportVisible] = useState(false);
 
     const weekDays = ['Пн', 'Вт', 'Ср', 'Чт', 'Пт', 'Сб', 'Вс'];
 
@@ -75,7 +75,7 @@ function CardCompany({company, setCompany, user, onClose, isCommentVisible}) {
         return cityFirstLater + city.slice(1, city.length)
     }
 
-    const onCommentClick = () => {
+    const onCommentClick = async () => {
         if(Object.keys(user).length <= 0) {
             return alert('Вы не авторизованы')
         }
@@ -91,7 +91,7 @@ function CardCompany({company, setCompany, user, onClose, isCommentVisible}) {
             
             setCommentValue('')
             setIsCommentFieldVisible(false)
-
+            
             axios.post(`${url}/Users/AddReview`, {
                 id: 0,
                 text: commentValue,
@@ -99,7 +99,10 @@ function CardCompany({company, setCompany, user, onClose, isCommentVisible}) {
                 userProfileId: user.id,
                 userName: user.login
             })
-                .catch(e => console.log(e))
+            .catch(error => {
+                console.error(error);
+                console.warn('can not send comment');
+            })
         } else {
             setIsCommentFieldVisible(true)
         }

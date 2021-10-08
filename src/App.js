@@ -22,7 +22,7 @@ const TOKEN = 'pk.eyJ1IjoibG9saWsyMCIsImEiOiJja3N6NDhlZ2oycGxnMndvZHVkbGV0MTZ1In
 
 const MARKER_SIZE = 65;
 
-const url = 'https://e4ee-88-232-171-215.ngrok.io'
+const url = 'https://85be-88-232-171-215.ngrok.io'
 
 //
 //
@@ -33,9 +33,6 @@ const url = 'https://e4ee-88-232-171-215.ngrok.io'
 //
 
 function App() {
-
-  const [isMetaVisible, setIsMetaVisible] = useState(false)
-
   //transcription
   const [currentLang, setCurrentLang] = useState(() => {
     switch(window.navigator.language) {
@@ -49,7 +46,7 @@ function App() {
   });
 
   //Loader
-  const [isLoader, setIsLoader] = useState(true);
+  const [isLoader, setIsLoader] = useState(false);
 
   //Map
   const [mapCoord, setMapCoord] = useState({
@@ -83,6 +80,7 @@ function App() {
   //Cities
   const [citiesMarker, setCitiesMarker] = useState([])
   const [isCitiesLoaded, setIsCitiesLoaded] = useState(false)
+  const [initCity, setInitCity] = useState('')
 
   //Company
   const [isCompanySelected, setIsCompanySelected] = useState(false)
@@ -93,10 +91,11 @@ function App() {
 
 
   //Токен
-  useEffect( async () => {
+  useEffect(() => {
 
-    if (token === "") {
-      // setIsLoader(true)
+    if (!token) {
+      setIsLoader(true)
+      console.log(isLoader);
       const tokenJWT = JSON.parse(localStorage.getItem("token"));
 
       if (
@@ -106,8 +105,7 @@ function App() {
       ) {
         const payloads = jwtDecode(tokenJWT);
 
-        axios
-          .get(`${url}/Users/${payloads.id}`, {
+        axios.get(`${url}/Users/${payloads.id}`, {
             headers: { Authorization: `${tokenJWT}` },
           })
           .then((response) => {
@@ -129,16 +127,18 @@ function App() {
               login: response.data.name,
               icon: response.data.avatarUrl,
             });
+
+            setIsAuthorize(true);
+            setIsLoader(false);
           })
           .catch((error) => {
-            console.log(error);
+            console.error(error);
+            console.warn('can not load token')
+            setIsLoader(false)
         });
 
         setToken(tokenJWT);
-        setIsAuthorize(true);
       }
-
-      // setIsLoader(false);
     }
 
     // if (!isGettedLocate) {
@@ -150,11 +150,7 @@ function App() {
   useEffect(() => {
     if(isCitiesLoaded) return 1;
     getCities()
-  })
-
-
-
-
+  });
 
 
   // Получение и отрисовка маркеров
@@ -271,21 +267,27 @@ function App() {
   ), [markers]);
 
   const getCityCompanies = (city) => {
+    setIsLoader(true)
     // axios.get(`https://api.npoint.io/3d5795e1a47fe9cb1c83`)
     axios.get(`${url}/api/Company/GetCompanies?city=${city.title}`)
     .then(response => {
-      console.log(response.data);
-      console.log(city);
       setMarkers(response.data)
       setMarkersCopy(response.data)
       setMapView('company')
+
       if(response.data.length) {
         setMapCoord((prev) => ({...prev, latitude: +response.data[0].latitude, longitude: +response.data[0].longitude, zoom: 12}))
       } else {
         setMapCoord((prev) => ({...prev, latitude: +city.latitude, longitude: +city.longitude, zoom: 12}))
       }
+
+      setIsLoader(false);
     })
-    .catch(e => console.log(e))
+    .catch(error => {
+      console.error(error);
+      console.warn('can not load city companies');
+      setIsLoader(false);
+    })
   }
 
 
@@ -296,9 +298,10 @@ function App() {
 
   // Получение и отрисовка городов
   const createCityMarker = (cityMarker) => {
+    const markerId = cityMarker.title.length + Math.floor(Math.random() * 200)
     return (
       <Marker 
-        key={cityMarker.title.length} 
+        key={markerId} 
         longitude={+cityMarker.longitude} 
         latitude={+cityMarker.latitude} 
         onClick={() => getCityCompanies(cityMarker)}
@@ -315,20 +318,26 @@ function App() {
   ), [citiesMarker]);
 
   function getCities() {
-    // axios.get(`${url}/api/Company/GetCompanies`, {headers: {'Content-Length': 6000}})
     // axios.get(`https://api.npoint.io/dbbe065fcd8b2f1f3288`)
+    setIsLoader(true)
     axios.get(`${url}/api/Company/GetCities`)
       .then((response) => {
         setMapView('company')
+
         getCityCompanies(response.data[0])
+
         setMapCoord((prev) => ({...prev, latitude: +response.data[0].latitude, longitude: +response.data[0].longitude, zoom: 12}))
         setCitiesMarker(response.data)
+        setInitCity(response.data[0].title)
+        
+        setIsLoader(false)
+        setIsCitiesLoaded(true)
       })
       .catch((error) => {
-        console.log(error);
+        console.error(error);
+        console.warn('can not load cities');
+        setIsLoader(false)
       })
-      setIsCitiesLoaded(true)
-      setIsLoader(false)
   }
 
 
@@ -369,11 +378,11 @@ function App() {
   }
 
   const mapStateChange = (evt) => {
-    console.log(evt);
-    if(evt.viewState.zoom <= 9 && !isMarkerCreate) {
-      setMarkers([])
-      setMapView('city')
-    }
+    // console.log(evt);
+    // if(evt.viewState.zoom <= 9 && !isMarkerCreate) {
+    //   setMarkers([])
+    //   setMapView('city')
+    // }
   } 
 
 
@@ -404,7 +413,8 @@ function App() {
         markersCopy,
         setMarkersCopy,
         citiesMarker,
-        readonlyMarkers
+        readonlyMarkers,
+        initCity
       }}
     >
       <div className="App">

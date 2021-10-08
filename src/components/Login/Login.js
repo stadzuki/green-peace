@@ -8,7 +8,7 @@ import styles from './Login.module.scss';
 import Loader from '../Loader';
 
 function Login({method, onClose}) {
-    const url = 'https://e4ee-88-232-171-215.ngrok.io';
+    const url = 'https://85be-88-232-171-215.ngrok.io';
 
     const {setLoginMethod, setUser, setIsAuthorize} = React.useContext(AppContext)
 
@@ -58,7 +58,7 @@ function Login({method, onClose}) {
         pageFields = [...fields]
     }
 
-    const defineUser = (id, token) => {
+    const defineUser = async (id, token) => {
         setIsLoader(true);
         axios.get(`${url}/Users/${id}`, { headers: {"Authorization" : `${token}`}})
         .then(response => {
@@ -68,15 +68,17 @@ function Login({method, onClose}) {
                 login: response.data.name,
                 icon: response.data.avatarUrl,
             })
+            
+            setIsAuthorize(true);
+            setIsLoader(false)
         })
         .catch(error => {
           console.log(error);
+          setIsLoader(false)
         })
 
         localStorage.setItem("token", JSON.stringify(token))
 
-        setIsAuthorize(true);
-        setIsLoader(false)
         closeHandler();
     }
 
