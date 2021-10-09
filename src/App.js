@@ -22,7 +22,7 @@ const TOKEN = 'pk.eyJ1IjoibG9saWsyMCIsImEiOiJja3N6NDhlZ2oycGxnMndvZHVkbGV0MTZ1In
 
 const MARKER_SIZE = 65;
 
-const url = 'https://85be-88-232-171-215.ngrok.io'
+const url = 'https://85a1-88-232-175-194.ngrok.io'
 
 //
 //
@@ -95,7 +95,6 @@ function App() {
 
     if (!token) {
       setIsLoader(true)
-      console.log(isLoader);
       const tokenJWT = JSON.parse(localStorage.getItem("token"));
 
       if (
@@ -144,7 +143,7 @@ function App() {
     // if (!isGettedLocate) {
     //   getLocation();
     // }
-  });
+  }, [token]);
 
   //Загрузка городов
   useEffect(() => {
@@ -267,14 +266,14 @@ function App() {
   ), [markers]);
 
   const getCityCompanies = (city) => {
-    setIsLoader(true)
+    // setIsLoader(true)
     // axios.get(`https://api.npoint.io/3d5795e1a47fe9cb1c83`)
     axios.get(`${url}/api/Company/GetCompanies?city=${city.title}`)
     .then(response => {
       setMarkers(response.data)
       setMarkersCopy(response.data)
       setMapView('company')
-
+      console.log(response.data);
       if(response.data.length) {
         setMapCoord((prev) => ({...prev, latitude: +response.data[0].latitude, longitude: +response.data[0].longitude, zoom: 12}))
       } else {
@@ -323,21 +322,22 @@ function App() {
     axios.get(`${url}/api/Company/GetCities`)
       .then((response) => {
         setMapView('company')
-
+        
         getCityCompanies(response.data[0])
 
         setMapCoord((prev) => ({...prev, latitude: +response.data[0].latitude, longitude: +response.data[0].longitude, zoom: 12}))
         setCitiesMarker(response.data)
         setInitCity(response.data[0].title)
         
-        setIsLoader(false)
-        setIsCitiesLoaded(true)
+        // setIsLoader(false)
       })
       .catch((error) => {
         console.error(error);
         console.warn('can not load cities');
         setIsLoader(false)
       })
+
+      setIsCitiesLoaded(true)
   }
 
 
@@ -414,7 +414,8 @@ function App() {
         setMarkersCopy,
         citiesMarker,
         readonlyMarkers,
-        initCity
+        initCity,
+        setIsLoader
       }}
     >
       <div className="App">
