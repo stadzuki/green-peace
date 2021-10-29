@@ -10,19 +10,27 @@ import transcription from '../utils/transcription';
 import typeCategories from '../components/shared/typeCategories';
 import Pin from '../components/Pin';
 import getCategory from '../utils/getCategory';
+import Loader from '../components/Loader';
+import AppContext from '../context';
 import removeDuplicates from '../utils/removeDuplicates';
 
 const TOKEN = 'pk.eyJ1IjoibG9saWsyMCIsImEiOiJja3N6NDhlZ2oycGxnMndvZHVkbGV0MTZ1In0.JkdOOOgJTsu1Sl2qO-5VAA';
-const url = 'https://85a1-88-232-175-194.ngrok.io';
+// const url = 'https://localhost:44375';
+const url = 'https://localhost:44375'
 
 let selectedCategory = [];
 let sorted = [];
-
+let lastZoom = 0;
 const currentLang = 'ru'
 
 function Catalog() {
+    let NAER_RADIUS_CLUSTER = 0.02;
+    
     const [isMarkersLoaded, setIsMarkersLoaded] = useState(false)
+    const [mapView, setMapView] = useState('company')
+    const [clustersMarker, setClustersMarker] = useState([])
     const [isCitiesLoaded, setIsCitiesLoaded] = useState(false)
+    const [isLoader, setIsLoader] = useState(false)
     const [citiesMarker, setCitiesMarker] = useState([])
     const [markers, setMarkers] = useState([]);
     const [isToggle, setIsToggle] = useState(true)
@@ -30,7 +38,7 @@ function Catalog() {
     const [mapCoord, setMapCoord] = useState({
         latitude: 53.893009,
         longitude: 	27.567444,
-        zoom: 8,
+        zoom: 13,
         bearing: 0,
         pitch: 0,
     });
@@ -54,7 +62,107 @@ function Catalog() {
     useEffect(() => {
         if(isCitiesLoaded) return 1;
         getCities()
-      })
+    })
+
+    const loadClusterMarkers = (cityCluster) => {
+        let markers = [...clustersMarker]
+        markers = markers.map((m) => {
+          return m.markers
+        })
+        markers = markers.flat()
+        
+        setMapCoord(prev => ({...prev, latitude: +cityCluster.markers[0].latitude, longitude: +cityCluster.markers[0].longitude, zoom: 13})) 
+        setMarkers(markers)
+        setClustersMarker([])
+        setMapView('company')
+    }
+
+    const createClusters = (markers) => {
+        let markersCopy = [...markers]
+        const clusters = [];
+        let cluster = {};
+        const currentMarker = 0;
+        
+        while(markersCopy.length > 0) {
+          cluster = {
+            latitude: +markersCopy[currentMarker].latitude,
+            longitude: +markersCopy[currentMarker].longitude,
+            markers: [markersCopy[currentMarker]]
+          }
+    
+          for(let i = 1; i < markersCopy.length; i++) {
+            if(
+              +markersCopy[i].longitude <= +cluster.longitude + NAER_RADIUS_CLUSTER
+                    && +markersCopy[i].longitude >= +cluster.longitude - NAER_RADIUS_CLUSTER
+                    && +markersCopy[i].latitude <= +cluster.latitude + NAER_RADIUS_CLUSTER
+                    && +markersCopy[i].latitude >= +cluster.latitude - NAER_RADIUS_CLUSTER
+            ) {
+              cluster.markers.push(markersCopy[i])
+            }
+          }
+    
+          for(let marker of cluster.markers) {
+            markersCopy = markersCopy.filter(m => m !== marker)
+          }
+          clusters.push(cluster)
+        }
+        return clusters
+    }
+
+    const createClusterMarker = (cityCluster, id) => {
+        let circleSize = 50;
+    
+        // if(cityCluster.markers.length < 5) {
+        //   circleSize = 30;
+        // } else if(cityCluster.markers.length < 10) {
+        //   circleSize = 40;
+        // }
+    
+        return (
+          <Marker 
+            key={id} 
+            longitude={+cityCluster.longitude} 
+            latitude={+cityCluster.latitude} 
+            onClick={() => loadClusterMarkers(cityCluster)}
+          >
+            <div style={{
+              width: circleSize,
+              cursor: 'pointer',
+              height: circleSize,
+              background: '#fff',
+              borderRadius: '25px',
+            }}>
+              <Pin count={[1, 2, 3]} color={['#EA5959', '#59EAEA', '#79EA59']} />
+              <div style={{
+                zIndex: 5,
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                width: '35px',
+                height: '35px',
+                top: 0,
+                left: 0,
+                right: 0,
+                bottom: 0,
+                margin: 'auto',
+                background: '#fff',
+                borderRadius: '25px',
+                position: 'absolute',
+                fontSize: '11px',
+                textAlign: 'center',
+              }}>
+                {cityCluster.markers.length}
+              </div>
+            </div>
+          </Marker>
+        )
+      }
+
+      const mapClusters = React.useMemo(() => clustersMarker.map(
+        (cityCluster, id) => (
+          createClusterMarker(cityCluster, id)
+        )
+      ), [clustersMarker]);
 
     const onMarkerClick = (id) => {
         const targetCompany = markers.find(m => m.id === id);
@@ -398,52 +506,128 @@ function Catalog() {
             selectedCategory.push(sortFrom)
         }
 
+        if(selectedCategory.length <= 0) {
+          setMarkers(markersCopy)
+        }
+
         categoryAddStyle(evt)
+
+        const clusters = createClusters(markers)
+        setClustersMarker(clusters)
     }
 
+    const mapStateChange = (evt) => {
+      if(lastZoom === evt.viewState.zoom) return 1;
+        // console.log(Math.ceil(evt.viewState.zoom));
+        // console.log(mapCoord.zoom);
+        // console.log(mapView);
+        
+        if(evt.viewState.zoom > 7 && evt.viewState.zoom < 13 && mapView !== 'cluster' && mapView !== 'city') {
+          // console.log(3); 
+          const clusters = createClusters(markers)
+          setClustersMarker(clusters)
+    
+          setMapView('cluster')
+        }
+    
+        if(evt.viewState.zoom > 13 && mapView === 'cluster') {
+          // console.log(4);
+          let markers = [...clustersMarker]
+          markers = markers.map((m) => {
+            return m.markers
+          })
+          markers = markers.flat()
+          
+          setClustersMarker([])
+          setMapView('company')
+    
+          setMarkers(markers)
+        }
+    
+        if(evt.viewState.zoom < 13  && mapView === 'cluster') {
+          // console.log(5);
+    
+          switch(Math.ceil(evt.viewState.zoom)) {
+            case 13:
+              NAER_RADIUS_CLUSTER = 0.01
+              break;
+            case 12:
+              NAER_RADIUS_CLUSTER = 0.02
+              break;
+            case 11:
+              NAER_RADIUS_CLUSTER = 0.03
+              break;
+            case 10:
+              NAER_RADIUS_CLUSTER = 0.04
+              break;
+            case 9:
+              NAER_RADIUS_CLUSTER = 0.06
+              break;
+            case 8:
+              NAER_RADIUS_CLUSTER = 0.1
+              break;
+          }
+    
+          // NAER_RADIUS_CLUSTER = 0.06;
+          const clusters = createClusters(markers)
+          // console.log(clusters);
+          setClustersMarker(clusters)
+        }
+
+        lastZoom = evt.viewState.zoom;
+      } 
+
     return (
-        <div className="catalogWrapper">
-            <div className="filters">
-                <p className="filtersTitle">Фильтр поиска</p>
-                <div className="filter filter-city">
-                    <p className="filterCityText">Город</p>
-                    {/* <Select lang={currentLang} setMap={setMapCoord} cities={citiesMarker} setCopy={setMarkersCopy} setMarkers={setMarkers}/> */}
-                    {isMarkersLoaded && citiesMarker.length? <Select lang={currentLang} cities={citiesMarker} setMap={setMapCoord} setMarkers={setMarkers} setCopy={setMarkersCopy}/> : ''}
+        <AppContext.Provider
+            value={{
+                setIsLoader
+            }}
+        >
+            {isLoader ? <Loader /> : ""}
+            <div className="catalogWrapper">
+                <div className="filters">
+                    <p className="filtersTitle">Фильтр поиска</p>
+                    <div className="filter filter-city">
+                        <p className="filterCityText">Город</p>
+                        {/* <Select lang={currentLang} setMap={setMapCoord} cities={citiesMarker} setCopy={setMarkersCopy} setMarkers={setMarkers}/> */}
+                        {isMarkersLoaded && citiesMarker.length? <Select lang={currentLang} cities={citiesMarker} setMap={setMapCoord} setMarkers={setMarkers} setCopy={setMarkersCopy}/> : ''}
+                    </div>
+                    <div className="filter filter-type">
+                        <p>Категории</p>
+                        <ul className="filterTypes">
+                            {categories.map((category, idx) => {
+                                return <Category 
+                                            key={idx} 
+                                            type={category.type} 
+                                            img={category.img}
+                                            onCategoryClick={(e) => onCategoryClick(e, category.type)}
+                                        />
+                            })}
+                        </ul>
+                    </div>
+                    <Toggle lang={currentLang} isToggle={isToggle} toggleClick={clearCategoriesFilter}/>
+                    <Link to="/" className="toHome">На главную</Link>
                 </div>
-                <div className="filter filter-type">
-                    <p>Категории</p>
-                    <ul className="filterTypes">
-                        {categories.map((category, idx) => {
-                            return <Category 
-                                        key={idx} 
-                                        type={category.type} 
-                                        img={category.img}
-                                        onCategoryClick={(e) => onCategoryClick(e, category.type)}
-                                    />
-                        })}
-                    </ul>
+                <div className="catalogView">
+                    <div className="mapContainer">
+                        <MapGL
+                            {...mapCoord}
+                            width="100vw"
+                            height="100vh"
+                            mapStyle="mapbox://styles/babichdima/cksj6yk2baq5217pja2fqa5r8"
+                            onViewportChange={setMapCoord}
+                            mapboxApiAccessToken={TOKEN}
+                            onViewStateChange={mapStateChange}
+                            >
+                            {mapView === 'company' ? mapMarkers : mapClusters}
+                        </MapGL>
+                    </div>
+                    <div className="compnayContainer">
+                        {markers.length > 0 ? catalogItems : <p style={{textAlign: 'center'}}>Компании отсутствуют</p>}
+                    </div>
                 </div>
-                <Toggle lang={currentLang} isToggle={isToggle} toggleClick={clearCategoriesFilter}/>
-                <Link to="/" className="toHome">На главную</Link>
             </div>
-            <div className="catalogView">
-                <div className="mapContainer">
-                    <MapGL
-                        {...mapCoord}
-                        width="100vw"
-                        height="100vh"
-                        mapStyle="mapbox://styles/babichdima/cksj6yk2baq5217pja2fqa5r8"
-                        onViewportChange={setMapCoord}
-                        mapboxApiAccessToken={TOKEN}
-                        >
-                        {mapMarkers}
-                    </MapGL>
-                </div>
-                <div className="compnayContainer">
-                    {markers.length > 0 ? catalogItems : <p style={{textAlign: 'center'}}>Компании отсутствуют</p>}
-                </div>
-            </div>
-        </div>
+        </AppContext.Provider>
     )
 }
 

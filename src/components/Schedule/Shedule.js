@@ -1,6 +1,6 @@
 import React from 'react';
 import Toggle from '../Toggle/Toggle';
-
+import InputMask from 'react-input-mask';
 import styles from './Schedule.module.scss';
 
 function Schedule({
@@ -33,13 +33,14 @@ function Schedule({
                 {inputs.map((input, id) => {
                     return (
                         <span key={id}>
-                            <input 
+                            <InputMask 
                                 className={styles.workTimeInput}
                                 type="text"
                                 value={input.value}
+                                mask="99:99"
                                 placeholder={input.placeholder}
                                 disabled={!schedule.isToggle}
-                                onChange={(e) => scheduleChangeHandler(e, idx, input.field)}
+                                onChange={(e) => scheduleChangeHandler(e, idx, input.field, weekday + '_' + input.field)}
                             />
                             {id === 0 ? <span>-</span> : ''}
                         </span>

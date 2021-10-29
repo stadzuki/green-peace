@@ -7,7 +7,7 @@ function Pin({count, color}) {
         minWidth: '50px',
         position: 'absolute',
         zIndex: 2,
-        top: '2px',
+        top: 0,
         bottom: 0,
         left: 0,
         right: 0,

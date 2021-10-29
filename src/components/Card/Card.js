@@ -12,6 +12,7 @@ import Select from '../Select/Select';
 
 import categories from '../shared/categories'
 import CreateCard from '../CreateCard/CreateCard';
+import Popup from '../Popup'
 
 let selectedCategory = [];
 let addedCategory = [];
@@ -27,10 +28,11 @@ let sorted = [];
     // ]
 
 // const NAER_RADIUS = 0.04 //+- 6 km
-const NAER_RADIUS = 0.5
+let NAER_RADIUS = 0.08
 
 function Card() {
     const [category, setCategory] = useState([])
+    
     // const [isSelectedCategory, setIsSelectedCategory] = useState(false)
     const [markersCardState, setMarkersCardState] = useState('near')
     const [isMarkersLoaded, setIsMarkersLoaded] = useState(false)
@@ -45,7 +47,13 @@ function Card() {
         markersCopy,
         citiesMarker,
         setMarkersCopy,
-        initCity
+        initCity,
+        setInitCity,
+        mapCoord,
+        mapView,
+        setMapView,
+        createClusters,
+        setClustersMarker
     } = React.useContext(AppContext)
 
     useEffect(() => {
@@ -63,6 +71,12 @@ function Card() {
         }
     }, [target])
 
+    useEffect(() => {
+        if(mapView === 'company') {
+            getNearCompanies()
+        }
+    }, [mapCoord])
+
     // useEffect(() => {
     //     getNearCompanies()
     // }, [currentPos])
@@ -77,13 +91,60 @@ function Card() {
     //     }
     // }, [currentCity])
 
-    const getNearCompanies = () => {
+    const onPlaceClick = (latitude, longitude) => {
+        setMapCoord((prev) => ({...prev, latitude, longitude, zoom: 24}))
+    }
+
+    const getNearCompanies = () => { // case 24 - 13
+        // console.log(2133);
+        const zoom = Math.round(mapCoord.zoom)
+        // console.log(zoom);
+        if(zoom === 15) {
+            NAER_RADIUS = 0.0065
+        }
+
+        if(zoom === 13) {
+            NAER_RADIUS = 0.03
+        }
+        
+        if(zoom === 12) {
+            NAER_RADIUS = 0.045
+        }
+        
+        if(zoom === 11) {
+            NAER_RADIUS = 0.065
+        }
+
+        // NAER_RADIUS = 0.02
+
+        // if(mapCoord.zoom >= 20) {
+        //     NAER_RADIUS = 0.01;
+        // } else if(mapCoord.zoom >= 13 && mapCoord.zoom < 20) {
+        //     NAER_RADIUS = 0.04;
+        // }
+
+        // console.log(NAER_RADIUS);
+
+        // NAER_RADIUS = 0.0001
+
         const sort = [...markers.filter(marker => {
-            return marker.longitude <= +markers[0].longitude + NAER_RADIUS 
-                && marker.longitude >= +markers[0].longitude - NAER_RADIUS 
-                && marker.latitude <= +markers[0].latitude + NAER_RADIUS
-                && marker.latitude >= +markers[0].latitude - NAER_RADIUS
+            // console.log('CURRENT', +mapCoord.longitude);
+            // console.log('MAX LNG', +mapCoord.longitude + NAER_RADIUS);
+            // console.log('MIN LNG',+mapCoord.longitude - NAER_RADIUS);
+
+            // console.log('marker lng', marker.longitude);
+
+            return +marker.longitude <= +mapCoord.longitude + NAER_RADIUS
+                && +marker.longitude >= +mapCoord.longitude - NAER_RADIUS
+                && +marker.latitude <= +mapCoord.latitude + NAER_RADIUS
+                && +marker.latitude >= +mapCoord.latitude - NAER_RADIUS
         })]
+        // const sort = [...markers.filter(marker => {
+        //     return marker.longitude <= +markers[0].longitude + NAER_RADIUS * mapC
+        //         && marker.longitude >= +markers[0].longitude - NAER_RADIUS 
+        //         && marker.latitude <= +markers[0].latitude + NAER_RADIUS
+        //         && marker.latitude >= +markers[0].latitude - NAER_RADIUS
+        // })]
         setMarkersFromCard(sort)
     }
 
@@ -244,14 +305,22 @@ function Card() {
             selectedCategory.push(sortFrom)
             
         }
-        
+              
+
+        if(selectedCategory.length <= 0) {
+            setMarkers(markersCopy)
+        }
+
         categoryAddStyle(evt)
+
+        const clusters = createClusters(markers)
+        setClustersMarker(clusters)
     }
 
     return (
         <div className={`${styles.cardContainer} ${styles.categoryCard} ${target ? styles.editContainer : ''}`}>
             <div className={styles.cardCategories}>
-                {!target && citiesMarker.length ? <Select lang={currentLang} setMap={setMapCoord} cities={citiesMarker} setCopy={setMarkersCopy} setMarkers={setMarkers} initCity={initCity}/> : ''}
+                {!target && citiesMarker.length ? <Select setInitCity={setInitCity} lang={currentLang} setMap={setMapCoord} cities={citiesMarker} setCopy={setMarkersCopy} setMarkers={setMarkers} initCity={initCity} setMapView={() => setMapView('company')}/> : ''}
                 <p className={styles.categoriesTitle}>
                     {!target ? transcription[currentLang].cardCategoryTitle : transcription[currentLang].createCompanyTitle}
                 </p>
@@ -268,7 +337,7 @@ function Card() {
                 {!target ? <Toggle lang={currentLang} isToggle={isToggle} toggleClick={clearCategoriesFilter}/> : ''}
             </div>
             {/* { isSelectedCategory && !target */}
-            {!target && markersFromCard !== 'init' && markers.length
+            {!target && markersFromCard !== 'init' && markers.length && mapView === 'company' || mapView === 'cluster' && !target && markersFromCard !== 'init' && markers.length
                 ? <div className={styles.aboutPlace}>
                     <div className={styles.locate}>
                         <div className={`${styles.locateBtn} ${styles.activeLocate}`} onClick={(e) => changeCardOutput(e, 'near')}>{transcription[currentLang].cardCategoryClose}</div>
@@ -279,7 +348,7 @@ function Card() {
                     <ul className={styles.places}>
                         {isMarkersLoaded && markersFromCard !== 'init' && markersFromCard.length > 0
                             ? markersFromCard.map((company, idx) => {
-                                return <Place name={company.title} adress={`${company.city}, ${company.address}`} key={idx}/>
+                                return <Place name={company.title} adress={`${company.city}, ${company.address}`} key={idx} onPlaceClick={() => onPlaceClick(+company.latitude, +company.longitude)}/>
                             })
                             : markersCardState === 'near' 
                                 ? <p>Поблизости ничего не найдено</p>

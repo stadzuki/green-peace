@@ -7,8 +7,10 @@ import removeDublicates from '../../utils/removeDuplicates'
 import transcription from '../../utils/transcription';
 import styles from './CreateCard.module.scss';
 import Schedule from '../Schedule/Shedule';
+import Popup from '../Popup';
 
-const url = 'https://85a1-88-232-175-194.ngrok.io'
+// const url = 'https://localhost:44375'
+const url = 'https://localhost:44375'
 
 const timeRegex = /^[0-9]{2}[0-9]?\:[0-9]{2}$/
 const phoneRegex = /^\+([0-9]+[\s]?\-?)+$/
@@ -38,6 +40,7 @@ function CreateCard({category, setCategory}) {
     ])
     const [invalidField, setInvalidField] = useState('')
     const [isScheduleOpen, setIsScheduleOpen] = useState(false)
+    const [isTimeValid, setTimeValid] = useState({})
 
     const {
         setTarget,
@@ -48,7 +51,8 @@ function CreateCard({category, setCategory}) {
         setNewMarker,//-
         newMarker,//-
         markersCopy,//-
-        currentLang
+        currentLang,
+        setPopup
     } = React.useContext(AppContext)
 
     const scheduleItems = [
@@ -77,13 +81,48 @@ function CreateCard({category, setCategory}) {
         setSchedule((prev) => removeDublicates([...prev, data]))
     }
 
-    const scheduleChangeHandler = (evt, idx, field) => {
+    const scheduleChangeHandler = (evt, idx, field, timeInput = '') => {
         const {target} = evt;
 
-        if(target.value.search(timeRegex) === -1) {
-            target.style.border = '0.5px solid #b8233c';
-        } else {
+        const leftSide = parseInt(target.value.split(':')[0]);
+        const rightSide = parseInt(target.value.split(':')[1]);
+
+        if(target.value.search(timeRegex) !== -1 && +leftSide <= 23 && +leftSide >= 0 && +rightSide <= 59 && +rightSide >= 0) {
             target.style.border = '0.5px solid #23b839';
+            setTimeValid(prev => ({...prev, [timeInput+idx]: true }))
+        } else {
+            target.style.border = '0.5px solid #b8233c';
+            setTimeValid(prev => ({...prev, [timeInput+idx]: false }))
+        }
+
+        if(leftSide > 23 || rightSide > 59) {
+            let tempValueLeft = leftSide > 9 ? leftSide : 0 + '' + leftSide;
+            let tempValueRight = rightSide;
+
+            if(leftSide > 23) {
+                tempValueLeft = 23;
+            }
+            
+            if(rightSide > 59) {
+                tempValueRight = 59;
+            }
+
+            if(leftSide || rightSide) {
+
+                target.value = tempValueLeft + ':' + tempValueRight;
+                target.style.border = '0.5px solid #23b839';
+            } else {
+                target.style.border = '0.5px solid #b8233c';
+            }
+
+            if(target.value.search(timeRegex) === -1) {
+                target.style.border = '0.5px solid #b8233c';
+                setTimeValid(prev => ({...prev, [timeInput]: false }))
+            } else {
+                setTimeValid(prev => ({...prev, [timeInput]: true }))
+            }
+            // target.style.border = '0.5px solid #b8233c';
+            // setTimeValid(prev => ({...prev, [timeInput]: false }))
         }
 
         setSchedule(prev => prev.map((item, id) => {
@@ -95,15 +134,60 @@ function CreateCard({category, setCategory}) {
         }))
     }
 
-    const inputHandler = (evt, model, regex = '') => {
+    const inputHandler = (evt, model, regex = '', timeInput = '') => {
         const {target} = evt;
-        console.log(target.value);
-        if(regex) {
+        
+        if(regex === timeRegex) {
+            const leftSide = parseInt(target.value.split(':')[0]);
+            const rightSide = parseInt(target.value.split(':')[1]);
+
+            if(target.value.search(timeRegex) !== -1 && leftSide <= 23 && leftSide >= 0 && rightSide <= 59 && rightSide >= 0) {
+                target.style.border = '0.5px solid #23b839';
+                setTimeValid(prev => ({...prev, [timeInput]: true }))
+            } else {
+                target.style.border = '0.5px solid #b8233c';
+                setTimeValid(prev => ({...prev, [timeInput]: false }))
+            }
+
+            if(leftSide > 23 || rightSide > 59) {
+                let tempValueLeft = leftSide > 9 ? leftSide : 0 + '' + leftSide;
+                let tempValueRight = rightSide;
+
+                if(leftSide > 23) {
+                    tempValueLeft = 23;
+                }
+                
+                if(rightSide > 59) {
+                    tempValueRight = 59;
+                }
+
+                if(leftSide || rightSide) {
+
+                    target.value = tempValueLeft + ':' + tempValueRight;
+                    target.style.border = '0.5px solid #23b839';
+                } else {
+                    target.style.border = '0.5px solid #b8233c';
+                }
+
+                if(target.value.search(timeRegex) === -1) {
+                    target.style.border = '0.5px solid #b8233c';
+                    setTimeValid(prev => ({...prev, [timeInput]: false }))
+                } else {
+                    setTimeValid(prev => ({...prev, [timeInput]: true }))
+                }
+                // target.style.border = '0.5px solid #b8233c';
+                // setTimeValid(prev => ({...prev, [timeInput]: false }))
+            }
+
+            model(target.value)
+            return;
+        } else if(regex) {
             if(target.value.search(regex) === -1) {
                 target.style.border = '0.5px solid #b8233c';
             } else {
                 target.style.border = '0.5px solid #23b839';
             }
+
             model(target.value)
             return;
         } 
@@ -180,6 +264,8 @@ function CreateCard({category, setCategory}) {
         // setMarkers(prev => prev.filter(m => m.id !== 0))
         setMarkers(markersCopy)
         document.querySelectorAll('.category-item').forEach(item => item.classList.remove('selected'))
+
+        setPopup(true)
     }
 
     const createMarkerOnClick = (e) => {
@@ -219,9 +305,9 @@ function CreateCard({category, setCategory}) {
             return setInvalidField('Вы не указали название города');
         }
 
-        if(!newMarker) {
-            return setInvalidField('Вы не указали метку на карте');
-        }
+        // if(!newMarker) {
+        //     return setInvalidField('Вы не указали метку на карте');
+        // }
 
         if(category.length <= 0) {
             return setInvalidField('Вы не указали категории');
@@ -235,6 +321,14 @@ function CreateCard({category, setCategory}) {
             return setInvalidField('Вы не указали название компании');
         }
 
+        if(!isAllTime) {
+            if(Object.values(isTimeValid).includes(false) || Object.values(isTimeValid).length < 0) {
+                console.log(isTimeValid);
+                console.log(timeWorkFinish);
+                return setInvalidField('Время рабочего дня / перерыва указано некорректно');
+            }
+        }
+        
         if(
             timeWorkStart.search(timeRegex) === -1
             || timeWorkFinish.search(timeRegex) === -1
@@ -248,6 +342,27 @@ function CreateCard({category, setCategory}) {
             if(!isAllTime && isScheduleClear()) {
                 return setInvalidField('Вы не выбрали выходные дни');
             }
+        }
+
+        const timeCoffeeStartLeftSide = parseInt(timeCoffeeStart.split(':')[0]);
+        const timeCoffeeStartRightSide = parseInt(timeCoffeeStart.split(':')[1]);
+        const timeCoffeeFinishLeftSide = parseInt(timeCoffeeFinish.split(':')[0]);
+        const timeCoffeeFinishRightSide = parseInt(timeCoffeeFinish.split(':')[1]);
+
+
+        console.log(timeCoffeeStartLeftSide);
+        console.log(timeCoffeeStartRightSide);
+        console.log(timeCoffeeFinishLeftSide);
+        console.log(timeCoffeeFinishRightSide);
+        if(
+            timeCoffeeStartLeftSide > 23 || timeCoffeeStartLeftSide < 0 && timeCoffeeStartRightSide > 59 || timeCoffeeStartRightSide < 0 
+        ) {
+            return setInvalidField('Время перерыва указано некорректно');
+        }
+        if(
+            timeCoffeeFinishLeftSide > 23 || timeCoffeeFinishLeftSide < 0 && timeCoffeeFinishRightSide > 59 || timeCoffeeFinishRightSide < 0
+        ) {
+            return setInvalidField('Время перерыва указано некорректно');
         }
 
         if(
@@ -344,12 +459,31 @@ function CreateCard({category, setCategory}) {
             imageUrl: photoFile,
             categoriesId: category
         }
-        
+
+        const fakeData = {
+            address: "asdasd",
+            categoriesId: [1, 8],
+            city: "гродно",
+            coffeTime: "12:32-12:32",
+            description: "sadsadsad",
+            id: 0,
+            imageUrl: "/9j/4AAQSkZJRgABAQEASABIAAD/2wBDAAYEBQYFBAYGBQYHBwYIChAKCgkJChQODwwQFxQYGBcUFhYaHSUfGhsjHBYWICwgIyYnKSopGR8tMC0oMCUoKSj/2wBDAQcHBwoIChMKChMoGhYaKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCj/wgARCAcIC0ADASIAAhEBAxEB/8QAHAAAAwEBAQEBAQAAAAAAAAAAAAECAwQFBgcI/8QAGQEBAQEBAQEAAAAAAAAAAAAAAAECAwQF/9oADAMBAAIQAxAAAAH4P1vI9fefGAj1uLt4q5u7h7k18z0/MXr7/P7jxPQ8/vjr8X2fGOzu4e2zyuzj7Dp8v1fJX2fP9DzifV8r1TxfW8n2E8nbHeXp870fNs9jyvV8o9Dm6eY0GjPo59zg9XyvVPP7+HvPN7+HuOTt4+1Y4O3hPS830fOT0+Ht4zfbDc4e3i7A4u3iO7g7+AO7g0Nbix6Zaiz1xC89DSWAEiaBuWITJjTKX6D4r7z53OvH5KkyV5iGgqaNmOwpUPfDez6nm7/Ps5MdM5eQBPqk5tKi0mhFIBXFGfRy9JShmqi5alyhNJZVI58erE+c4fa86XvvtwzfvPe/Jf1nz7877L5b0l9lNdsACgAAIgFGgAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAEAAAAAAYAAALzejzvP3Ki/P2cXmLTLRUAjmpUY4PP9Lz830UzcAZLCKAoEyWEcu2O2dOWUmVZL0zGgigmkK81sWplLM3elWsicDSSuRw2KkDiOLu4d5blaxYnYZ6ZCqbAA59MdBZ3MeP3+X7Op1jFapEiSUmU2kLTPREqmgCISB52DsZDHTRAQ5ESRaFQgJSZTmhtCOLzoqQqHBGdZG2MI0vOkj4H77876Z+m+g8b282nVZpLkoGNNVKUxcwqZBJrCVv5z63ket7fP…",
+            isAllTime: false,
+            latitude: markers[0].latitude,
+            longitude: markers[0].longitude,
+            phoneNumber: "+1 232 132-13-12",
+            title: "asdsadas",
+            webSiteUrl: "123213213",
+            workTime: "23:23-23:23+23:23-23:23+23:23-23:23+23:23-23:23+23:23-23:23+none-none+none-none",
+        }
+
+        // let headers = {"Access-Control-Allow-Origin": "*", "Access-Control-Allow-Methods": "GET, POST, PUT, DELETE"}
         axios.post(`${url}/api/Company/AddCompany`, data)
             .catch((error) => {
                 console.log(error);
             })
-
+            
+        
         onClose();
         console.log(data);
     }
@@ -386,10 +520,10 @@ function CreateCard({category, setCategory}) {
                                 {/* <span>{transcription[currentLang].inputsTitles.workFrom}</span> */}
                                 {/* <input className={styles.workTimeInput} type="text" value={timeWorkStart} onChange={(e) => inputHandler(e, setTimeWorkStart, timeRegex)} placeholder="08:00"/> */}
                                 {/* <InputMask mask="+9 999 999-99-99" placeholder="Номер телефона"/> */}
-                                <InputMask className={styles.workTimeInput} value={timeWorkStart} onChange={(e) => inputHandler(e, setTimeWorkStart, timeRegex)} mask="99:99" placeholder="08:00"/>
+                                <InputMask className={styles.workTimeInput} value={timeWorkStart} onChange={(e) => inputHandler(e, setTimeWorkStart, timeRegex, 'startWork')} mask="99:99" placeholder="08:00" disabled={isScheduleOpen}/>
                                 <span>-</span>
                                 {/* <input className={styles.workTimeInput} style={{marginRight: 20}} type="text" value={timeWorkFinish} onChange={(e) => inputHandler(e, setTimeWorkFinish, timeRegex)} placeholder="22:00"/> */}
-                                <InputMask className={styles.workTimeInput} style={{marginRight: 20}} value={timeWorkFinish} onChange={(e) => inputHandler(e, setTimeWorkFinish, timeRegex)} mask="99:99" placeholder="22:00"/>
+                                <InputMask className={styles.workTimeInput} style={{marginRight: 20}} value={timeWorkFinish} onChange={(e) => inputHandler(e, setTimeWorkFinish, timeRegex, 'finishWork')} mask="99:99" placeholder="22:00" disabled={isScheduleOpen}/>
                             </div>
                         </div>
                         <div className={styles.workTimeWrapper}>
@@ -397,10 +531,10 @@ function CreateCard({category, setCategory}) {
                             <div className={styles.workTime}>
                                 {/* <span>{transcription[currentLang].inputsTitles.workFrom}</span> */}
                                 {/* <input className={styles.workTimeInput} type="text" value={timeCoffeeStart} onChange={(e) => inputHandler(e, setTimeCoffeeStart, timeRegex)} placeholder="08:00"/> */}
-                                <InputMask className={styles.workTimeInput} value={timeCoffeeStart} onChange={(e) => inputHandler(e, setTimeCoffeeStart, timeRegex)} mask="99:99" placeholder="08:00"/>
+                                <InputMask className={styles.workTimeInput} value={timeCoffeeStart} onChange={(e) => inputHandler(e, setTimeCoffeeStart, timeRegex, 'startCoffee')} mask="99:99" placeholder="08:00"/>
                                 <span>-</span>
                                 {/* <input className={styles.workTimeInput} type="text" value={timeCoffeeFinish} onChange={(e) => inputHandler(e, setTimeCoffeeFinish, timeRegex)} placeholder="22:00"/> */}
-                                <InputMask className={styles.workTimeInput} value={timeCoffeeFinish} onChange={(e) => inputHandler(e, setTimeCoffeeFinish, timeRegex)} mask="99:99" placeholder="22:00"/>
+                                <InputMask className={styles.workTimeInput} value={timeCoffeeFinish} onChange={(e) => inputHandler(e, setTimeCoffeeFinish, timeRegex, 'finishCoffee')} mask="99:99" placeholder="22:00"/>
                             </div>
                         </div>
                     </div>
@@ -417,7 +551,7 @@ function CreateCard({category, setCategory}) {
                     <div className="schedule">
                         <div
                             className={`scheduleBtn ${isScheduleOpen ? 'scheduleOpened' : ''}`}
-                            onClick={() => setIsScheduleOpen((prev) => !prev)}
+                            onClick={() => {setIsScheduleOpen((prev) => !prev); setTimeValid(_ => ({}))}} 
                         >
                             {isScheduleOpen ? 'Скрыть варианты графика' : 'Больше вариантов графика'}
                         </div>

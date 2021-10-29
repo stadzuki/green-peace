@@ -6,7 +6,8 @@ import Report from '../Report/Report'
 import styles from './CardCompany.module.scss'
 import transcription from '../../utils/transcription';
 
-const url = 'https://85a1-88-232-175-194.ngrok.io';
+// const url = 'https://localhost:44375';
+const url = 'https://localhost:44375'
 
 function CardCompany({company, setCompany, user, onClose, isCommentVisible}) {
     const [isCommentFieldVisible, setIsCommentFieldVisible] = useState(false);

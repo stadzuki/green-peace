@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useReducer, useState } from "react";
 import AppContext from "./context";
 
 import MapGL, { Marker } from "react-map-gl";
@@ -17,12 +17,14 @@ import typeCategories from "./components/shared/typeCategories";
 
 import Pin from "./components/Pin";
 import getCategory from "./utils/getCategory";
+import Popup from "./components/Popup";
 
 const TOKEN = 'pk.eyJ1IjoibG9saWsyMCIsImEiOiJja3N6NDhlZ2oycGxnMndvZHVkbGV0MTZ1In0.JkdOOOgJTsu1Sl2qO-5VAA';
 
 const MARKER_SIZE = 65;
 
-const url = 'https://85a1-88-232-175-194.ngrok.io'
+// const url = 'https://localhost:44375'
+const url = 'https://localhost:44375'
 
 //
 //
@@ -30,9 +32,16 @@ const url = 'https://85a1-88-232-175-194.ngrok.io'
 //           ПЕРЕПИСАТЬ TOKEN В USE EFFECT
 //
 //
-//
+
+
+let lastZoom = 0;
 
 function App() {
+  let NAER_RADIUS_CLUSTER = 0.02;
+  const mapRef = React.useRef()
+
+  
+
   //transcription
   const [currentLang, setCurrentLang] = useState(() => {
     switch(window.navigator.language) {
@@ -48,11 +57,12 @@ function App() {
   //Loader
   const [isLoader, setIsLoader] = useState(false);
 
+  const [popup, setPopup] = useState(false)
   //Map
   const [mapCoord, setMapCoord] = useState({
     latitude: 53.893009,
     longitude: 	27.567444,
-    zoom: 11,
+    zoom: 13,
     bearing: 0,
     pitch: 0,
   });
@@ -82,13 +92,22 @@ function App() {
   const [isCitiesLoaded, setIsCitiesLoaded] = useState(false)
   const [initCity, setInitCity] = useState('')
 
+  //
+  const [clustersMarker, setClustersMarker] = useState([])
+
   //Company
   const [isCompanySelected, setIsCompanySelected] = useState(false)
   const [currentCompany, setCurrentCompany] = useState({})
 
   let userDublicate = {}
 
+  // useEffect(() => {
+  //     const map = mapRef.current.getMap()
+  //     const visibleFeatures = map.queryRenderedFeatures()
+  //     console.log('visible features: ', visibleFeatures)
+  // }, [mapRef, mapCoord])
 
+  // console.log(target);
 
   //Токен
   useEffect(() => {
@@ -128,7 +147,7 @@ function App() {
             });
 
             setIsAuthorize(true);
-            setIsLoader(false);
+            // setIsLoader(false);
           })
           .catch((error) => {
             console.error(error);
@@ -150,7 +169,6 @@ function App() {
     if(isCitiesLoaded) return 1;
     getCities()
   });
-
 
   // Получение и отрисовка маркеров
   const createMarker = (marker) => {
@@ -174,8 +192,8 @@ function App() {
         onDrag={(e) => setMarkers([{id: 0, latitude: e.lngLat[1], longitude: e.lngLat[0]}])}
       >
         {isMarkerCreate !== 'INIT' 
-          ? <div className='markersContainer'
-              style={{ transform: `translate(${-MARKER_SIZE / 2}px,${-MARKER_SIZE}px)` }}
+          ? <div className='markersssContainer'
+              style={{ transform: `translate(${-MARKER_SIZE / 2}px,${-MARKER_SIZE}px)`, position: 'absolute' }}
               onMouseOver={(e) => {
                 let parent;
 
@@ -189,7 +207,9 @@ function App() {
                   parent = document.body;
                 }
                 
-                parent.querySelector('.markerMetaWrapper').classList.add('visible');
+                if(parent) {
+                  parent?.querySelector('.markerMetaWrapper').classList.add('visible');
+                }
               }}
               onMouseOut={(e) => {
                 let parent;
@@ -204,7 +224,9 @@ function App() {
                   parent = document.body;
                 }
                 
-                parent.querySelector('.markerMetaWrapper').classList.remove('visible');
+                if(parent) {
+                  parent?.querySelector('.markerMetaWrapper').classList.remove('visible');
+                }
               }}
           >
             <Pin count={[...marker.categoriesId]} color={[...colors]} />
@@ -245,14 +267,19 @@ function App() {
               height="65"
             />
           </div>
-          : <img 
-              style={{ pointerEvents: 'none' }}
-              // style={{ transform: `translate(${-MARKER_SIZE / 2}px,${-MARKER_SIZE}px)`, pointerEvents: 'none' }}
-              src="/img/map-marker.webp"
-              alt="marker"
-              width="65"
-              height="65"
-          />
+          : 
+            <div className='markersContainer'
+              style={{ transform: `translate(${-MARKER_SIZE / 2}px,${-MARKER_SIZE}px)`, position: 'absolute' }}
+            >
+              <img 
+                style={{ pointerEvents: 'none', position: 'relative' }}
+                // style={{ transform: `translate(${-MARKER_SIZE / 2}px,${-MARKER_SIZE}px)`, pointerEvents: 'none' }}
+                src="/img/map-marker.webp"
+                alt="marker"
+                width="65"
+                height="65"
+              />
+            </div>
         }
         
       </Marker>
@@ -266,38 +293,135 @@ function App() {
   ), [markers]);
 
   const getCityCompanies = (city) => {
-    // setIsLoader(true)
-    // axios.get(`https://api.npoint.io/3d5795e1a47fe9cb1c83`)
+    setIsLoader(true)
+    setInitCity(city.title)
+    
     axios.get(`${url}/api/Company/GetCompanies?city=${city.title}`)
     .then(response => {
+      setMapCoord((prev) => ({...prev, latitude: +response.data[0].latitude, longitude: +response.data[0].longitude, zoom: 13}))
+      console.log(response.data[0]);
       setMarkers(response.data)
       setMarkersCopy(response.data)
-      setMapView('company')
-      console.log(response.data);
-      if(response.data.length) {
-        setMapCoord((prev) => ({...prev, latitude: +response.data[0].latitude, longitude: +response.data[0].longitude, zoom: 12}))
-      } else {
-        setMapCoord((prev) => ({...prev, latitude: +city.latitude, longitude: +city.longitude, zoom: 12}))
-      }
-
+      
+      setTimeout(() => {
+        setMapView('company');
+      })
       setIsLoader(false);
     })
     .catch(error => {
       console.error(error);
       console.warn('can not load city companies');
+
       setIsLoader(false);
     })
   }
 
+  const createClusters = (markers) => {
+    let markersCopy = [...markers]
+    const clusters = [];
+    let cluster = {};
+    const currentMarker = 0;
+    
+    while(markersCopy.length > 0) {
+      cluster = {
+        latitude: +markersCopy[currentMarker].latitude,
+        longitude: +markersCopy[currentMarker].longitude,
+        markers: [markersCopy[currentMarker]]
+      }
 
+      for(let i = 1; i < markersCopy.length; i++) {
+        if(
+          +markersCopy[i].longitude <= +cluster.longitude + NAER_RADIUS_CLUSTER
+                && +markersCopy[i].longitude >= +cluster.longitude - NAER_RADIUS_CLUSTER
+                && +markersCopy[i].latitude <= +cluster.latitude + NAER_RADIUS_CLUSTER
+                && +markersCopy[i].latitude >= +cluster.latitude - NAER_RADIUS_CLUSTER
+        ) {
+          cluster.markers.push(markersCopy[i])
+        }
+      }
 
+      for(let marker of cluster.markers) {
+        markersCopy = markersCopy.filter(m => m !== marker)
+      }
+      clusters.push(cluster)
+    }
+    return clusters
+  }
 
+  const loadClusterMarkers = (cityCluster) => {
+    let markers = [...clustersMarker]
+    markers = markers.map((m) => {
+      return m.markers
+    })
+    markers = markers.flat()
+
+    setMarkers(markers)
+    setMapView('company')
+    setClustersMarker([])
+
+    setMapCoord(prev => ({...prev, latitude: +cityCluster.markers[0].latitude, longitude: +cityCluster.markers[0].longitude, zoom: 14}))
+  }
+
+  const createClusterMarker = (cityCluster, id) => {
+    let circleSize = 50;
+
+    // if(cityCluster.markers.length < 5) {
+    //   circleSize = 30;
+    // } else if(cityCluster.markers.length < 10) {
+    //   circleSize = 40;
+    // }
+
+    return (
+      <Marker 
+        key={id} 
+        longitude={+cityCluster.longitude} 
+        latitude={+cityCluster.latitude} 
+        onClick={() => {setMapView('company'); loadClusterMarkers(cityCluster)}}
+      >
+        <div style={{
+          width: circleSize,
+          cursor: 'pointer',
+          height: circleSize,
+          background: '#fff',
+          borderRadius: '25px',
+        }}>
+          <Pin count={[1, 2, 3]} color={['#EA5959', '#59EAEA', '#79EA59']} />
+          <div style={{
+            zIndex: 5,
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            width: '35px',
+            height: '35px',
+            top: 0,
+            left: 0,
+            right: 0,
+            bottom: 0,
+            margin: 'auto',
+            background: '#fff',
+            borderRadius: '25px',
+            position: 'absolute',
+            fontSize: '11px',
+            textAlign: 'center',
+          }}>
+            {cityCluster.markers.length}
+          </div>
+        </div>
+      </Marker>
+    )
+  }
+
+  const mapClusters = React.useMemo(() => clustersMarker.map(
+    (cityCluster, id) => (
+      createClusterMarker(cityCluster, id)
+    )
+  ), [clustersMarker]);
 
 
 
   // Получение и отрисовка городов
   const createCityMarker = (cityMarker) => {
-    const markerId = cityMarker.title.length + Math.floor(Math.random() * 200)
+    const markerId = Math.floor(Math.random() * 200) * Math.floor(Math.random() * 400)
     return (
       <Marker 
         key={markerId} 
@@ -316,20 +440,15 @@ function App() {
     )
   ), [citiesMarker]);
 
-  function getCities() {
+  async function getCities() {
     // axios.get(`https://api.npoint.io/dbbe065fcd8b2f1f3288`)
-    setIsLoader(true)
+    // setIsLoader(true)
     axios.get(`${url}/api/Company/GetCities`)
       .then((response) => {
-        setMapView('company')
-        
         getCityCompanies(response.data[0])
 
-        setMapCoord((prev) => ({...prev, latitude: +response.data[0].latitude, longitude: +response.data[0].longitude, zoom: 12}))
         setCitiesMarker(response.data)
         setInitCity(response.data[0].title)
-        
-        // setIsLoader(false)
       })
       .catch((error) => {
         console.error(error);
@@ -369,6 +488,8 @@ function App() {
   }
 
   const mapClickHandler = (e) => {
+    // console.log(mapRef.current.getMap());
+    // console.log(mapRef.current.queryRenderedFeatures());
     if(isMarkerCreate === true) {
       setIsMarkerCreate('INIT')
       setNewMarker({id: 0, latitude: e.lngLat[1], longitude: e.lngLat[0]})
@@ -378,11 +499,77 @@ function App() {
   }
 
   const mapStateChange = (evt) => {
-    // console.log(evt);
-    // if(evt.viewState.zoom <= 9 && !isMarkerCreate) {
-    //   setMarkers([])
-    //   setMapView('city')
-    // }
+    // console.log(Math.ceil(evt.viewState.zoom));
+    // console.log(mapCoord.zoom);
+    // console.log(mapView);
+    // console.log(mapView);
+    if(lastZoom === evt.viewState.zoom) return 1;
+    console.log(12);
+    if(evt.viewState.zoom <= 7 && !isMarkerCreate && mapView === 'company') {
+      console.log(1);
+      setMarkers([])
+      setMapView('city')
+    }
+    
+    if(evt.viewState.zoom < 7 && !isMarkerCreate && mapView === 'cluster') {
+      console.log(2);
+      setClustersMarker([])
+      setMapView('city')
+    }
+    
+    if(Math.ceil(evt.viewState.zoom) > 7 && Math.ceil(evt.viewState.zoom) < 13 && mapView !== 'cluster' && mapView !== 'city') {
+      console.log(3); 
+      const clusters = createClusters(markers)
+      setClustersMarker(clusters)
+
+      setMapView('cluster')
+    }
+
+    if(evt.viewState.zoom > 13 && mapView === 'cluster') {
+      console.log(4);
+      let markers = [...clustersMarker]
+      markers = markers.map((m) => {
+        return m.markers
+      })
+      markers = markers.flat()
+      
+      setClustersMarker([])
+      setMapView('company')
+
+      setMarkers(markers)
+    }
+
+    if(Math.ceil(evt.viewState.zoom) < 13  && mapView === 'cluster') {
+      console.log(5);
+
+      switch(Math.ceil(evt.viewState.zoom)) {
+        case 13:
+          NAER_RADIUS_CLUSTER = 0.01
+          break;
+        case 12:
+          NAER_RADIUS_CLUSTER = 0.02
+          break;
+        case 11:
+          NAER_RADIUS_CLUSTER = 0.03
+          break;
+        case 10:
+          NAER_RADIUS_CLUSTER = 0.04
+          break;
+        case 9:
+          NAER_RADIUS_CLUSTER = 0.06
+          break;
+        case 8:
+          NAER_RADIUS_CLUSTER = 0.1
+          break;
+      }
+
+      // NAER_RADIUS_CLUSTER = 0.06;
+      const clusters = createClusters(markers)
+      // console.log(clusters);
+      setClustersMarker(clusters)
+    }
+
+    lastZoom = evt.viewState.zoom;
   } 
 
 
@@ -395,6 +582,7 @@ function App() {
       value={{
         setLoginMethod,
         user,
+        mapCoord,
         setUser,
         isAuthorize,
         // currentPos,
@@ -415,10 +603,19 @@ function App() {
         citiesMarker,
         readonlyMarkers,
         initCity,
-        setIsLoader
+        setInitCity,
+        setIsLoader,
+        mapView,
+        setMapView,
+        createClusters,
+        setClustersMarker,
+        createMarkerHanlder,
+        setPopup,
+        popup
       }}
     >
       <div className="App">
+        {popup ? <Popup clickTrue={() => {setPopup(false); createMarkerHanlder()}} clickFalse={() => setPopup(false)}/> : ''}
         {isLoader ? <Loader /> : ""}
         <Login method={loginMethod} onClose={() => setLoginMethod("")} />
         
@@ -429,6 +626,7 @@ function App() {
           {isCompanySelected && !target ? <CardCompany company={currentCompany} setCompany={setCurrentCompany} user={user} isCommentVisible={true} onClose={() => {setIsCompanySelected(false); setCurrentCompany({})}}/> : ''}
         </div>
         <MapGL
+          ref={mapRef}
           {...mapCoord}
           width="100vw"
           height="100vh"
@@ -440,10 +638,26 @@ function App() {
         >
           {/* {mapCoord.zoom <= 10 ? mapCities : mapMarkers} */}
           {!isMarkerCreate && !target
-            ? markers.length || mapView === 'company' ? mapMarkers : mapCities
+            ? mapView === 'company' 
+              ? mapMarkers 
+              : mapView === 'city' 
+                ? mapCities 
+                : mapClusters
             : mapMarkers
           }
-          {/* {markers.length || mapView === 'company' ? mapMarkers : mapCities} */}
+          {/* {mapClusters} */}
+          {/* <Marker latitude={mapCoord.latitude} longitude={mapCoord.longitude}>
+          <img 
+              style={{ pointerEvents: 'none' }}
+              // style={{ transform: `translate(${-MARKER_SIZE / 2}px,${-MARKER_SIZE}px)`, pointerEvents: 'none' }}
+              src="/img/map-marker.webp"
+              alt="marker"
+              width="65"
+              height="65"
+          />
+          </Marker> */}
+          {/* {markers.length && mapView === 'company' ? mapMarkers : ''}
+          {mapView === 'city' ? mapCities : ''} */}
         </MapGL>
         <MarkerCreator changeTarget={createMarkerHanlder} currentLang={currentLang}/>
       </div>

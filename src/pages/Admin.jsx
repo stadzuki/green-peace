@@ -6,10 +6,12 @@ import CardCompany from "../components/CardCompany/CardCompany";
 
 import removeDuplicates from "../utils/removeDuplicates";
 
-const url = 'https://85a1-88-232-175-194.ngrok.io';
+// const url = 'https://localhost:44375';
+const url = 'https://localhost:44375'
 const timeRegex = /^[0-9]{2}[0-9]?\:[0-9]{2}$/;
 
 let validCompany = {};
+let tryLoadCompanies = 0;
 
 function Admin() {
     const [companies, setCompanies] = React.useState([])
@@ -26,7 +28,7 @@ function Admin() {
         {id: 6, isToggle: false, firstFieldValue: '', secondFieldValue: ''}
     ])
     
-    let tryLoadCompanies = 0;
+    
 
     const scheduleItems = [
         {name: 'Понедельник', idx: 0},
@@ -45,8 +47,8 @@ function Admin() {
         \n13 - шины\n\n';
 
     React.useEffect(() => {
-        if(companies.length <= 0 && tryLoadCompanies <= 5) {
-            if(tryLoadCompanies === 5) return alert('Не удалось загрузить данные')
+        if(companies.length <= 0 && tryLoadCompanies < 5) {
+            if(tryLoadCompanies === 4) return alert('Не удалось загрузить данные')
             getComanies()
             tryLoadCompanies++;
         }
@@ -199,6 +201,7 @@ function Admin() {
         // axios.get(`https://api.npoint.io/3d5795e1a47fe9cb1c83`)
         axios.get(`${url}/api/Company/GetCompaniesInAdminPanel`)
             .then((response) => {
+                console.log(response);
                 setCurrentCompany(response.data[0]);
                 setCompanies(response.data);
                 schedulePrepare(response.data[0].workTime, setSchedule)

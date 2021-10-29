@@ -100,3 +100,45 @@ body {
     }
   }
 }
+
+.popup {
+  display: flex;
+  position: fixed;
+  top: 40%;
+  left: 43%;
+  background: #fff;
+  padding: 35px;
+  border-radius: 5px;
+  text-align: center;
+
+  p {
+    font-size: 16px;
+    font-weight: 500;
+  }
+}
+
+.popupBtns {
+  display: flex;
+  flex-direction: column;
+  color: #fff;
+}
+
+.popupNew {
+  margin-top: 15px;
+  background-color: #19be6c;
+}
+
+.popupClose {
+  margin-top: 5px;
+  background-color: #C4C4C4;
+}
+
+.popupBtn {
+  border-radius: 5px;
+  padding: 15px 10px;
+  cursor: pointer;
+
+  &:hover {
+    background: rgb(38, 98, 209);
+  }
+}

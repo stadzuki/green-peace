@@ -5,9 +5,10 @@ import AppContext from '../../context';
 import transcription from '../../utils/transcription'
 import styles from './Select.module.scss'
 
-const url = 'https://85a1-88-232-175-194.ngrok.io'
+// const url = 'https://localhost:44375'
+const url = 'https://localhost:44375'
 
-function Select({setMap, lang, cities, setMarkers, setCopy, initCity}) {
+function Select({setInitCity, setMap, lang, cities, setMarkers, setCopy, initCity, setMapView}) {
     const [selectedCity, setSelectedCity] = useState('')
     const [isSelectOpen, setIsSelectOpen] = useState(false)
 
@@ -38,8 +39,16 @@ function Select({setMap, lang, cities, setMarkers, setCopy, initCity}) {
         })
 
         setMap((prev) => {
-            return {...prev, latitude: +city.latitude,  longitude: +city.longitude, zoom: 11}
+            return {...prev, latitude: +city.latitude,  longitude: +city.longitude, zoom: 13}
         })
+        
+        if(setMapView !== undefined) {
+            setTimeout(() => setMapView())
+        }
+
+        if(setInitCity !== undefined) { 
+            setInitCity(city.title)
+        }
 
         setSelectedCity(city.title)
         setIsSelectOpen(false)
