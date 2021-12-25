@@ -25,7 +25,8 @@ mapboxgl.workerClass = require('worker-loader!mapbox-gl/dist/mapbox-gl-csp-worke
 const TOKEN = 'pk.eyJ1IjoibG9saWsyMCIsImEiOiJja3N6NDhlZ2oycGxnMndvZHVkbGV0MTZ1In0.JkdOOOgJTsu1Sl2qO-5VAA';
 
 const MARKER_SIZE = 65;
-
+let scrollTimer;
+let clusterCache;
 const url = 'https://localhost:44375'
 // const url = 'https://3441-37-212-85-102.eu.ngrok.io'
 
@@ -524,73 +525,84 @@ function App() {
     // console.log(mapCoord.zoom);
     // console.log(mapView);
     // console.log(mapView);
-    if(lastZoom === evt.viewState.zoom) return 1;
-    console.log(12);
-    if(evt.viewState.zoom <= 7 && !isMarkerCreate && mapView === 'company') {
-      console.log(1);
-      setMarkers([])
-      setMapView('city')
-    }
-    
-    if(evt.viewState.zoom < 7 && !isMarkerCreate && mapView === 'cluster') {
-      console.log(2);
-      setClustersMarker([])
-      setMapView('city')
-    }
-    
-    if(Math.ceil(evt.viewState.zoom) > 7 && Math.ceil(evt.viewState.zoom) < 13 && mapView !== 'cluster' && mapView !== 'city') {
-      console.log(3); 
-      const clusters = createClusters(markers)
-      setClustersMarker(clusters)
-
-      setMapView('cluster')
+    if (scrollTimer) {
+      clearTimeout(scrollTimer);
     }
 
-    if(evt.viewState.zoom > 13 && mapView === 'cluster') {
-      console.log(4);
-      let markers = [...clustersMarker]
-      markers = markers.map((m) => {
-        return m.markers
-      })
-      markers = markers.flat()
-      
-      setClustersMarker([])
-      setMapView('company')
-
-      setMarkers(markers)
-    }
-
-    if(Math.ceil(evt.viewState.zoom) < 13  && mapView === 'cluster') {
-      console.log(5);
-
-      switch(Math.ceil(evt.viewState.zoom)) {
-        case 13:
-          NAER_RADIUS_CLUSTER = 0.01
-          break;
-        case 12:
-          NAER_RADIUS_CLUSTER = 0.02
-          break;
-        case 11:
-          NAER_RADIUS_CLUSTER = 0.03
-          break;
-        case 10:
-          NAER_RADIUS_CLUSTER = 0.04
-          break;
-        case 9:
-          NAER_RADIUS_CLUSTER = 0.06
-          break;
-        case 8:
-          NAER_RADIUS_CLUSTER = 0.1
-          break;
+    scrollTimer = setTimeout(function () {
+      if(lastZoom === evt.viewState.zoom) return 1;
+      console.log(12);
+      if(evt.viewState.zoom <= 7 && !isMarkerCreate && mapView === 'company') {
+        console.log(1);
+        setMarkers([])
+        setMapView('city')
       }
-
-      // NAER_RADIUS_CLUSTER = 0.06;
-      const clusters = createClusters(markers)
-      // console.log(clusters);
-      setClustersMarker(clusters)
-    }
-
-    lastZoom = evt.viewState.zoom;
+      
+      if(evt.viewState.zoom < 7 && !isMarkerCreate && mapView === 'cluster') {
+        console.log(2);
+        setClustersMarker([])
+        setMapView('city')
+      }
+      
+      if(Math.ceil(evt.viewState.zoom) > 7 && Math.ceil(evt.viewState.zoom) < 13 && mapView !== 'cluster' && mapView !== 'city') {
+        console.log(3); 
+        if(clusterCache) {
+          setClustersMarker(clusterCache)
+        } else {
+          const clusters = createClusters(markers)
+          setClustersMarker(clusters)
+          clusterCache = clusters;
+        }
+  
+        setMapView('cluster')
+      }
+  
+      if(evt.viewState.zoom > 13 && mapView === 'cluster') {
+        console.log(4);
+        let markers = [...clustersMarker]
+        markers = markers.map((m) => {
+          return m.markers
+        })
+        markers = markers.flat()
+        
+        setClustersMarker([])
+        setMapView('company')
+  
+        setMarkers(markers)
+      }
+  
+      if(Math.ceil(evt.viewState.zoom) < 13  && mapView === 'cluster') {
+        console.log(5);
+  
+        switch(Math.ceil(evt.viewState.zoom)) {
+          case 13:
+            NAER_RADIUS_CLUSTER = 0.01
+            break;
+          case 12:
+            NAER_RADIUS_CLUSTER = 0.02
+            break;
+          case 11:
+            NAER_RADIUS_CLUSTER = 0.03
+            break;
+          case 10:
+            NAER_RADIUS_CLUSTER = 0.04
+            break;
+          case 9:
+            NAER_RADIUS_CLUSTER = 0.06
+            break;
+          case 8:
+            NAER_RADIUS_CLUSTER = 0.1
+            break;
+        }
+  
+        // NAER_RADIUS_CLUSTER = 0.06;
+        const clusters = createClusters(markers)
+        // console.log(clusters);
+        setClustersMarker(clusters)
+      }
+  
+      lastZoom = evt.viewState.zoom;
+    }, 3000)
   } 
 
 
