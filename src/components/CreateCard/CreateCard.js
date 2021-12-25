@@ -9,8 +9,8 @@ import styles from './CreateCard.module.scss';
 import Schedule from '../Schedule/Shedule';
 import Popup from '../Popup';
 
-// const url = 'https://localhost:44375'
 const url = 'https://localhost:44375'
+// const url = 'https://3441-37-212-85-102.eu.ngrok.io'
 
 const timeRegex = /^[0-9]{2}[0-9]?\:[0-9]{2}$/
 const phoneRegex = /^\+([0-9]+[\s]?\-?)+$/
@@ -231,7 +231,7 @@ function CreateCard({category, setCategory}) {
         // })
     }
 
-    const onClose = () => {
+    const onClose = (isPopup = false) => {
         setCity('')
         setCategory([])
         setAdress('')
@@ -265,7 +265,9 @@ function CreateCard({category, setCategory}) {
         setMarkers(markersCopy)
         document.querySelectorAll('.category-item').forEach(item => item.classList.remove('selected'))
 
-        setPopup(true)
+        if(isPopup) {
+            setPopup(true)
+        }
     }
 
     const createMarkerOnClick = (e) => {
@@ -350,10 +352,6 @@ function CreateCard({category, setCategory}) {
         const timeCoffeeFinishRightSide = parseInt(timeCoffeeFinish.split(':')[1]);
 
 
-        console.log(timeCoffeeStartLeftSide);
-        console.log(timeCoffeeStartRightSide);
-        console.log(timeCoffeeFinishLeftSide);
-        console.log(timeCoffeeFinishRightSide);
         if(
             timeCoffeeStartLeftSide > 23 || timeCoffeeStartLeftSide < 0 && timeCoffeeStartRightSide > 59 || timeCoffeeStartRightSide < 0 
         ) {
@@ -484,13 +482,13 @@ function CreateCard({category, setCategory}) {
             })
             
         
-        onClose();
+        onClose(true);
         console.log(data);
     }
 
     return (
         <div>
-            <img className={styles.compayClose} width="10" src="/img/cancel.png" alt="close" onClick={onClose}/>
+            <img className={styles.compayClose} width="15" src="/img/cancel.png" alt="close" onClick={() => onClose(false)}/>
             <form>
                 <p>
                     <span>{transcription[currentLang].inputsTitles.city}</span>

@@ -16,7 +16,7 @@ ReactDOM.render(
       <Switch>
           <Route exact path="/" component={App} />
           <Route path="/admin" component={Admin} />
-          <Route path="/catalog" component={Catalog}/>
+          <Route path="/catalog/:city?" component={Catalog}/>
       </Switch>
       {/* <App /> */}
     </Router>

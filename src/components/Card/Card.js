@@ -53,7 +53,8 @@ function Card() {
         mapView,
         setMapView,
         createClusters,
-        setClustersMarker
+        setClustersMarker,
+        onMarkerClick
     } = React.useContext(AppContext)
 
     useEffect(() => {
@@ -91,8 +92,9 @@ function Card() {
     //     }
     // }, [currentCity])
 
-    const onPlaceClick = (latitude, longitude) => {
-        setMapCoord((prev) => ({...prev, latitude, longitude, zoom: 24}))
+    const onPlaceClick = (latitude, longitude, id) => {
+        setMapCoord((prev) => ({...prev, latitude, longitude, zoom: 19}))
+        onMarkerClick(id);
     }
 
     const getNearCompanies = () => { // case 24 - 13
@@ -348,7 +350,7 @@ function Card() {
                     <ul className={styles.places}>
                         {isMarkersLoaded && markersFromCard !== 'init' && markersFromCard.length > 0
                             ? markersFromCard.map((company, idx) => {
-                                return <Place name={company.title} adress={`${company.city}, ${company.address}`} key={idx} onPlaceClick={() => onPlaceClick(+company.latitude, +company.longitude)}/>
+                                return <Place name={company.title} adress={`${company.city}, ${company.address}`} key={idx} onPlaceClick={() => onPlaceClick(+company.latitude, +company.longitude, company.id)}/>
                             })
                             : markersCardState === 'near' 
                                 ? <p>Поблизости ничего не найдено</p>

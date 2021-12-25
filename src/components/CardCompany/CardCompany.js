@@ -6,8 +6,8 @@ import Report from '../Report/Report'
 import styles from './CardCompany.module.scss'
 import transcription from '../../utils/transcription';
 
-// const url = 'https://localhost:44375';
-const url = 'https://localhost:44375'
+const url = 'https://localhost:44375';
+// const url = 'https://3441-37-212-85-102.eu.ngrok.io'
 
 function CardCompany({company, setCompany, user, onClose, isCommentVisible}) {
     const [isCommentFieldVisible, setIsCommentFieldVisible] = useState(false);
@@ -129,7 +129,7 @@ function CardCompany({company, setCompany, user, onClose, isCommentVisible}) {
     return (
         <div className={`${styles.companyCard}`}>
             <p className={styles.companyTitle}>{company.title}</p>
-            <img className={styles.companyClose} width="10" src="/img/cancel.png" alt="close" onClick={onClose}/>
+            <img className={styles.companyClose} width="15" src="/img/cancel.png" alt="close" onClick={onClose}/>
             <div className={styles.companyImage}>
                 <img src={"data:image/jpeg;base64," + company.imageUrl} alt="company photo"/>
             </div>

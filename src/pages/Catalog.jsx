@@ -15,15 +15,16 @@ import AppContext from '../context';
 import removeDuplicates from '../utils/removeDuplicates';
 
 const TOKEN = 'pk.eyJ1IjoibG9saWsyMCIsImEiOiJja3N6NDhlZ2oycGxnMndvZHVkbGV0MTZ1In0.JkdOOOgJTsu1Sl2qO-5VAA';
-// const url = 'https://localhost:44375';
-const url = 'https://localhost:44375'
-
+const url = 'https://localhost:44375';
+// const url = 'https://3441-37-212-85-102.eu.ngrok.io'
+let marker_cache;
 let selectedCategory = [];
 let sorted = [];
 let lastZoom = 0;
+let currCity = '';
 const currentLang = 'ru'
 
-function Catalog() {
+function Catalog(props) {
     let NAER_RADIUS_CLUSTER = 0.02;
     
     const [isMarkersLoaded, setIsMarkersLoaded] = useState(false)
@@ -60,9 +61,37 @@ function Catalog() {
     ]
 
     useEffect(() => {
+      const city = props.history.location.pathname.split('/')[2];
+      if(city) {
+        console.log(city)
+        setIsLoader(true)
+        axios.get(`${url}/api/Company/GetCompanies?city=${city}`)
+        .then(response => {
+          console.log(response)
+            setMarkers(response.data);
+            setMarkersCopy(response.data);
+            setMapCoord((prev) => ({...prev, latitude: +response.data[0].latitude, longitude: +response.data[0].longitude, zoom: 13}))
+            setIsLoader(false)
+            
+        })
+        .catch(error => {
+            console.error(error);
+            console.warn('can not load companies');
+        })
+      }
+    }, [])
+
+    useEffect(() => {
         if(isCitiesLoaded) return 1;
         getCities()
     })
+
+    // useEffect(() => {
+    //   if (markers.length > 0 && currCity !== markers[0].city) {
+    //     currCity = markers[0].city;
+    //     props.history.push(`${currCity}`);
+    //   }
+    // }, [markers])
 
     const loadClusterMarkers = (cityCluster) => {
         let markers = [...clustersMarker]
@@ -273,33 +302,53 @@ function Catalog() {
             <div className='markerContainer'
                 onMouseOver={(e) => {
                   let parent;
-    
-                  if(e.target.tagName.toUpperCase() === 'CIRCLE') {
-                    parent = e.target.parentNode.parentNode
-                  } else if(e.target.tagName.toUpperCase() === 'SVG') {
-                    parent = e.target.parentNode
-                  } else if(e.target.tagName.toUpperCase() === 'ING') {
-                    parent = e.target.parentNode.parentNode
-                  } else {
-                    parent = document.body;
+                let mapboxContainer;
+
+                if(e.target.tagName.toUpperCase() === 'CIRCLE') {
+                  parent = e.target.parentNode.parentNode
+                  mapboxContainer = e.target.parentNode.parentNode.parentNode
+                } else if(e.target.tagName.toUpperCase() === 'SVG') {
+                  parent = e.target.parentNode
+                  mapboxContainer = e.target.parentNode.parentNode
+                } else if(e.target.tagName.toUpperCase() === 'IMG') {
+                  parent = e.target.parentNode.parentNode
+                  mapboxContainer = e.target.parentNode.parentNode
+                }
+                
+                if(parent) {
+                  const wrapper = parent?.querySelector('.markerMetaWrapper');
+                  wrapper.classList.add('visible');
+                  wrapper.style.zIndex = 99999
+
+                  if(mapboxContainer) {
+                    mapboxContainer.style.zIndex = 9999;
                   }
-                  
-                  parent.querySelector('.markerMetaWrapper').classList.add('visible');
+                }
                 }}
                 onMouseOut={(e) => {
                   let parent;
-    
-                  if(e.target.tagName.toUpperCase() === 'CIRCLE') {
-                    parent = e.target.parentNode.parentNode
-                  } else if(e.target.tagName.toUpperCase() === 'SVG') {
-                    parent = e.target.parentNode
-                  } else if(e.target.tagName.toUpperCase() === 'ING') {
-                    parent = e.target.parentNode.parentNode
-                  } else {
-                    parent = document.body;
+                let mapboxContainer;
+
+                if(e.target.tagName.toUpperCase() === 'CIRCLE') {
+                  parent = e.target.parentNode.parentNode
+                  mapboxContainer = e.target.parentNode.parentNode.parentNode
+                } else if(e.target.tagName.toUpperCase() === 'SVG') {
+                  parent = e.target.parentNode
+                  mapboxContainer = e.target.parentNode.parentNode
+                } else if(e.target.tagName.toUpperCase() === 'IMG') {
+                  parent = e.target.parentNode.parentNode
+                  mapboxContainer = e.target.parentNode.parentNode
+                }
+                
+                if(parent) {
+                  const wrapper = parent?.querySelector('.markerMetaWrapper');
+                  wrapper.classList.remove('visible');
+                  wrapper.style.zIndex = 0;
+
+                  if(mapboxContainer) {
+                    mapboxContainer.style.zIndex = 0;
                   }
-                  
-                  parent.querySelector('.markerMetaWrapper').classList.remove('visible');
+                }
                 }}
               >
                 <Pin count={[...marker.categoriesId]} color={[...colors]} />
@@ -344,9 +393,13 @@ function Catalog() {
         )
     }
 
+    const selectCompany = () => {
+      console.log();
+    }
+
     const createCatalogItem = ({id, title, city, categoriesId, imageUrl}) => {
         return (
-            <div className="catalogCompanyCard" key={id}>
+            <div className="catalogCompanyCard" key={id} onClick={selectCompany}>
                 <div className="catalogImageWrapper">
                     <img src={"data:image/jpeg;base64," + imageUrl} alt="company photo"/>
                 </div>
@@ -532,16 +585,19 @@ function Catalog() {
     
         if(evt.viewState.zoom > 13 && mapView === 'cluster') {
           // console.log(4);
-          let markers = [...clustersMarker]
-          markers = markers.map((m) => {
-            return m.markers
-          })
-          markers = markers.flat()
+          if(!marker_cache) {
+            let markers = [...clustersMarker]
+            markers = markers.map((m) => {
+              return m.markers
+            })
+            markers = markers.flat()
+            marker_cache = markers;
+          }
           
           setClustersMarker([])
           setMapView('company')
     
-          setMarkers(markers)
+          setMarkers(marker_cache);
         }
     
         if(evt.viewState.zoom < 13  && mapView === 'cluster') {
@@ -590,7 +646,7 @@ function Catalog() {
                     <div className="filter filter-city">
                         <p className="filterCityText">Город</p>
                         {/* <Select lang={currentLang} setMap={setMapCoord} cities={citiesMarker} setCopy={setMarkersCopy} setMarkers={setMarkers}/> */}
-                        {isMarkersLoaded && citiesMarker.length? <Select lang={currentLang} cities={citiesMarker} setMap={setMapCoord} setMarkers={setMarkers} setCopy={setMarkersCopy}/> : ''}
+                        {isMarkersLoaded && citiesMarker.length ? <Select lang={currentLang} cities={citiesMarker} setMap={setMapCoord} setMarkers={setMarkers} setCopy={setMarkersCopy} isCatalog={true}/> : ''}
                     </div>
                     <div className="filter filter-type">
                         <p>Категории</p>

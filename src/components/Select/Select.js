@@ -4,11 +4,12 @@ import AppContext from '../../context';
 
 import transcription from '../../utils/transcription'
 import styles from './Select.module.scss'
+import { Link, NavLink } from 'react-router-dom';
 
-// const url = 'https://localhost:44375'
 const url = 'https://localhost:44375'
-
-function Select({setInitCity, setMap, lang, cities, setMarkers, setCopy, initCity, setMapView}) {
+// const url = 'https://3441-37-212-85-102.eu.ngrok.io'
+let isClicked = false;
+function Select({setInitCity, setMap, lang, cities, setMarkers, setCopy, initCity, setMapView, isCatalog}) {
     const [selectedCity, setSelectedCity] = useState('')
     const [isSelectOpen, setIsSelectOpen] = useState(false)
 
@@ -78,7 +79,14 @@ function Select({setInitCity, setMap, lang, cities, setMarkers, setCopy, initCit
                     {cities.length  ? <ul className={styles.citiesList}>
                         {cities.map((city, idx) => {
                             return (
-                                <li 
+                                isCatalog 
+                                ? <NavLink key={idx} to={!isClicked ? "catalog/" + city.title : city.title} style={{textDecoration: 'none', color: '#101010'}} onClick={() => isClicked = true}>
+                                    <li 
+                                        className={`${styles.city} ${selectedCity === city.title ? styles.selectedCity : ''}`} 
+                                        onClick={() => CityClickHandler(city)}
+                                    >{city.title}</li>
+                                </NavLink>
+                                : <li 
                                     key={idx} 
                                     className={`${styles.city} ${selectedCity === city.title ? styles.selectedCity : ''}`} 
                                     onClick={() => CityClickHandler(city)}

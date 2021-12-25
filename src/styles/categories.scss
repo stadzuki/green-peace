@@ -44,47 +44,98 @@
         margin-top: 0;
     }
 }
+.paper {
+    & + .selected {background: #15a42b;}
 
-.paper:hover {
-    background: #15a42b;
+    &:hover {
+        background: #15a42b;
+    }
 }
-.glass:hover {
-    background: #189fe0;
+
+.glass {
+    & + .selected {background: #189fe0;}
+
+    &:hover {
+        background: #189fe0;
+    }
 }
-.bottle:hover {
-    background: #ff9a50;
+
+.bottle {
+    & + .selected {background: #ff9a50;}
+
+    &:hover {
+        background: #ff9a50;
+    }
 }
-.tin:hover {
-    background: #f45397;
+.tin {
+    & + .selected {background: #f45397;}
+
+    &:hover {
+        background: #f45397;
+    }
 }
-.clothes:hover {
-    background: #eb4444;
+.clothes {
+    & + .selected {background: #eb4444;}
+
+    &:hover {
+        background: #eb4444;
+    }
 }
-.gadget:hover {
-    background: #3cbe93;
+.gadget {
+    & + .selected {background: #3cbe93;}
+
+    &:hover {
+        background: #3cbe93;
+    }
 }
-.radioactive:hover {
-    background: #afff00;
+.radioactive {
+    & + .selected {background: #afff00;}
+
+    &:hover {
+        background: #afff00;
+    }
 }
-.battery:hover {
-    background: #ffa81f;
+.battery {
+    & + .selected {background: #ffa81f;}
+
+    &:hover {
+        background: #ffa81f;
+    }
 }
-.lamp:hover {
-    background: #ffea3b;
+.lamp {
+    & + .selected {background: #ffea3b;}
+
+    &:hover {
+        background: #ffea3b;
+    }
 }
-.technique:hover {
-    background: #70a8ff;
+.technique {
+    & + .selected {background: #70a8ff;}
+
+    &:hover {
+        background: #70a8ff;
+    }
 }
-.package:hover {
-    background: #b3764a;
+.package {
+    & + .selected {background: #b3764a;}
+
+    &:hover {
+        background: #b3764a;
+    }
 }
-.beer:hover {
-    background: #f2390f;
+.beer{
+    & + .selected {background: #f2390f;}
+
+    &:hover {
+        background: #f2390f;
+    }
 }
-.tires:hover {
-    background: #202020;
+.tires {
+    & + .selected {background: #202020;}
+
+    &:hover {
+        background: #202020;
+    }
 }
-  
-.selected {
-background-color: #2ECC6E;
-}
+
+.selected {background: #15a42b;}

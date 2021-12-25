@@ -18,13 +18,16 @@ import typeCategories from "./components/shared/typeCategories";
 import Pin from "./components/Pin";
 import getCategory from "./utils/getCategory";
 import Popup from "./components/Popup";
+import mapboxgl from 'mapbox-gl';
+// eslint-disable-next-line import/no-webpack-loader-syntax, import/no-unresolved
+mapboxgl.workerClass = require('worker-loader!mapbox-gl/dist/mapbox-gl-csp-worker').default;
 
 const TOKEN = 'pk.eyJ1IjoibG9saWsyMCIsImEiOiJja3N6NDhlZ2oycGxnMndvZHVkbGV0MTZ1In0.JkdOOOgJTsu1Sl2qO-5VAA';
 
 const MARKER_SIZE = 65;
 
-// const url = 'https://localhost:44375'
 const url = 'https://localhost:44375'
+// const url = 'https://3441-37-212-85-102.eu.ngrok.io'
 
 //
 //
@@ -32,6 +35,8 @@ const url = 'https://localhost:44375'
 //           ПЕРЕПИСАТЬ TOKEN В USE EFFECT
 //
 //
+
+
 
 
 let lastZoom = 0;
@@ -196,36 +201,52 @@ function App() {
               style={{ transform: `translate(${-MARKER_SIZE / 2}px,${-MARKER_SIZE}px)`, position: 'absolute' }}
               onMouseOver={(e) => {
                 let parent;
+                let mapboxContainer;
 
                 if(e.target.tagName.toUpperCase() === 'CIRCLE') {
                   parent = e.target.parentNode.parentNode
+                  mapboxContainer = e.target.parentNode.parentNode.parentNode
                 } else if(e.target.tagName.toUpperCase() === 'SVG') {
                   parent = e.target.parentNode
+                  mapboxContainer = e.target.parentNode.parentNode
                 } else if(e.target.tagName.toUpperCase() === 'IMG') {
                   parent = e.target.parentNode.parentNode
-                } else {
-                  parent = document.body;
+                  mapboxContainer = e.target.parentNode.parentNode
                 }
                 
                 if(parent) {
-                  parent?.querySelector('.markerMetaWrapper').classList.add('visible');
+                  const wrapper = parent?.querySelector('.markerMetaWrapper');
+                  wrapper.classList.add('visible');
+                  wrapper.style.zIndex = 99999
+
+                  if(mapboxContainer) {
+                    mapboxContainer.style.zIndex = 9999;
+                  }
                 }
               }}
               onMouseOut={(e) => {
                 let parent;
+                let mapboxContainer;
 
                 if(e.target.tagName.toUpperCase() === 'CIRCLE') {
                   parent = e.target.parentNode.parentNode
+                  mapboxContainer = e.target.parentNode.parentNode.parentNode
                 } else if(e.target.tagName.toUpperCase() === 'SVG') {
                   parent = e.target.parentNode
+                  mapboxContainer = e.target.parentNode.parentNode
                 } else if(e.target.tagName.toUpperCase() === 'IMG') {
                   parent = e.target.parentNode.parentNode
-                } else {
-                  parent = document.body;
+                  mapboxContainer = e.target.parentNode.parentNode
                 }
                 
                 if(parent) {
-                  parent?.querySelector('.markerMetaWrapper').classList.remove('visible');
+                  const wrapper = parent?.querySelector('.markerMetaWrapper');
+                  wrapper.classList.remove('visible');
+                  wrapper.style.zIndex = 0;
+
+                  if(mapboxContainer) {
+                    mapboxContainer.style.zIndex = 0;
+                  }
                 }
               }}
           >
@@ -611,7 +632,8 @@ function App() {
         setClustersMarker,
         createMarkerHanlder,
         setPopup,
-        popup
+        popup,
+        onMarkerClick
       }}
     >
       <div className="App">
